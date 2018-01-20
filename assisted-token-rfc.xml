@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type='text/xsl' href='http://xml2rfc.tools.ietf.org/authoring/rfc2629.xslt' ?>
+<!DOCTYPE rfc PUBLIC "-//IETF//DTD RFC 2629//EN" "http://xml2rfc.tools.ietf.org/authoring/rfc2629.dtd">
+
+<?rfc compact="yes" ?>
+<?rfc sortrefs="yes" ?>
+<?rfc strict="yes" ?>
+<?rfc subcompact="no" ?>
+<?rfc symrefs="yes"?>
+<?rfc toc="yes"?>
+<?rfc tocdepth="4"?>
+<?rfc tocindent="yes"?>
+<?rfc tocompact="yes"?>
+
+<rfc ipr="trust200902" category="std" docName="draft-ideskog-assisted-token-00">
+    <front>
+        <title abbrev="Assisted Token">OAuth 2.0 Assisted Token</title>
+
+        <author fullname="Jacob Ideskog" initials="J." surname="Ideskog">
+            <organization>Curity AB</organization>
+
+            <address>
+                <email>jacob@curity.io</email>
+            </address>
+        </author>
+
+        <author fullname="Travis Spencer" initials="T." surname="Spencer">
+            <organization>Curity AB</organization>
+
+            <address>
+                <email>travis@curity.io</email>
+                <uri>http://travisspencer.com/</uri>
+            </address>
+        </author>
+
+        <date day="19" month="January" year="2018"/>
+
+        <area>Security</area>
+        <workgroup>OAuth Working Group</workgroup>
+
+        <keyword>OAuth</keyword>
+        <keyword>JavaScript</keyword>
+        <keyword>SPA</keyword>
+        <keyword>Single Page Application</keyword>
+
+        <abstract>
+            <t>
+                This specification defines a flow to integrate Single Page Applications (SPAs) with an OAuth
+                Authorization Server. It defines the protocol of this message exchange and includes suggestions on how
+                to
+                wrap certain functionality in JavaScript helper libraries. This specification extends the capabilities
+                defined in
+                <xref target="RFC6749"/>
+            </t>
+        </abstract>
+    </front>
+
+    <middle>
+        <section title="Introduction" anchor="introduction">
+            <t>
+                Section 1.3 of the The OAuth 2.0 Authorization Framework describes the grant types included in the base
+                specification of the OAuth 2.0 protocol. The implicit flow was intended for usage with client that
+                cannot preserve a secret. This includes Single Page Applications (SPAs). However, a common property of
+                SPAs is that they build state in the current page context. The implicit flow requires the user to
+                redirect the browser to the Authorization Server and then back to the page. For many SPAs this means
+                that the state of the page is lost, or must be rebuilt which can prove difficult or impossible. For this
+                reason a new flow is needed that addresses these concerns seen with the implicit flow.
+            </t>
+
+            <t>
+                To simplify the integration of OAuth into Web applications, a new flow, which we refer to as the
+                "Assisted Token Flow" in added to the OAuth server. This flow uses a new endpoint, the Assisted
+                Token Endpoint. This is introduced rather than reusing the authorize endpoint because it alleviates
+                the client developer from needing to specify a response_type parameter in the authorize request.
+                This flow takes place in a dynamic iframe. After the flow completes, the AS redirects back to the
+                application, which frames the flow, using a JavaScript call to window.postMessage. By using these
+                two mechanisms to start and finish the flow, client developers only need to provide a client_id and
+                write a handler for window.postMessage. Response types or other query string parameters are
+                unnecessary. This request/response is shown in the following diagram.
+            </t>
+            <t>
+                The goals are: Reduce the complexity of the call for the developer Never leave the current page
+            </t>
+            <t>
+                Two versions: There are two versions of the flow. One where the user never interacts with the frame,
+                and one where the user is required to interact in order to authenticated.
+            </t>
+        </section>
+
+        <section title="Terminology" anchor="terminology">
+            <t>
+                The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
+                "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in Key
+                words for use in RFCs to Indicate Requirement Levels<xref target='RFC2119'/>.
+            </t>
+
+            <t>
+                <list style='hanging'>
+                    <t hangText="Single Page Application (SPA)">
+                        <vspace/>
+                        .....
+                    </t>
+                </list>
+            </t>
+            <t>
+                All other terms are as defined in the <xref target="RFC6749">OAuth 2.0 Authorization
+                Framework</xref>.
+            </t>
+
+            <t>Unless otherwise noted, all the protocol parameter names and values are case sensitive.</t>
+        </section>
+
+        <section title="Assisted Token Endpoint" anchor="assisted-token-endpoint">
+
+            <section anchor="cross-orgin-suport" title="Cross-Origin Support">
+                <t>
+                    The assisted token endpoint MAY support <xref format="title" target="W3C.WD-cors-20120403">
+                    CORS</xref>.
+                </t>
+            </section>
+        </section>
+
+        <section title="Protocol" anchor="protocol">
+            <t>(A) The client opens a hidden iframe and makes the initial GET request passing the client_id as the only
+                required parameter. The GET request is made by setting the "src" parameter in the iframe with the full
+                URL to the assisted endpoint including the client_id parameter.
+
+                (B) If the Authorization Server can determine that the user has an SSO session, it issues an Access
+                Token and shows a page.
+
+                (C) The page runs JavaScript onLoad that sends a message using postMessage with the result to the parent
+                frame.
+
+                To force the non interactive flow above the client MAY send the "prompt=none" query string argument
+                along with the client_id. This forces the Authorization Server as well as any Authentication Service to
+                no prompt the user.
+
+                If the user is not logged in, an error SHOULD be returned. If the error contains
+                "user_authentication_required", then the client can restart the flow in a visible frame. See the
+                Interactive Flow.
+
+                (A) The client opens a visible iframe and makes the initial GET request passing the client_id as the
+                only required parameter. The GET request is made by setting the "src" parameter in the iframe with the
+                full URL to the assisted endpoint including the client_id parameter.
+
+                (B) The Authorization Server hands over to an authenticating party that interacts with the user for
+                Authentication.
+
+                (C) The Authorization server issues the Access Token and shows a page.
+
+                (D) The page runs JavaScript onLoad that sends a message using postMessage with the result to the parent
+                frame.
+
+                After (D) the client closes the iframe and the flow is complete. The
+            </t>
+
+            <section title="Assisted Token Request" anchor="assisted-token-request">
+                <t>The assisted token request is a GET request constructed by the client containing the following
+                    parameters
+
+                    client_id REQUIRED
+
+                    prompt OPTIONAL May contain the value "none" which indicates that the client wants to use an
+                    existing
+                    sso
+                    session to log the user in and not show any consent screens. If the Authorization Server cannot
+                    fulfill
+                    this
+                    it MUST respond with an error.
+
+                    for_origin OPTIONAL as described in section (TODO: Reference Origin section)
+
+                    scope OPTIONAL as described in section (TODO: Reference Scope section)
+                </t>
+            </section>
+
+            <section title="Assisted Token Response" anchor="assisted-token-response">
+                <t>The response is a postMessage sent from the page on the Authorization Server in the iframe, to the
+                    client in
+                    the parent frame. This post message is a JSON object with the following parameters
+                    Successful Response
+
+                    access_token REQUIRED
+
+                    scope REQUIRED only if the server changes the scopes from the default.
+
+                    expires_in REQUIRED the number of seconds until the access_token expires.
+                </t>
+            </section>
+
+            <section title="Error Response" anchor="error-response">
+                <t>error REQUIRED an error code as defined in RFC6749#4.2.2.1 with the following addition
+
+                    user_interaction_required
+                    The user is required to interact with the flow in some way. This could be to grant consent, or to
+                    authenticate.
+
+                    error_description OPTIONAL Human-readable ASCII [USASCII] text providing additional information,
+                    used to
+                    assist the client developer in understanding the error that occurred.
+                </t>
+            </section>
+        </section>
+
+        <section title="Client Metadata" anchor="client-metadata">
+            <t>
+                The OAuth server MAY allow dynamic clients to request the use of the assisted token flow when
+                registering. To do so, clients should include the string element
+                "urn:ietf:params:oauth:grant-type:assisted_token" in array of "grant_types" in the metadata sent to
+                the <xref target="RFC7591">client registration endpoint</xref> the To this end, the client register
+                that they support A client may dynamically register with the OAuth server,
+            </t>
+        </section>
+
+        <section title="Authorization Server Metadata" anchor="authorization-server-metadata">
+            <t>
+                Support for the assisted token flow MAY be declared in the OAuth 2.0
+                Authorization Server Metadata
+                <xref target="I-D.ietf-oauth-discovery"/>
+                with the following metadata:
+            </t>
+            <t>
+                <list style="hanging">
+                    <t hangText="assisted_token_endpoint">
+                        <vspace/>
+                        OPTIONAL.
+                        URL of the authorization server's assisted token endpoint defined in
+                        <xref target="assisted-token-request"/>.
+                    </t>
+                    <t hangText="grant_types_supported">
+                        <vspace/>
+                        OPTIONAL.
+                        A JSON array specified in <xref target="I-D.ietf-oauth-discovery"/> which should contain the
+                        value "urn:ietf:params:oauth:grant-type:assisted_token" as defined in
+                        <xref target="client-metadata"/>.
+                    </t>
+                </list>
+            </t>
+        </section>
+
+        <section title="IANA Considerations" anchor="iana-considerations">
+            <section anchor="URIReg" title="OAuth URI Registration">
+                <t>
+                    This specification registers the following values in the IANA "OAuth URI" registry
+                    <xref target="IANA.OAuth.Parameters"/> established by<xref target="RFC6755"/>.
+                </t>
+
+                <section title="Registry Contents" anchor="URIContents">
+                    <t>
+                        <?rfc subcompact="yes"?>
+                        <list style="symbols">
+                            <t>URN: urn:ietf:params:oauth:grant-type:assisted_token</t>
+                            <t>Common Name: Assisted token flow grant type for OAuth 2.0</t>
+                            <t>Change controller: IESG</t>
+                            <t>Specification Document:<xref target="client-metadata"/>of [[ this specification ]]</t>
+                        </list>
+                    </t>
+
+                    <?rfc subcompact="no"?>
+                </section>
+            </section>
+
+            <section anchor="ErrorReg" title="OAuth Extensions Error Registration">
+                <t>
+                    This specification registers the following values in the
+                    IANA "OAuth Extensions Error Registry" registry
+                    <xref target="IANA.OAuth.Parameters"/>
+                    established by<xref target="RFC6749"/>.
+                </t>
+
+                <section title="Registry Contents" anchor="ErrorContents">
+                    <t>
+                        <?rfc subcompact="yes"?>
+                        <list style="symbols">
+                            <t>Error name: authorization_pending</t>
+                            <t>Error usage location: Token endpoint response</t>
+                            <t>Related protocol extension: [[ this specification ]]</t>
+                            <t>Change controller: IETF</t>
+                            <t>Specification Document: <xref target="error-response"/> of [[ this specification ]]</t>
+                        </list>
+                    </t>
+                </section>
+            </section>
+
+            <section title="OAuth 2.0 Authorization Server Metadata" anchor="MetadataReg">
+
+                <t>
+                    This specification registers the following values in the IANA "OAuth 2.0 Authorization Server
+                    Metadata" registry<xref target="IANA.OAuth.Parameters"/> established by
+                    <xref target="I-D.ietf-oauth-discovery"/>.
+                </t>
+
+                <section title="Registry Contents" anchor="MetadataContents">
+                    <t>
+                        <?rfc subcompact="yes"?>
+                        <list style="symbols">
+                            <t>Metadata name: assisted_token_endpoint</t>
+                            <t>Metadata Description: The Assisted Token Endpoint.</t>
+                            <t>Change controller: IESG</t>
+                            <t>Specification Document: <xref target="authorization-server-metadata"/>
+                                of [[ this specification ]]</t>
+                        </list>
+                    </t>
+
+                    <?rfc subcompact="no"?>
+                </section>
+            </section>
+        </section>
+
+        <section title="Security Considerations" anchor="security-considerations">
+
+        </section>
+
+        <section anchor="privacy-considerations" title="Privacy Considerations">
+            <t>
+                about third-party cookies
+            </t>
+        </section>
+    </middle>
+
+    <back>
+        <references title="Normative References">
+            <?rfc include='http://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.draft-ietf-oauth-discovery-08.xml'?>
+            <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml' ?>
+            <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.6749.xml' ?>
+            <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.7591.xml' ?>
+            <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.6755.xml' ?>
+
+            <reference anchor="IANA.OAuth.Parameters" target="http://www.iana.org/assignments/oauth-parameters">
+                <front>
+                    <title>OAuth Parameters</title>
+                    <author>
+                        <organization>IANA</organization>
+                    </author>
+                    <date/>
+                </front>
+            </reference>
+        </references>
+
+        <references title="Informative References">
+            <?rfc include='http://xml.resource.org/public/rfc/bibxml4/reference.W3C.WD-cors-20120403.xml' ?>
+        </references>
+
+        <section anchor="Acknowledgements" title="Acknowledgements">
+            <t>
+                The following individuals contributed ideas, feedback, and wording to this specification:
+            </t>
+
+            <t>
+                Mark Dobrinic
+            </t>
+        </section>
+
+        <section title="Document History" anchor="document-history">
+            <?rfc subcompact="yes"?>
+            <t>
+                [[ to be removed by the RFC editor before publication as an RFC ]]
+            </t>
+            <t>
+                -00
+                <list style='symbols'>
+                    <t>
+                        Initial draft.
+                    </t>
+                </list>
+            </t>
+        </section>
+    </back>
+</rfc>
