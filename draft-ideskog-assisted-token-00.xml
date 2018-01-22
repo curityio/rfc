@@ -69,7 +69,7 @@
 
             <t>
                 To simplify the integration of OAuth into Web applications, a new flow, which we refer to as the
-                "Assisted Token Flow" in added to the OAuth server. This flow uses a new endpoint, the Assisted
+                "Assisted Token Flow" in added to the authorization server. This flow uses a new endpoint, the Assisted
                 Token Endpoint. This is introduced rather than reusing the authorize endpoint because it alleviates
                 the client developer from needing to specify a response_type parameter in the authorize request.
                 This flow takes place in a dynamic iframe. After the flow completes, the AS redirects back to the
@@ -91,23 +91,21 @@
             <t>
                 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
                 "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in Key
-                words for use in RFCs to Indicate Requirement Levels<xref target='RFC2119'/>.
+                words for use in RFCs to Indicate Requirement Levels <xref target='RFC2119'/>.
             </t>
 
-            <t>
+            <!--<t>
                 <list style='hanging'>
                     <t hangText="Single Page Application (SPA)">
                         <vspace/>
                         .....
                     </t>
                 </list>
-            </t>
+            </t>-->
             <t>
-                All other terms are as defined in the <xref target="RFC6749">OAuth 2.0 Authorization
-                Framework</xref>.
+                All other terms are as defined in <xref target="RFC6749"/>. Unless otherwise noted, all the protocol
+                parameter names and values are case sensitive.
             </t>
-
-            <t>Unless otherwise noted, all the protocol parameter names and values are case sensitive.</t>
         </section>
 
         <section title="Assisted Token Endpoint" anchor="assisted-token-endpoint">
@@ -203,12 +201,17 @@
 
         <section title="Client Metadata" anchor="client-metadata">
             <t>
-                The OAuth server MAY allow dynamic clients to request the use of the assisted token flow when
+                The authorization server MAY allow dynamic clients to request the use of the assisted token flow when
                 registering. Such a client may indicate that it will interact with the authorization server using the
-                asssited token flow by including the string element
+                assisted token flow by including the string element
                 "urn:ietf:params:oauth:grant-type:assisted_token" in the array associated with the "grant_types"
                 metadata field sent to the client registration endpoint (as defined in Section 3. of
-                <xref target="RFC7591"/>). The inclusion of this value is done despite the fact that the client will
+                <xref target="RFC7591"/>). If the authorization server allows the client to register with this grant
+                type, the "grant_types" included in the response MUST include the value
+                "urn:ietf:params:oauth:grant-type:assisted_token".
+            </t>
+            <t>
+                The inclusion of this value in the "grant_types" field is done despite the fact that the client will
                 not use this grant type at the token endpoint but rather the <xref target="assisted-token-endpoint">
                 assisted token endpoint</xref>.
             </t>
@@ -216,10 +219,8 @@
 
         <section title="Authorization Server Metadata" anchor="authorization-server-metadata">
             <t>
-                Support for the assisted token flow MAY be declared in the OAuth 2.0
-                Authorization Server Metadata
-                <xref target="I-D.ietf-oauth-discovery"/>
-                with the following metadata:
+                Support for the assisted token flow MUST be declared in the OAuth 2.0 Authorization Server Metadata
+                <xref target="I-D.ietf-oauth-discovery"/> with the following metadata:
             </t>
             <t>
                 <list style="hanging">
