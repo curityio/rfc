@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type='text/xsl' href='http://xml2rfc.tools.ietf.org/authoring/rfc2629.xslt' ?>
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 <!DOCTYPE rfc PUBLIC "-//IETF//DTD RFC 2629//EN" "http://xml2rfc.tools.ietf.org/authoring/rfc2629.dtd">
 
 <?rfc compact="yes" ?>
@@ -58,7 +58,7 @@
     <middle>
         <section title="Introduction" anchor="introduction">
             <t>
-                Section 1.3 of the The OAuth 2.0 Authorization Framework describes the grant types included in the base
+                Section 1.3 of <xref format="title" target="RFC6749"/> describes the grant types included in the base
                 specification of the OAuth 2.0 protocol. The implicit flow was intended for usage with client that
                 cannot preserve a secret. This includes Single Page Applications (SPAs). However, a common property of
                 SPAs is that they build state in the current page context. The implicit flow requires the user to
@@ -205,10 +205,12 @@
         <section title="Client Metadata" anchor="client-metadata">
             <t>
                 The OAuth server MAY allow dynamic clients to request the use of the assisted token flow when
-                registering. To do so, clients should include the string element
-                "urn:ietf:params:oauth:grant-type:assisted_token" in array of "grant_types" in the metadata sent to
-                the <xref target="RFC7591">client registration endpoint</xref> the To this end, the client register
-                that they support A client may dynamically register with the OAuth server,
+                registering. Such a client may indicate that it will interact with the authorization server using the
+                asssited token flow by including the string element
+                "urn:ietf:params:oauth:grant-type:assisted_token" in the array associated with the "grant_types"
+                metadata field sent to
+                the <xref target="RFC7591">client registration endpoint</xref>. The inclusion of this value is done
+                despite the fact that the client will not use this grant type at the token endpoint.
             </t>
         </section>
 
@@ -225,13 +227,14 @@
                         <vspace/>
                         OPTIONAL.
                         URL of the authorization server's assisted token endpoint defined in
-                        <xref target="assisted-token-request"/>.
+                        <xref target="assisted-token-endpoint"/>.
                     </t>
                     <t hangText="grant_types_supported">
                         <vspace/>
                         OPTIONAL.
-                        A JSON array specified in <xref target="I-D.ietf-oauth-discovery"/> which should contain the
-                        value "urn:ietf:params:oauth:grant-type:assisted_token" as defined in
+                        A JSON array specified in Section 2. of
+                        <xref target="I-D.ietf-oauth-discovery"/>
+                        which should contain the value "urn:ietf:params:oauth:grant-type:assisted_token" as defined in
                         <xref target="client-metadata"/>.
                     </t>
                 </list>
@@ -260,7 +263,7 @@
                 </section>
             </section>
 
-            <section anchor="ErrorReg" title="OAuth Extensions Error Registration">
+            <!--<section anchor="ErrorReg" title="OAuth Extensions Error Registration">
                 <t>
                     This specification registers the following values in the
                     IANA "OAuth Extensions Error Registry" registry
@@ -280,13 +283,13 @@
                         </list>
                     </t>
                 </section>
-            </section>
+            </section>-->
 
             <section title="OAuth 2.0 Authorization Server Metadata" anchor="MetadataReg">
 
                 <t>
                     This specification registers the following values in the IANA "OAuth 2.0 Authorization Server
-                    Metadata" registry<xref target="IANA.OAuth.Parameters"/> established by
+                    Metadata" registry <xref target="IANA.OAuth.Parameters"/> established by
                     <xref target="I-D.ietf-oauth-discovery"/>.
                 </t>
 
@@ -308,7 +311,17 @@
         </section>
 
         <section title="Security Considerations" anchor="security-considerations">
+            <t>
+                In addition to the all <xref target="RFC6819"> the security considerations discussed in OAuth 2.0
+                </xref>, the following security considerations SHOULD be taken into account.
+            </t>
 
+            <section title="Framing" anchor="framing">
+                <t>The authorization server MUST prevent any origin from framing the assisted token endpoint except ones
+                    that an administrator has explicitly allowed. It may do this in any manner that is available to the
+                    application.
+                </t>
+            </section>
         </section>
 
         <section anchor="privacy-considerations" title="Privacy Considerations">
@@ -320,12 +333,110 @@
 
     <back>
         <references title="Normative References">
-            <?rfc include='http://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.draft-ietf-oauth-discovery-08.xml'?>
-            <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml' ?>
-            <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.6749.xml' ?>
-            <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.7591.xml' ?>
-            <?rfc include='http://xml.resource.org/public/rfc/bibxml/reference.RFC.6755.xml' ?>
+            <!-- Get these from https://xml2rfc.tools.ietf.org/public/rfc/bibxml/. In-line them rather than use
+            xml2rfc's PIs, so that other XML applications (e.g., Intellij and Firefox) can validate the document -->
+            
+            <reference anchor='I-D.ietf-oauth-discovery'>
+                <front>
+                    <title>OAuth 2.0 Authorization Server Metadata</title>
 
+                    <author initials='M' surname='Jones' fullname='Michael Jones'/>
+                    <author initials='N' surname='Sakimura' fullname='Nat Sakimura'/>
+                    <author initials='J' surname='Bradley' fullname='John Bradley'/>
+
+                    <date month='November' day='15' year='2017'/>
+
+                    <abstract>
+                        <t>This specification defines a metadata format that an OAuth 2.0 client can use to obtain the
+                            information needed to interact with an OAuth 2.0 authorization server, including its
+                            endpoint locations and authorization server capabilities.
+                        </t>
+                    </abstract>
+                </front>
+
+                <seriesInfo name='Internet-Draft' value='draft-ietf-oauth-discovery-08'/>
+                <format type='TXT'
+                        target='http://www.ietf.org/internet-drafts/draft-ietf-oauth-discovery-08.txt'/>
+            </reference>
+            <reference anchor='RFC2119' target='https://www.rfc-editor.org/info/rfc2119'>
+                <front>
+                    <title>Key words for use in RFCs to Indicate Requirement Levels</title>
+                    <author initials='S.' surname='Bradner' fullname='S. Bradner'>
+                        <organization/>
+                    </author>
+                    <date year='1997' month='March'/>
+                    <abstract>
+                        <t>In many standards track documents several words are used to signify the requirements in the
+                            specification. These words are often capitalized. This document defines these words as they
+                            should be interpreted in IETF documents. This document specifies an Internet Best Current
+                            Practices for the Internet Community, and requests discussion and suggestions for
+                            improvements.
+                        </t>
+                    </abstract>
+                </front>
+                <seriesInfo name='BCP' value='14'/>
+                <seriesInfo name='RFC' value='2119'/>
+                <seriesInfo name='DOI' value='10.17487/RFC2119'/>
+            </reference>
+            <reference anchor='RFC6749' target='https://www.rfc-editor.org/info/rfc6749'>
+                <front>
+                    <title>The OAuth 2.0 Authorization Framework</title>
+                    <author initials='D.' surname='Hardt' fullname='D. Hardt' role='editor'>
+                        <organization/>
+                    </author>
+                    <date year='2012' month='October'/>
+                    <abstract>
+                        <t>The OAuth 2.0 authorization framework enables a third-party application to obtain limited
+                            access to an HTTP service, either on behalf of a resource owner by orchestrating an approval
+                            interaction between the resource owner and the HTTP service, or by allowing the third-party
+                            application to obtain access on its own behalf. This specification replaces and obsoletes
+                            the OAuth 1.0 protocol described in RFC 5849. [STANDARDS-TRACK]
+                        </t>
+                    </abstract>
+                </front>
+                <seriesInfo name='RFC' value='6749'/>
+                <seriesInfo name='DOI' value='10.17487/RFC6749'/>
+            </reference>
+            <reference anchor='RFC7591' target='https://www.rfc-editor.org/info/rfc7591'>
+                <front>
+                    <title>OAuth 2.0 Dynamic Client Registration Protocol</title>
+                    <author initials='J.' surname='Richer' fullname='J. Richer' role='editor'/>
+                    <author initials='M.' surname='Jones' fullname='M. Jones'/>
+                    <author initials='J.' surname='Bradley' fullname='J. Bradley'/>
+                    <author initials='M.' surname='Machulak' fullname='M. Machulak'/>
+                    <author initials='P.' surname='Hunt' fullname='P. Hunt'/>
+                    <date year='2015' month='July'/>
+                    <abstract>
+                        <t>This specification defines mechanisms for dynamically registering OAuth 2.0 clients with
+                            authorization servers. Registration requests send a set of desired client metadata values to
+                            the authorization server. The resulting registration responses return a client identifier to
+                            use at the authorization server and the client metadata values registered for the client.
+                            The client can then use this registration information to communicate with the authorization
+                            server using the OAuth 2.0 protocol. This specification also defines a set of common client
+                            metadata fields and values for clients to use during registration.
+                        </t>
+                    </abstract>
+                </front>
+                <seriesInfo name='RFC' value='7591'/>
+                <seriesInfo name='DOI' value='10.17487/RFC7591'/>
+            </reference>
+            <reference anchor='RFC6755' target='https://www.rfc-editor.org/info/rfc6755'>
+                <front>
+                    <title>An IETF URN Sub-Namespace for OAuth</title>
+                    <author initials='B.' surname='Campbell' fullname='B. Campbell'/>
+                    <author initials='H.' surname='Tschofenig' fullname='H. Tschofenig'/>
+                    <date year='2012' month='October'/>
+                    <abstract>
+                        <t>
+                            This document establishes an IETF URN Sub-namespace for use with OAuth-related
+                            specifications. This document is not an Internet Standards Track specification; it is
+                            published for informational purposes.
+                        </t>
+                    </abstract>
+                </front>
+                <seriesInfo name='RFC' value='6755'/>
+                <seriesInfo name='DOI' value='10.17487/RFC6755'/>
+            </reference>
             <reference anchor="IANA.OAuth.Parameters" target="http://www.iana.org/assignments/oauth-parameters">
                 <front>
                     <title>OAuth Parameters</title>
@@ -338,7 +449,35 @@
         </references>
 
         <references title="Informative References">
-            <?rfc include='http://xml.resource.org/public/rfc/bibxml4/reference.W3C.WD-cors-20120403.xml' ?>
+            <reference anchor='W3C.WD-cors-20120403'
+                       target='http://www.w3.org/TR/2012/WD-cors-20120403'>
+                <front>
+                    <title>Cross-Origin Resource Sharing</title>
+                    <author initials='A.' surname='Kesteren' fullname='Anne van Kesteren'/>
+                    <date month='April' day='3' year='2012' />
+                </front>
+
+                <seriesInfo name='World Wide Web Consortium LastCall' value='WD-cors-20120403' />
+                <format type='HTML' target='http://www.w3.org/TR/2012/WD-cors-20120403' />
+            </reference>
+            <reference anchor='RFC6819' target='https://www.rfc-editor.org/info/rfc6819'>
+                <front>
+                    <title>OAuth 2.0 Threat Model and Security Considerations</title>
+                    <author initials='T.' surname='Lodderstedt' fullname='T. Lodderstedt' role='editor'/>
+                    <author initials='M.' surname='McGloin' fullname='M. McGloin'/>
+                    <author initials='P.' surname='Hunt' fullname='P. Hunt'/>
+                    <date year='2013' month='January'/>
+                    <abstract>
+                        <t>This document gives additional security considerations for OAuth, beyond those in the OAuth
+                            2.0 specification, based on a comprehensive threat model for the OAuth 2.0 protocol. This
+                            document is not an Internet Standards Track specification; it is published for informational
+                            purposes.
+                        </t>
+                    </abstract>
+                </front>
+                <seriesInfo name='RFC' value='6819'/>
+                <seriesInfo name='DOI' value='10.17487/RFC6819'/>
+            </reference>
         </references>
 
         <section anchor="Acknowledgements" title="Acknowledgements">
