@@ -94,17 +94,18 @@
                 words for use in RFCs to Indicate Requirement Levels <xref target='RFC2119'/>.
             </t>
 
-            <!--<t>
+            <t>
                 <list style='hanging'>
-                    <t hangText="Single Page Application (SPA)">
+                    <t hangText="Handle Token">
                         <vspace/>
-                        .....
+                        An opaque token that refers to internal data of the authorization server (e.g., the user
+                        ID, scope of the token, etc.) as described in Section 3.1 of <xref target="RFC6819"/>.
                     </t>
                 </list>
-            </t>-->
+            </t>
             <t>
-                All other terms are as defined in <xref target="RFC6749"/>. Unless otherwise noted, all the protocol
-                parameter names and values are case sensitive.
+                All other terms used in this document are as defined in <xref target="RFC6749"/>. Unless otherwise
+                noted, all the protocol parameter names and values are case sensitive.
             </t>
         </section>
 
@@ -356,6 +357,78 @@
                     deployment.
                 </t>
             </section>
+
+            <section title="Handle Tokens" anchor="handle-token">
+                <t>
+                    Because the client applications that use the assisted token flow are written in scripting languages
+                    like JavaScript and are hosted in Web pages, users may keep such applications open in their user
+                    agents for a prolonged period of time. During such period, the token issued to the client may
+                    expire. To ensure that such expired tokens left remnant in the user agent are benign, a Handle
+                    Token SHOULD always be issued by the assisted token endpoint. This ensures that no identity data
+                    is exposed (even when the token is not yet expired) and that an unrevoked token does not increase
+                    risks.
+                </t>
+            </section>
+
+            <section title="Warning Against Untrusted Scripts" anchor="warning-against-untrusted-script">
+                <t>
+                    As admitted in Section 8 of <xref target="RFC6454"/>, preventing exfiltration of cookies, tokens,
+                    and other such credentials in web browsers has historically proven difficult to implement. Instead,
+                    the same-origin policy has emerged as the cornerstone of security for such user agents. Using this
+                    security model, it is not possible to prevent access to a token issued to a client if that client
+                    includes nefarious scripts from untrustworthy sources that have access to the Document Object
+                    Model (DOM) where the token is stored. For this reason, the authorization server MUST warn client
+                    application developers who interact with the assisted token endpoint <spanx>not</spanx> to use
+                    untrusted scripts in their applications. This warning SHOULD at least be conveyed through the
+                    documentation but MAY also be provided through other mechanisms.
+                </t>
+            </section>
+
+            <section title="Origin of Event and Authorization Server" anchor="origin-of-event-and-authorization-server">
+                <t>
+                    As described in <xref target="assisted-token-request"/>, the authorization server will return an
+                    access token to the client using HTML's postMessage interface. The receiver of this message is
+                    provided with an event object that contains an origin property. A client application MUST compare
+                    this with that of the authorization server before consuming the message. Otherwise, it runs the
+                    risk of processing messages posted from untrusted origins. An example of a proper message handler
+                    is shown in the following JavaScript listing:
+                </t>
+                <figure anchor="f_arwmwmrm" title="Comparing the origin of the postMessage event with that of the authorization server">
+                    <artwork>
+                        <![CDATA[
+<script type="text/javascript">
+    window.addEventListener("message", function(evt) {
+        if (evt.origin !== "https://oauth-server.example.com")
+            return; // Ignore event from untrusted source
+
+        ...
+    }, false);
+</script>]]>
+                    </artwork>
+                </figure>
+            </section>
+
+            <section title="Token Storage" anchor="token-storage">
+                <t>
+                    Most client applications that use the assisted token flow will maintain the access token issued by
+                    the authorization server in a persisted state; this will commonly be an HTTP cookie or local
+                    storage. This is necessary, for instance, to create a pleasing user experience when a user navigates
+                    away from the application in their web browser and then returns. To ensure that the token is stored
+                    safely, the authorization server MAY provide application developers with guidance in the
+                    accompanying documentation on how to safely persist tokens. The authorization server MAY also
+                    provide script libraries that perform this action according to best common practices. The
+                    authorization server MAY also store the token in an HTTP cookie in its own DNS domain (rather than
+                    that of the client) using the assisted token endpoint's path. This would elevate any storage
+                    requirements from the client application developer. Besides simplifying the programming model for
+                    developers, this technique allows the authorization server to check the validity of the token and
+                    determine if the token has expired or if the associated grant has been revoked in subsequent
+                    requests to the assisted token endpoint; this will be possible because the requests will include
+                    the token in the HTTP Cookie request header. In such cases, the authorization server can take the
+                    appropriate action, such as authenticating the user anew or request consent, before issuing a new
+                    token. If the token is stored by the application, however, this kind of verification cannot be
+                    performed by the authorization server without an explicit request to validate a stored token.
+                </t>
+            </section>
         </section>
 
         <section anchor="privacy-considerations" title="Privacy Considerations">
@@ -377,7 +450,7 @@
         <references title="Normative References">
             <!-- Get these from https://xml2rfc.tools.ietf.org/public/rfc/bibxml/. In-line them rather than use
             xml2rfc's PIs, so that other XML applications (e.g., Intellij and Firefox) can validate the document -->
-            
+
             <reference anchor='I-D.ietf-oauth-discovery'>
                 <front>
                     <title>OAuth 2.0 Authorization Server Metadata</title>
@@ -501,6 +574,27 @@
 
                 <seriesInfo name='World Wide Web Consortium LastCall' value='WD-cors-20120403' />
                 <format type='HTML' target='http://www.w3.org/TR/2012/WD-cors-20120403' />
+            </reference>
+            <reference anchor='RFC6454' target='https://www.rfc-editor.org/info/rfc6454'>
+                <front>
+                    <title>The Web Origin Concept</title>
+                    <author initials='A.' surname='Barth' fullname='A. Barth'>
+                        <organization/>
+                    </author>
+                    <date year='2011' month='December'/>
+                    <abstract>
+                        <t>This document defines the concept of an &quot;origin&quot;, which is often used as the scope
+                            of authority or privilege by user agents. Typically, user agents isolate content retrieved
+                            from different origins to prevent malicious web site operators from interfering with the
+                            operation of benign web sites. In addition to outlining the principles that underlie the
+                            concept of origin, this document details how to determine the origin of a URI and how to
+                            serialize an origin into a string. It also defines an HTTP header field, named &quot;Origin&quot;,
+                            that indicates which origins are associated with an HTTP request. [STANDARDS-TRACK]
+                        </t>
+                    </abstract>
+                </front>
+                <seriesInfo name='RFC' value='6454'/>
+                <seriesInfo name='DOI' value='10.17487/RFC6454'/>
             </reference>
             <reference anchor="FRAME-BUSTING" target="http://seclab.stanford.edu/websec/framebusting/">
                 <front>
