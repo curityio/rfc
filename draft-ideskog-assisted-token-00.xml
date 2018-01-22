@@ -58,49 +58,65 @@
     <middle>
         <section title="Introduction" anchor="introduction">
             <t>
-                Section 1.3 of <xref format="title" target="RFC6749"/> describes the grant types included in the base
-                specification of the OAuth 2.0 protocol. The implicit flow was intended for usage with client that
-                cannot preserve a secret. This includes Single Page Applications (SPAs). However, a common property of
-                SPAs is that they build state in the current page context. The implicit flow requires the user to
-                redirect the browser to the Authorization Server and then back to the page. For many SPAs this means
-                that the state of the page is lost, or must be rebuilt which can prove difficult or impossible. For this
-                reason a new flow is needed that addresses these concerns seen with the implicit flow.
+                This OAuth 2.0 protocol flow for Single-page Applications (SPA), often referred to as the assisted token
+                flow, provides clients written in scripting languages, like JavaScript, with a simplified integration
+                (compared to the implicit grant type flow) and ensures that end users are not redirected away from the
+                current page in order to obtain authorization from the resource owner. The communication between the
+                client and the authorization server takes place within an HTML iframe element that is only displayed
+                when interactive user interaction is required; this is the case when authentication and/or authorization
+                are necessary. To communicate the result from this iframe to the client application, HTML's postMessage
+                interface is used instead of the redirection endpoint defined in Section 3.1.2 of
+                <xref format="title" target="RFC6749"/>. This difference is important for many SPAs which take time to
+                reload and may not be able to recreate the same state prior to the user being redirected to the
+                authorization server.
             </t>
 
-            <figure>
-                <artwork><![CDATA[
-+------------------------------+                              +---------------------+
-|               Client         |                              |    Authorization    |
-|  +---------------------------+                              |        Server       |
-|  |             +-------------+                              |                     |
-|  |--(A)------->|             |                              |                     |
-|  |             |             |---(B)----Client Identifier-->|                     |
-|  |             |  Hidden     |                              |                     |
-|  |             |  iframe     |<--(C)-HTML with postMessage -|                     |
-|  |<-(D)-Token--|             |       that includes token    |                     |
-|  |             |             |                              |                     |
-|  |             +-------------+                              |                     |
-|  +---------------------------+                              |                     |
-|                              |                              |                     |
-+------------------------------+                              +---------------------+
+            <t>
+                Another goal of the assisted token flow is to simply integration of the client and the authorization
+                server. Though <xref target="RFC6749"/> resulted in a much simpler integration for client applications
+                compared to its predecessor,<xref target="RFC5849"/>, developers still struggle with the many inputs
+                required to perform the various OAuth flows. For this reason, the assisted token flow introduces a new
+                endpoint called the assisted token endpoint rather than extending and reusing the token endpoint
+                defined in Section X of<xref target="RFC6749"/>. As a result, client developers do not need to specify
+                a response_type parameter in the authorization request. This coupled with the use of a dynamic iframe
+                and HTML's postMessage interface for communication between the client and the authorization server means
+                that redirect_uri and state parameter are also unnecessary. Consequently, client developers only need
+                to provide a client_id and handle the postMessage that fired by the authorization server in order to
+                implement OAuth.
+            </t>
+
+            <t>This interaction is shown in <xref target="assisted-token-flow"/>.</t>
+
+            <figure title="Assisted Token Flow" anchor="assisted-token-flow">
+                <artwork type="ascii-art"><![CDATA[
++----------------------------+                      +---------------+
+|           Client           |                      | Authorization |
+| +--------------------------+                      |     Server    |
+| |              +-----------+                      |               |
+| |--(A)-------->|           |--(B)-- Client ------>|               |
+| |              |           |        Identifier    |               |
+| |              |  Hidden   |                      |               |
+| |              |  iframe   |<-(C)-- HTML with ----|               |
+| |<-(D)- Token -|           |        postMessage   |               |
+| |              |           |        including     |               |
+| |              +-----------+        access token  |               |
+| +--------------------------+                      |               |
+|                            |                      |               |
++----------------------------+                      +---------------+
 ]]>
                 </artwork>
             </figure>
 
             <t>
-                To simplify the integration of OAuth into Web applications, a new flow, which we refer to as the
-                "Assisted Token Flow" in added to the authorization server. This flow uses a new endpoint, the Assisted
-                Token Endpoint. This is introduced rather than reusing the authorize endpoint because it alleviates
-                the client developer from needing to specify a response_type parameter in the authorize request.
-                This flow takes place in a dynamic iframe. After the flow completes, the AS redirects back to the
-                application, which frames the flow, using a JavaScript call to window.postMessage. By using these
-                two mechanisms to start and finish the flow, client developers only need to provide a client_id and
-                write a handler for window.postMessage. Response types or other query string parameters are
-                unnecessary. This request/response is shown in the following diagram.
+                The assisted token flow illustrated in <xref target="assisted-token-flow"/> includes the following steps:
+                <list style="empty">
+                    <t>(A) The client creates a dynamic iframe element using a scripting language like JavaScript. The src attribute of this iframe is the assisted token endpoint of the authorization server.</t>
+                    <t>(B) The query string of the src attribute on the iframe includes only the client identifier.</t>
+                    <t>(C) If the user is already logged in and has granted consent to the client, the authorization server immediately returns an HTML document that includes script that is executing, causing a window.postMessage event to fire.</t>
+                    <t>(D) The application handles this event which includes an access token which is then available to the client; the client is then able to close the dynamic iframe without ever revealing it to the user.</t>
+                </list>
             </t>
-            <t>
-                The goals are: Reduce the complexity of the call for the developer Never leave the current page
-            </t>
+            
             <t>
                 Two versions: There are two versions of the flow. One where the user never interacts with the frame,
                 and one where the user is required to interact in order to authenticated.
@@ -130,6 +146,8 @@
         </section>
 
         <section title="Assisted Token Endpoint" anchor="assisted-token-endpoint">
+
+            <t>MUST BE PRE_REGISTERED</t>
 
             <section anchor="cross-orgin-suport" title="Cross-Origin Support">
                 <t>
@@ -470,6 +488,26 @@
         <references title="Normative References">
             <!-- Get these from https://xml2rfc.tools.ietf.org/public/rfc/bibxml/. In-line them rather than use
             xml2rfc's PIs, so that other XML applications (e.g., Intellij and Firefox) can validate the document -->
+
+            <reference anchor='RFC5849' target='https://www.rfc-editor.org/info/rfc5849'>
+                <front>
+                    <title>The OAuth 1.0 Protocol</title>
+                    <author initials='E.' surname='Hammer-Lahav' fullname='E. Hammer-Lahav' role='editor'>
+                        <organization/>
+                    </author>
+                    <date year='2010' month='April'/>
+                    <abstract>
+                        <t>OAuth provides a method for clients to access server resources on behalf of a resource owner
+                            (such as a different client or an end-user). It also provides a process for end-users to
+                            authorize third-party access to their server resources without sharing their credentials
+                            (typically, a username and password pair), using user-agent redirections. This document is
+                            not an Internet Standards Track specification; it is published for informational purposes.
+                        </t>
+                    </abstract>
+                </front>
+                <seriesInfo name='RFC' value='5849'/>
+                <seriesInfo name='DOI' value='10.17487/RFC5849'/>
+            </reference>
 
             <reference anchor='I-D.ietf-oauth-discovery'>
                 <front>
