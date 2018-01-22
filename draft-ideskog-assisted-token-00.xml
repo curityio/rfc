@@ -67,6 +67,26 @@
                 reason a new flow is needed that addresses these concerns seen with the implicit flow.
             </t>
 
+            <figure>
+                <artwork><![CDATA[
++------------------------------+                              +---------------------+
+|               Client         |                              |    Authorization    |
+|  +---------------------------+                              |        Server       |
+|  |             +-------------+                              |                     |
+|  |--(A)------->|             |                              |                     |
+|  |             |             |---(B)----Client Identifier-->|                     |
+|  |             |  Hidden     |                              |                     |
+|  |             |  iframe     |<--(C)-HTML with postMessage -|                     |
+|  |<-(D)-Token--|             |       that includes token    |                     |
+|  |             |             |                              |                     |
+|  |             +-------------+                              |                     |
+|  +---------------------------+                              |                     |
+|                              |                              |                     |
++------------------------------+                              +---------------------+
+]]>
+                </artwork>
+            </figure>
+
             <t>
                 To simplify the integration of OAuth into Web applications, a new flow, which we refer to as the
                 "Assisted Token Flow" in added to the authorization server. This flow uses a new endpoint, the Assisted
