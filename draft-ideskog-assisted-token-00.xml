@@ -313,14 +313,47 @@
 
         <section title="Security Considerations" anchor="security-considerations">
             <t>
-                In addition to the all <xref target="RFC6819"> the security considerations discussed in OAuth 2.0
+                In addition to all <xref target="RFC6819"> the security considerations discussed in OAuth 2.0
                 </xref>, the following security considerations SHOULD be taken into account.
             </t>
 
             <section title="Framing" anchor="framing">
-                <t>The authorization server MUST prevent any origin from framing the assisted token endpoint except ones
+                <t>
+                    Due to the use of an iframe to host the assisted token endpoint, the authorization server MUST take precautions to ensure that only trusted origins are allowed to frame it. The authorization server MUST prevent any origin from framing the assisted token endpoint except ones
                     that an administrator has explicitly allowed. It may do this in any manner that is available to the
                     application.
+                </t>
+
+                <t>
+                    One such mechanism that MAY be deployed is <xref target="CSP-2">Content Security Policy</xref>. This
+                    protocol SHOULD be used on the assisted token endpoint (and, if applicable, other endpoints used to
+                    authenticated the user in a specific deployment) to prevent framing from unauthorized origins. Using
+                    CSP allows the authorization server to specify multiple origins in a single response header field
+                    and to constrain these using flexible patterns (see <xref target="CSP-2"/> for details). This
+                    standard provides a robust mechanism for protecting against click-jacking when combining policies
+                    that restrict "child-src" which script source are allowed to execute using "script-src" policies.
+                </t>
+                <t>
+                    Because some user agents do not support <xref target="CSP-2"/>, this technique SHOULD be combined with
+                    others. In particular, the authorization server SHOULD return an "X-Frame-Options" response header
+                    on the assisted token endpoint (and, if applicable, other endpoints used to authenticate the user
+                    in a specific deployment). As defined in <xref target="RFC7034"/>, this header will cause user
+                    agents that support this header (but not CSP) to block framing from any origin that is not
+                    specified in this header's value. Because this header's value can only include one origin, the
+                    framer should use the "for_origin" parameter (as specified in
+                    <xref target="assisted-token-request"/>) to include its own origin.
+                </t>
+
+                <t>
+                    Some user agents do not support <xref target="RFC7034">X-Frame-Options</xref> nor
+                    <xref target="CSP-2"/>. Therefore, the authorization server SHOULD include a frame-busting script
+                    like that shown in Figure 7 of <xref target="FRAME-BUSTING"/>. Such a script would use JavaScript
+                    to break out of any unauthorized origin that is framing the assisted token endpoint. The
+                    authorization server MAY simply break out of all frames in case <xref target="RFC7034">
+                    X-Frame-Options</xref> and<xref target="CSP-2"/> are unsupported by the user agent, though this
+                    would render the assisted token flow non-functional. The choice of whether or not this drastic
+                    countermeasure should be employed depends on the user agents being targetted in a certain
+                    deployment.
                 </t>
             </section>
         </section>
@@ -330,9 +363,12 @@
                 In some deployments, the assisted token endpoint may be served from a distinct domain from that of the
                 client. In such cases, the client will be a third-party domain, and the resource owner's user agent may
                 prevent the authorization server from storing any third-party cookies. If the authorization server
-                requires state to be persisted across requests when performing the assisted token flow, it SHOULD
-                provide a privacy preserving mechanism to store and retrieve its state. The technical details of how to
-                do this are implementation specific, and are beyond the scope of this specification.
+                requires state to be persisted when performing the assisted token flow, it SHOULD
+                provide a privacy-preserving mechanism to store and retrieve its state even when the assisted token
+                endpoint is hosted on a distinct domain from that of the client. The technical details of how to
+                accomplish this are implementation specific, and are beyond the scope of this specification. If the
+                authorization server does not support clients that are hosted from a third-party domain, it MUST
+                indicate this to the client through some mechanism (e.g., its associated documentation).
             </t>
         </section>
     </middle>
@@ -466,6 +502,24 @@
                 <seriesInfo name='World Wide Web Consortium LastCall' value='WD-cors-20120403' />
                 <format type='HTML' target='http://www.w3.org/TR/2012/WD-cors-20120403' />
             </reference>
+            <reference anchor="FRAME-BUSTING" target="http://seclab.stanford.edu/websec/framebusting/">
+                <front>
+                    <title>Busting frame busting: a study of clickjacking vulnerabilities at popular sites</title>
+                    <author initials="G." surname="Rydstedt">
+                        <organization>Stanford Web Security Research</organization>
+                    </author>
+                    <author initials="E." surname="Bursztein">
+                        <organization>Stanford Web Security Research</organization>
+                    </author>
+                    <author initials="D." surname="Boneh">
+                        <organization>Stanford Web Security Research</organization>
+                    </author>
+                    <author initials="C." surname="Jackson">
+                        <organization>Stanford Web Security Research</organization>
+                    </author>
+                    <date year="2010" month="July"/>
+                </front>
+            </reference>
             <reference anchor='RFC6819' target='https://www.rfc-editor.org/info/rfc6819'>
                 <front>
                     <title>OAuth 2.0 Threat Model and Security Considerations</title>
@@ -483,6 +537,36 @@
                 </front>
                 <seriesInfo name='RFC' value='6819'/>
                 <seriesInfo name='DOI' value='10.17487/RFC6819'/>
+            </reference>
+            <reference target="https://www.w3.org/TR/CSP2" anchor="CSP-2">
+                <front>
+                    <title>Content Security Policy Level 2</title>
+                    <author initials="M." surname="West"/>
+                    <author initials="A." surname="Barth"/>
+                    <author initials="D." surname="Veditz"/>
+                    <date month="July" year="2015"/>
+                </front>
+            </reference>
+            <reference anchor='RFC7034' target='https://www.rfc-editor.org/info/rfc7034'>
+                <front>
+                    <title>HTTP Header Field X-Frame-Options</title>
+                    <author initials='D.' surname='Ross' fullname='D. Ross'>
+                        <organization/>
+                    </author>
+                    <author initials='T.' surname='Gondrom' fullname='T. Gondrom'>
+                        <organization/>
+                    </author>
+                    <date year='2013' month='October'/>
+                    <abstract>
+                        <t>To improve the protection of web applications against clickjacking, this document describes
+                            the X-Frame-Options HTTP header field, which declares a policy, communicated from the server
+                            to the client browser, regarding whether the browser may display the transmitted content in
+                            frames that are part of other web pages.
+                        </t>
+                    </abstract>
+                </front>
+                <seriesInfo name='RFC' value='7034'/>
+                <seriesInfo name='DOI' value='10.17487/RFC7034'/>
             </reference>
         </references>
 
