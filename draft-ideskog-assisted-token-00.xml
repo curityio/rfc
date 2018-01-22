@@ -332,7 +332,7 @@
                 prevent the authorization server from storing any third-party cookies. If the authorization server
                 requires state to be persisted across requests when performing the assisted token flow, it SHOULD
                 provide a privacy preserving mechanism to store and retrieve its state. The technical details of how to
-                do this are implementation specific, and are beyond the scope of this standard.
+                do this are implementation specific, and are beyond the scope of this specification.
             </t>
         </section>
     </middle>
