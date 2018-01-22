@@ -114,8 +114,7 @@
 
             <section anchor="cross-orgin-suport" title="Cross-Origin Support">
                 <t>
-                    The assisted token endpoint MAY support <xref format="title" target="W3C.WD-cors-20120403">
-                    CORS</xref>.
+                    The assisted token endpoint MAY support CORS <xref target="W3C.WD-cors-20120403"/>.
                 </t>
             </section>
         </section>
@@ -208,9 +207,10 @@
                 registering. Such a client may indicate that it will interact with the authorization server using the
                 asssited token flow by including the string element
                 "urn:ietf:params:oauth:grant-type:assisted_token" in the array associated with the "grant_types"
-                metadata field sent to
-                the <xref target="RFC7591">client registration endpoint</xref>. The inclusion of this value is done
-                despite the fact that the client will not use this grant type at the token endpoint.
+                metadata field sent to the client registration endpoint (as defined in Section 3. of
+                <xref target="RFC7591"/>). The inclusion of this value is done despite the fact that the client will
+                not use this grant type at the token endpoint but rather the <xref target="assisted-token-endpoint">
+                assisted token endpoint</xref>.
             </t>
         </section>
 
@@ -326,7 +326,12 @@
 
         <section anchor="privacy-considerations" title="Privacy Considerations">
             <t>
-                about third-party cookies
+                In some deployments, the assisted token endpoint may be served from a distinct domain from that of the
+                client. In such cases, the client will be a third-party domain, and the resource owner's user agent may
+                prevent the authorization server from storing any third-party cookies. If the authorization server
+                requires state to be persisted across requests when performing the assisted token flow, it SHOULD
+                provide a privacy preserving mechanism to store and retrieve its state. The technical details of how to
+                do this are implementation specific, and are beyond the scope of this standard.
             </t>
         </section>
     </middle>
