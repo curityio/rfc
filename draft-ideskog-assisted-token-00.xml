@@ -251,27 +251,48 @@
 
                 <t>
                     <list hangIndent="8" style="hanging">
-                        <t hangText="client_id">REQUIRED. The client identifier as described in Section 2.2 of
-                            <xref target="RFC6749"/>.
+                        <t hangText="client_id">
+                            REQUIRED. The client identifier as described in Section 2.2 of<xref target="RFC6749"/>.
                         </t>
 
-                        <t hangText="for_origin">OPTIONAL. The origin of the client in case multiple allowed origins are
+                        <t hangText="for_origin">
+                            OPTIONAL. The origin of the client in case multiple allowed origins are
                             configured with the authorization server and support for user agents that do not support
                             <xref target="CSP-2"/> but only X-Frame-Options <xref target="RFC7034"/>. See Section
                             <xref target="framing"/> for details.
                         </t>
 
-                        <t hangText="prompt">OPTIONAL. May contain the value "none" which indicates that the client wants to use an
-                            existing
-                            sso
-                            session to log the user in and not show any consent screens. If the Authorization Server cannot
-                            fulfill
-                            this
-                            it MUST respond with an error.
+                        <t hangText="prompt">
+                            OPTIONAL. Space delimited, case sensitive list of ASCII string values that can be used to
+                            determine the login state of the resource owner at the authorization server. The defined
+                            values are:
+                            <list style="hanging">
+                                <t hangText="none">
+                                    The authorization server MUST NOT display any authentication or consent user
+                                    interface pages. An error is returned if the user is not already authenticated or if
+                                    the client has not received consent (either explicitly by the resource owner or by
+                                    the authorization server's configuration of the client) or if the authorization
+                                    server cannot fulfill other conditions for processing. This can be used as a method
+                                    to probing for existing authentication and/or consent.
+                                </t>
+
+                                <t hangText="login">
+                                    Regardless of the current user authentication state, the authorization server
+                                    SHOULD prompt the user to authenticate. If it cannot, it MUST return an error.
+                                </t>
+
+                                <t hangText="consent">
+                                    The authorization server SHOULD prompt the user for consent before returning
+                                    information to the client. If it cannot obtain consent, it MUST return an error.
+                                </t>
+                            </list>
+
+                            Other values may be provided in this list; the authorization server MUST ignore them
+                            without producing an error if it cannot understand them.
                         </t>
 
                         <t hangText="scope">
-                            OPTIONAL. as described in section (TODO: Reference Scope section)
+                            OPTIONAL. The scope of the access request as described in <xref target="access-token-scope"/>.
                         </t>
                     </list>
                 </t>
@@ -303,6 +324,8 @@
                     assist the client developer in understanding the error that occurred.
                 </t>
             </section>
+
+            <section title="Access Token Scope" anchor="access-token-scope"/>
         </section>
 
         <section title="Client Metadata" anchor="client-metadata">
