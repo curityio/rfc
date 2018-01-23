@@ -245,22 +245,35 @@
             </t>
 
             <section title="Assisted Token Request" anchor="assisted-token-request">
-                <t>The assisted token request is a GET request constructed by the client containing the following
-                    parameters
+                <t>The assisted token request is an HTTP GET request constructed by the client with the following
+                    parameters provided on the query string:
+                </t>
 
-                    client_id REQUIRED
+                <t>
+                    <list hangIndent="8" style="hanging">
+                        <t hangText="client_id">REQUIRED. The client identifier as described in Section 2.2 of
+                            <xref target="RFC6749"/>.
+                        </t>
 
-                    prompt OPTIONAL May contain the value "none" which indicates that the client wants to use an
-                    existing
-                    sso
-                    session to log the user in and not show any consent screens. If the Authorization Server cannot
-                    fulfill
-                    this
-                    it MUST respond with an error.
+                        <t hangText="for_origin">OPTIONAL. The origin of the client in case multiple allowed origins are
+                            configured with the authorization server and support for user agents that do not support
+                            <xref target="CSP-2"/> but only X-Frame-Options <xref target="RFC7034"/>. See Section
+                            <xref target="framing"/> for details.
+                        </t>
 
-                    for_origin OPTIONAL as described in section (TODO: Reference Origin section)
+                        <t hangText="prompt">OPTIONAL. May contain the value "none" which indicates that the client wants to use an
+                            existing
+                            sso
+                            session to log the user in and not show any consent screens. If the Authorization Server cannot
+                            fulfill
+                            this
+                            it MUST respond with an error.
+                        </t>
 
-                    scope OPTIONAL as described in section (TODO: Reference Scope section)
+                        <t hangText="scope">
+                            OPTIONAL. as described in section (TODO: Reference Scope section)
+                        </t>
+                    </list>
                 </t>
             </section>
 
@@ -412,9 +425,10 @@
 
             <section title="Framing" anchor="framing">
                 <t>
-                    Due to the use of an iframe to host the assisted token endpoint, the authorization server MUST take precautions to ensure that only trusted origins are allowed to frame it. The authorization server MUST prevent any origin from framing the assisted token endpoint except ones
-                    that an administrator has explicitly allowed. It may do this in any manner that is available to the
-                    application.
+                    Due to the use of an iframe to host the assisted token endpoint, the authorization server MUST take
+                    precautions to ensure that only trusted origins are allowed to frame it. The authorization server
+                    MUST prevent any origin from framing the assisted token endpoint except ones that an administrator
+                    has explicitly allowed. It may do this in any manner that is available to the application.
                 </t>
 
                 <t>
