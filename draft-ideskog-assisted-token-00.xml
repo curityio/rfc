@@ -45,12 +45,12 @@
 
         <abstract>
             <t>
-                This specification defines a flow to integrate Single Page Applications (SPAs) with an OAuth
-                Authorization Server. It defines the protocol of this message exchange and includes suggestions on how
-                to
-                wrap certain functionality in JavaScript helper libraries. This specification extends the capabilities
-                defined in
-                <xref target="RFC6749"/>
+                The OAuth 2.0 authorization flow for Single Page Applications (SPAs), often referred to as the assisted
+                token flow, enables OAuth clients to request user authorization written in scripting languages, like
+                JavaScript, with a simplified integration compared to the implicit grant type flow. Communication does
+                not rely on redirection of the user agent, but instead leverages HTML's iframe element and postMessage
+                interface. This communication is done using an additional endpoint, the assisted token endpoint, which
+                this document defines.
             </t>
         </abstract>
     </front>
@@ -77,7 +77,7 @@
                 compared to its predecessor, <xref target="RFC5849"/>, developers still struggle with the many inputs
                 required to perform the various OAuth flows. For this reason, the assisted token flow introduces a new
                 endpoint called the assisted token endpoint rather than extending and reusing the token endpoint
-                defined in Section X of<xref target="RFC6749"/>. As a result, client developers do not need to specify
+                defined in Section 3.2 of<xref target="RFC6749"/>. As a result, client developers do not need to specify
                 a response_type parameter in the authorization request. This coupled with the use of a dynamic iframe
                 and HTML's postMessage interface for communication between the client and the authorization server means
                 that redirect_uri and state parameter are also unnecessary. Consequently, client developers only need
