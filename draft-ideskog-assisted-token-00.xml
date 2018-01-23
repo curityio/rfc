@@ -74,7 +74,7 @@
             <t>
                 Another goal of the assisted token flow is to simply integration of the client and the authorization
                 server. Though <xref target="RFC6749"/> resulted in a much simpler integration for client applications
-                compared to its predecessor,<xref target="RFC5849"/>, developers still struggle with the many inputs
+                compared to its predecessor, <xref target="RFC5849"/>, developers still struggle with the many inputs
                 required to perform the various OAuth flows. For this reason, the assisted token flow introduces a new
                 endpoint called the assisted token endpoint rather than extending and reusing the token endpoint
                 defined in Section X of<xref target="RFC6749"/>. As a result, client developers do not need to specify
@@ -98,9 +98,9 @@
 | |              |  Hidden   |                      |               |
 | |              |  iframe   |<-(C)-- HTML with ----|               |
 | |<-(D)- Token -|           |        postMessage   |               |
-| |              |           |        including     |               |
-| |              +-----------+        access token  |               |
-| +--------------------------+                      |               |
+| |       or     |           |        including     |               |
+| |       error  +-----------+        access token  |               |
+| +--------------------------+        or error      |               |
 |                            |                      |               |
 +----------------------------+                      +---------------+
 ]]>
@@ -109,17 +109,71 @@
 
             <t>
                 The assisted token flow illustrated in <xref target="assisted-token-flow"/> includes the following steps:
+
                 <list style="empty">
-                    <t>(A) The client creates a dynamic iframe element using a scripting language like JavaScript. The src attribute of this iframe is the assisted token endpoint of the authorization server.</t>
-                    <t>(B) The query string of the src attribute on the iframe includes only the client identifier.</t>
-                    <t>(C) If the user is already logged in and has granted consent to the client, the authorization server immediately returns an HTML document that includes script that is executing, causing a window.postMessage event to fire.</t>
-                    <t>(D) The application handles this event which includes an access token which is then available to the client; the client is then able to close the dynamic iframe without ever revealing it to the user.</t>
+                    <t>(A) The client creates a hidden iframe element using a scripting language like JavaScript. The
+                        src attribute of this iframe is the URL of the assisted token endpoint of the authorization server.</t>
+
+                    <t>(B) The query string of the src attribute on the iframe includes, at a minimum, the client
+                        identifier.</t>
+
+                    <t>(C) If the user is already logged in and has granted consent to the client, the authorization
+                        server immediately returns an HTML document that includes a script that is executing; this
+                        fires an event which is communicated to the client using an HTML window.postMessage.</t>
+
+                    <t>(D) The client handles this event -- the payload of which is either an access token or an error;
+                        the client then closes the dynamic iframe without revealing it to the user.</t>
                 </list>
             </t>
             
             <t>
-                Two versions: There are two versions of the flow. One where the user never interacts with the frame,
-                and one where the user is required to interact in order to authenticated.
+                If the resource owner has not authenticated or has not authorized the client, then interaction between
+                the resource owner and the authorization server is required to obtain these. In such a case, the HTML in
+                step (C) of <xref target="assisted-token-flow"/> will include an error indicating that user
+                involvement is required. This will be handled by the client in step (D) and login and/or consent will
+                commence. This process is illustrated in <xref target="assisted-token-login-consent-flow"/>.
+            </t>
+
+            <figure title="Assisted Token Login and/or Consent Flow" anchor="assisted-token-login-consent-flow">
+                <artwork type="ascii-art"><![CDATA[
++----------------------------+                      +---------------+
+|           Client           |                      | Authorization |
+| +--------------------------+                      |     Server    |
+| |              +-----------+        Client        |               |
+| |--(A)-------->|           |--(B)-- Identifier -->|               |
+| |              |           |                      |               |
+| |              |  Visible  |--(C)-- User -------->|               |
+| |              |  iframe   |        authenticates |               |
+| |<-(E)- Token -|           |                      |               |
+| |              |           |<-(D)-- HTML with ----|               |
+| |              +-----------+        postMessage   |               |
+| +--------------------------+        including     |               |
+|                            |        access token  |               |
++----------------------------+                      +---------------+
+]]>
+                </artwork>
+            </figure>
+
+            <t>
+                The flow shown in <xref target="assisted-token-login-consent-flow"/> includes the following steps:
+
+                <list style="empty">
+                    <t>(A) The client creates a <spanx>visible</spanx> iframe after receiving an indication from the
+                        authorization server that user interaction is required.As in the previous flow, the src
+                        attribute of this iframe is the URL of the authorization server's assisted token endpoint.</t>
+
+                    <t>(B) The query string of the src attribute of the visible iframe includes, at a minimum, the
+                        client identifier.</t>
+
+                    <t>(C) The authorization server prompts the resource owner to authenticate and/or authorize the
+                        client.</t>
+
+                    <t>(D) The authorization server returns an HTML document that includes a script that is executing;
+                        this fires an event which is communicated to the client using an HTML window.postMessage.</t>
+
+                    <t>(E) The client handles this event -- the payload of which is an access token; the client then
+                        closes the iframe that it previously opened to facilitate user interaction.</t>
+                </list>
             </t>
         </section>
 
