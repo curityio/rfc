@@ -77,7 +77,7 @@
                 compared to its predecessor, <xref target="RFC5849"/>, developers still struggle with the many inputs
                 required to perform the various OAuth flows. For this reason, the assisted token flow introduces a new
                 endpoint called the assisted token endpoint rather than extending and reusing the token endpoint
-                defined in Section 3.2 of<xref target="RFC6749"/>. As a result, client developers do not need to specify
+                defined in Section 3.2 of <xref target="RFC6749"/>. As a result, client developers do not need to specify
                 a response_type parameter in the authorization request. This coupled with the use of a dynamic iframe
                 and HTML's postMessage interface for communication between the client and the authorization server means
                 that redirect_uri and state parameter are also unnecessary. Consequently, client developers only need
@@ -200,8 +200,41 @@
         </section>
 
         <section title="Assisted Token Endpoint" anchor="assisted-token-endpoint">
+            <t>
+                The means through which the client obtains the location of the assisted token endpoint is either by
+                using the authorization server's metadata <xref target="authorization-server-metadata"/>,the service
+                documentation, or some other method that is beyond the scope of this specification.
+            </t>
 
-            <t>MUST BE PRE_REGISTERED</t>
+            <t>
+                The endpoint URI MAY include an "application/x-www-form-urlencoded" formatted (per Appendix B of
+                <xref target="RFC6749"/>) query component (Section 3.4 of <xref target="RFC3986"/>), which MUST be
+                retained when adding additional query parameters. The endpoint URI MUST NOT include a fragment
+                component.
+            </t>
+
+            <t>
+                Since requests to the assisted token endpoint result in the transmission of clear-text credentials (in
+                the HTTP request and response), the authorization server MUST require the use of TLS as described in
+                Section 1.6 of <xref target="RFC6749"/> when sending requests to the assisted token endpoint.
+            </t>
+
+            <t>The client MUST use the HTTP "GET" method when making access token requests to this endpoint.</t>
+
+            <t>
+                Parameters sent without a value MAY be treated as if they were omitted from the request. The
+                authorization server MUST ignore unrecognized request parameters. Request and response parameters
+                MUST NOT be included more than once.
+            </t>
+
+            <t>
+                After completing its interaction with the resource owner, the authorization server will fire an event
+                using the HTML postMessage interface. This message MUST NOT be posted to all origins, denoted by "*".
+                Instead, the authorization server MUST post this message only  to the client's allowed origin(s)
+                previously established with the authorization server during the client registration process.
+            </t>
+
+            <section title="Access Token Scope" anchor="access-token-scope"/>
 
             <section anchor="cross-orgin-suport" title="Cross-Origin Support">
                 <t>
@@ -211,39 +244,6 @@
         </section>
 
         <section title="Protocol" anchor="protocol">
-            <t>(A) The client opens a hidden iframe and makes the initial GET request passing the client_id as the only
-                required parameter. The GET request is made by setting the "src" parameter in the iframe with the full
-                URL to the assisted endpoint including the client_id parameter.
-
-                (B) If the Authorization Server can determine that the user has an SSO session, it issues an Access
-                Token and shows a page.
-
-                (C) The page runs JavaScript onLoad that sends a message using postMessage with the result to the parent
-                frame.
-
-                To force the non interactive flow above the client MAY send the "prompt=none" query string argument
-                along with the client_id. This forces the Authorization Server as well as any Authentication Service to
-                no prompt the user.
-
-                If the user is not logged in, an error SHOULD be returned. If the error contains
-                "user_authentication_required", then the client can restart the flow in a visible frame. See the
-                Interactive Flow.
-
-                (A) The client opens a visible iframe and makes the initial GET request passing the client_id as the
-                only required parameter. The GET request is made by setting the "src" parameter in the iframe with the
-                full URL to the assisted endpoint including the client_id parameter.
-
-                (B) The Authorization Server hands over to an authenticating party that interacts with the user for
-                Authentication.
-
-                (C) The Authorization server issues the Access Token and shows a page.
-
-                (D) The page runs JavaScript onLoad that sends a message using postMessage with the result to the parent
-                frame.
-
-                After (D) the client closes the iframe and the flow is complete. The
-            </t>
-
             <section title="Assisted Token Request" anchor="assisted-token-request">
                 <t>The assisted token request is an HTTP GET request constructed by the client with the following
                     parameters provided on the query string:
@@ -263,10 +263,10 @@
                         </t>
 
                         <t hangText="prompt">
-                            OPTIONAL. Space delimited, case sensitive list of ASCII string values that can be used to
-                            determine the login state of the resource owner at the authorization server. The defined
-                            values are:
-                            <list style="hanging">
+                            OPTIONAL. Space delimited, case sensitive list of ASCII <xref target="USASCII"/> string
+                            values that can be used to determine the login state of the resource owner at the
+                            authorization server. The defined values are:
+                            <list hangIndent="8" style="hanging">
                                 <t hangText="none">
                                     The authorization server MUST NOT display any authentication or consent user
                                     interface pages. An error is returned if the user is not already authenticated or if
@@ -307,13 +307,13 @@
                 </t>
 
                 <t>
-                    <list style="hanging">
+                    <list hangIndent="8" style="hanging">
                         <t hangText="access_token">
                             REQUIRED. The access token issued by the authorization server.
                         </t>
 
                         <t hangText="expires_in">
-                            RECOMMENDED.  The lifetime in seconds of the access token.
+                            RECOMMENDED. The lifetime in seconds of the access token.
                         </t>
 
                         <t hangText="scope">
@@ -323,11 +323,12 @@
                         <t hangText="sub">
                             RECOMMENDED. A locally unique and never reassigned identifier within the authorization
                             server for the user, which is intended to be consumed by the client. It MUST NOT exceed
-                            255 ASCII characters in length. The sub value is a case sensitive string.
+                            255 ASCII (<xref target="USASCII"/>) characters in length. The sub value is a case sensitive
+                            string.
                         </t>
 
                         <t hangText="token_type">
-                            REQUIRED.  The type of the token issued as described in Section 7.1 of
+                            REQUIRED. The type of the token issued as described in Section 7.1 of
                             <xref target="RFC6749"/>. Value is case insensitive.
                         </t>
                     </list>
@@ -335,19 +336,94 @@
             </section>
 
             <section title="Error Response" anchor="error-response">
-                <t>error REQUIRED an error code as defined in RFC6749#4.2.2.1 with the following addition
+                <t>As with a successful response, an error is returned to the client using an the HTML postMessage
+                    interface. Such an error is returned whenever the resource owner denies the access request or
+                    whenever the request fails for reasons other than the origin of the client being disallowed to
+                    frame the assisted token endpoint. The error message includes a JSON object with the following
+                    fields:
+                </t>
 
-                    user_interaction_required
-                    The user is required to interact with the flow in some way. This could be to grant consent, or to
-                    authenticate.
+                <t>
+                    <list hangIndent="8" style="hanging">
+                        <t hangText="error">
+                            REQUIRED. A single ASCII <xref target="USASCII"/> error code from the following:
 
-                    error_description OPTIONAL Human-readable ASCII [USASCII] text providing additional information,
-                    used to
-                    assist the client developer in understanding the error that occurred.
+                            <list hangIndent="8" style="hanging">
+                                <t hangText="invalid_request">
+                                    The request is missing a required parameter, includes an
+                                    invalid parameter value, includes a parameter more than
+                                    once, or is otherwise malformed.
+                                </t>
+
+                                <t hangText="unauthorized_client">
+                                    The client is not authorized to request an access token using this method.
+                                </t>
+
+                                <t hangText="access_denied">
+                                    The resource owner or authorization server denied the request.
+                                </t>
+
+                                <t hangText="consent_required">
+                                    The client includes a prompt value of consent, but consent by the resource owner
+                                    was required.
+                                </t>
+
+                                <t hangText="interaction_required">
+                                    The client included a prompt value of none, but either the user needed to
+                                    authenticate or consent to the client's access or some other requirement of the
+                                    authorization server prevented it sfrom providing access without some form of user
+                                    interaction.
+                                </t>
+
+                                <t hangText="login_required">
+                                    The client included a prompt value of login, but the authorization server could not
+                                    reauthenticate the user.
+                                </t>
+
+                                <t hangText="unsupported_response_type">
+                                    The authorization server does not support obtaining an access token using this
+                                    method.
+                                </t>
+
+                                <t hangText="invalid_scope">
+                                    The requested scope is invalid, unknown, or malformed.
+                                </t>
+
+                                <t hangText="server_error">
+                                    The authorization server encountered an unexpected condition that prevented it
+                                    from fulfilling the request. (This error code is needed because a 500 Internal
+                                    Server Error HTTP status code cannot be returned to the client directly in the
+                                    child frame.)
+                                </t>
+
+                                <t hangText="temporarily_unavailable">
+                                    The authorization server is currently unable to handle the request due to a
+                                    temporary overloading or maintenance of the server. (This error code is needed
+                                    because a 503 Service Unavailable HTTP status code cannot be returned to the client
+                                    directly in the child frame.)
+                                </t>
+                            </list>
+
+                            Values for the "error" parameter MUST NOT include characters outside the set %x20-21 /
+                            %x23-5B / %x5D-7E.
+                        </t>
+
+                        <t hangText="error_description">
+                            OPTIONAL. Human-readable ASCII <xref target="USASCII"/> text providing additional
+                            information, used to assist the client developer in understanding the error that occurred.
+                            Values for the "error_description" parameter MUST NOT include characters outside the set
+                            %x20-21 / %x23-5B / %x5D-7E.
+                        </t>
+
+                        <t hangText="error_uri">
+                            OPTIONAL. A URI identifying a human-readable web page with information about the error,
+                            used to provide the client developer with additional information about the error. Values
+                            for the "error_uri" parameter MUST conform to the URI-reference syntax and thus MUST NOT
+                            include characters outside the set %x21 / %x23-5B / %x5D-7E.
+                        </t>
+                    </list>
                 </t>
             </section>
-
-            <section title="Access Token Scope" anchor="access-token-scope"/>
         </section>
 
         <section title="Client Metadata" anchor="client-metadata">
@@ -415,6 +491,9 @@
                 </section>
             </section>
 
+            <!-- The IANA register needs to be updated to have error messages that can eb returned from the assisted
+            token endpoint and not only the authorization endpoint-->
+            
             <!--<section anchor="ErrorReg" title="OAuth Extensions Error Registration">
                 <t>
                     This specification registers the following values in the
@@ -602,6 +681,30 @@
             <!-- Get these from https://xml2rfc.tools.ietf.org/public/rfc/bibxml/. In-line them rather than use
             xml2rfc's PIs, so that other XML applications (e.g., Intellij and Firefox) can validate the document -->
 
+            <reference anchor='RFC3986' target='https://www.rfc-editor.org/info/rfc3986'>
+                <front>
+                    <title>Uniform Resource Identifier (URI): Generic Syntax</title>
+                    <author initials='T.' surname='Berners-Lee' fullname='T. Berners-Lee'/>
+                    <author initials='R.' surname='Fielding' fullname='R. Fielding'/>
+                    <author initials='L.' surname='Masinter' fullname='L. Masinter'/>
+                    <date year='2005' month='January'/>
+                    <abstract>
+                        <t>A Uniform Resource Identifier (URI) is a compact sequence of characters that identifies an
+                            abstract or physical resource. This specification defines the generic URI syntax and a
+                            process for resolving URI references that might be in relative form, along with guidelines
+                            and security considerations for the use of URIs on the Internet. The URI syntax defines a
+                            grammar that is a superset of all valid URIs, allowing an implementation to parse the common
+                            components of a URI reference without knowing the scheme-specific requirements of every
+                            possible identifier. This specification does not define a generative grammar for URIs; that
+                            task is performed by the individual specifications of each URI scheme. [STANDARDS-TRACK]
+                        </t>
+                    </abstract>
+                </front>
+                <seriesInfo name='STD' value='66'/>
+                <seriesInfo name='RFC' value='3986'/>
+                <seriesInfo name='DOI' value='10.17487/RFC3986'/>
+            </reference>
+
             <reference anchor='RFC5849' target='https://www.rfc-editor.org/info/rfc5849'>
                 <front>
                     <title>The OAuth 1.0 Protocol</title>
@@ -620,6 +723,17 @@
                 </front>
                 <seriesInfo name='RFC' value='5849'/>
                 <seriesInfo name='DOI' value='10.17487/RFC5849'/>
+            </reference>
+
+            <reference anchor="USASCII">
+                <front>
+                    <title>Coded Character Set -- 7-bit American Standard Code for Information Interchange</title>
+                    <author>
+                        <organization>American National Standards Institute</organization>
+                    </author>
+                    <date year="1986"/>
+                </front>
+                <seriesInfo name="ANSI" value="X3.4"/>
             </reference>
 
             <reference anchor='I-D.ietf-oauth-discovery'>
@@ -641,8 +755,7 @@
                 </front>
 
                 <seriesInfo name='Internet-Draft' value='draft-ietf-oauth-discovery-08'/>
-                <format type='TXT'
-                        target='http://www.ietf.org/internet-drafts/draft-ietf-oauth-discovery-08.txt'/>
+                <format type='TXT' target='http://www.ietf.org/internet-drafts/draft-ietf-oauth-discovery-08.txt'/>
             </reference>
             <reference anchor='RFC2119' target='https://www.rfc-editor.org/info/rfc2119'>
                 <front>
@@ -735,8 +848,7 @@
         </references>
 
         <references title="Informative References">
-            <reference anchor='W3C.WD-cors-20120403'
-                       target='http://www.w3.org/TR/2012/WD-cors-20120403'>
+            <reference anchor='W3C.WD-cors-20120403' target='http://www.w3.org/TR/2012/WD-cors-20120403'>
                 <front>
                     <title>Cross-Origin Resource Sharing</title>
                     <author initials='A.' surname='Kesteren' fullname='Anne van Kesteren'/>
