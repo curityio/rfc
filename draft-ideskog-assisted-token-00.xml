@@ -299,16 +299,38 @@
             </section>
 
             <section title="Assisted Token Response" anchor="assisted-token-response">
-                <t>The response is a postMessage sent from the page on the Authorization Server in the iframe, to the
-                    client in
-                    the parent frame. This post message is a JSON object with the following parameters
-                    Successful Response
+                <t>The response from the assisted token endpoint is an HTML document that includes a script which
+                    invokes the HTML postMessage interface to send either the parent window (in the case shown in
+                    <xref target="assisted-token-flow"/>) or the opener (in the case illustrated in
+                    <xref target="assisted-token-login-consent-flow"/>). The origin that this event is posted to is
+                    that of the client. The contents of this message is a JSON object with the following fields:
+                </t>
 
-                    access_token REQUIRED
+                <t>
+                    <list style="hanging">
+                        <t hangText="access_token">
+                            REQUIRED. The access token issued by the authorization server.
+                        </t>
 
-                    scope REQUIRED only if the server changes the scopes from the default.
+                        <t hangText="expires_in">
+                            RECOMMENDED.  The lifetime in seconds of the access token.
+                        </t>
 
-                    expires_in REQUIRED the number of seconds until the access_token expires.
+                        <t hangText="scope">
+                            REQUIRED. The scope of the access token as described in <xref target="access-token-scope"/>.
+                        </t>
+
+                        <t hangText="sub">
+                            RECOMMENDED. A locally unique and never reassigned identifier within the authorization
+                            server for the user, which is intended to be consumed by the client. It MUST NOT exceed
+                            255 ASCII characters in length. The sub value is a case sensitive string.
+                        </t>
+
+                        <t hangText="token_type">
+                            REQUIRED.  The type of the token issued as described in Section 7.1 of
+                            <xref target="RFC6749"/>. Value is case insensitive.
+                        </t>
+                    </list>
                 </t>
             </section>
 
