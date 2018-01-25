@@ -234,7 +234,35 @@
                 previously established with the authorization server during the client registration process.
             </t>
 
-            <section title="Access Token Scope" anchor="access-token-scope"/>
+            <section title="Access Token Scope" anchor="access-token-scope">
+                <t>
+                    Like the authorization and token endpoints, the assisted token endpoint allows the client to
+                    specify the scope of the access request using the "scope" request parameter. In turn, the
+                    authorization server uses the "scope" response parameter to inform the client of the scope of
+                    the access token issued. Unlike the typical behavior of those endpoints, however, access tokens
+                    issued by the authorization server using the assisted token endpoint MUST use the client's
+                    pre-configured scope or the authorization server's pre-defined default if none have been configured
+                    for the client.
+                </t>
+
+                <t>
+                    If the client did not include a "scope" request parameter or if the issued access token scope is
+                    different from the one requested by the client, the authorization server MUST include the "scope"
+                    response parameter to inform the client of the actual scope granted. Even when the scope of the
+                    issued access token is the same as the one requested by the client, the authorization server SHOULD
+                    include the "scope" response parameter.
+                </t>
+
+                <t>
+                    The format, constraints, and grammar of the scope parameter value is as defined in Section 3.3 of
+                    <xref target="RFC6749"/>.
+                </t>
+
+                <t>
+                    The authorization server SHOULD NOT return an error if a scope has not been pre-configured for the
+                    client; only if the authorization server does not have a pre-defined default scope.
+                </t>
+            </section>
 
             <section anchor="cross-orgin-suport" title="Cross-Origin Support">
                 <t>
