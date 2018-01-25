@@ -16,7 +16,7 @@ To use Firefox, just open the XML file directly. It will use the referenced XSLT
 3. Add a new Python run configuration using the following settings:
     
     * *Script path* the path to `xml2rfc` (e.g., `/Users/user22/Library/Python/2.7/bin/xml2rfc`)
-    * *Parameters* should be `--html whatever.xml` (e.g., `--html draft-ideskog-assisted-token-00.xml`)
+    * *Parameters* should be `--html --text whatever.xml` (e.g., `--html draft-ideskog-assisted-token-00.xml`)
     * Pick an interpreter from the `Python interpreter` section
     
 4. When the XML of the RFC draft has changed, just run the Python configuration (`^R`)      
