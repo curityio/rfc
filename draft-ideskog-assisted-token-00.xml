@@ -33,7 +33,7 @@
             </address>
         </author>
 
-        <date day="19" month="January" year="2018"/>
+        <date day="25" month="January" year="2018"/>
 
         <area>Security</area>
         <workgroup>OAuth Working Group</workgroup>
@@ -304,11 +304,6 @@
                                     to probing for existing authentication and/or consent.
                                 </t>
 
-                                <t hangText="login">
-                                    Regardless of the current user authentication state, the authorization server
-                                    SHOULD prompt the user to authenticate. If it cannot, it MUST return an error.
-                                </t>
-
                                 <t hangText="consent">
                                     The authorization server SHOULD prompt the user for consent before returning
                                     information to the client. If it cannot obtain consent, it MUST return an error.
@@ -399,13 +394,8 @@
                                 <t hangText="interaction_required">
                                     The client included a prompt value of none, but either the user needed to
                                     authenticate or consent to the client's access or some other requirement of the
-                                    authorization server prevented it sfrom providing access without some form of user
+                                    authorization server prevented it from providing access without some form of user
                                     interaction.
-                                </t>
-
-                                <t hangText="login_required">
-                                    The client included a prompt value of login, but the authorization server could not
-                                    reauthenticate the user.
                                 </t>
 
                                 <t hangText="unsupported_response_type">
@@ -501,7 +491,7 @@
             <section anchor="URIReg" title="OAuth URI Registration">
                 <t>
                     This specification registers the following values in the IANA "OAuth URI" registry
-                    <xref target="IANA.OAuth.Parameters"/> established by<xref target="RFC6755"/>.
+                    <xref target="IANA.OAuth.Parameters"/> established by <xref target="RFC6755"/>.
                 </t>
 
                 <section title="Registry Contents" anchor="URIContents">
@@ -520,29 +510,10 @@
             </section>
 
             <!-- The IANA register needs to be updated to have error messages that can eb returned from the assisted
-            token endpoint and not only the authorization endpoint-->
-            
-            <!--<section anchor="ErrorReg" title="OAuth Extensions Error Registration">
-                <t>
-                    This specification registers the following values in the
-                    IANA "OAuth Extensions Error Registry" registry
-                    <xref target="IANA.OAuth.Parameters"/>
-                    established by<xref target="RFC6749"/>.
-                </t>
+            token endpoint and not only the authorization endpoint
 
-                <section title="Registry Contents" anchor="ErrorContents">
-                    <t>
-                        <?rfc subcompact="yes"?>
-                        <list style="symbols">
-                            <t>Error name: authorization_pending</t>
-                            <t>Error usage location: Token endpoint response</t>
-                            <t>Related protocol extension: [[ this specification ]]</t>
-                            <t>Change controller: IETF</t>
-                            <t>Specification Document: <xref target="error-response"/> of [[ this specification ]]</t>
-                        </list>
-                    </t>
-                </section>
-            </section>-->
+            TODO: for_origin in the request needs to be defined as well.
+            -->
 
             <section title="OAuth 2.0 Authorization Server Metadata" anchor="MetadataReg">
 
@@ -609,7 +580,7 @@
                     like that shown in Figure 7 of <xref target="FRAME-BUSTING"/>. Such a script would use JavaScript
                     to break out of any unauthorized origin that is framing the assisted token endpoint. The
                     authorization server MAY simply break out of all frames in case <xref target="RFC7034">
-                    X-Frame-Options</xref> and<xref target="CSP-2"/> are unsupported by the user agent, though this
+                    X-Frame-Options</xref> and <xref target="CSP-2"/> are unsupported by the user agent, though this
                     would render the assisted token flow non-functional. The choice of whether or not this drastic
                     countermeasure should be employed depends on the user agents being targetted in a certain
                     deployment.
@@ -660,7 +631,7 @@
             return; // Ignore event from untrusted source
 
         ...
-    }, false);
+    });
 </script>]]>
                     </artwork>
                 </figure>
@@ -731,26 +702,6 @@
                 <seriesInfo name='STD' value='66'/>
                 <seriesInfo name='RFC' value='3986'/>
                 <seriesInfo name='DOI' value='10.17487/RFC3986'/>
-            </reference>
-
-            <reference anchor='RFC5849' target='https://www.rfc-editor.org/info/rfc5849'>
-                <front>
-                    <title>The OAuth 1.0 Protocol</title>
-                    <author initials='E.' surname='Hammer-Lahav' fullname='E. Hammer-Lahav' role='editor'>
-                        <organization/>
-                    </author>
-                    <date year='2010' month='April'/>
-                    <abstract>
-                        <t>OAuth provides a method for clients to access server resources on behalf of a resource owner
-                            (such as a different client or an end-user). It also provides a process for end-users to
-                            authorize third-party access to their server resources without sharing their credentials
-                            (typically, a username and password pair), using user-agent redirections. This document is
-                            not an Internet Standards Track specification; it is published for informational purposes.
-                        </t>
-                    </abstract>
-                </front>
-                <seriesInfo name='RFC' value='5849'/>
-                <seriesInfo name='DOI' value='10.17487/RFC5849'/>
             </reference>
 
             <reference anchor="USASCII">
@@ -847,23 +798,6 @@
                 <seriesInfo name='RFC' value='7591'/>
                 <seriesInfo name='DOI' value='10.17487/RFC7591'/>
             </reference>
-            <reference anchor='RFC6755' target='https://www.rfc-editor.org/info/rfc6755'>
-                <front>
-                    <title>An IETF URN Sub-Namespace for OAuth</title>
-                    <author initials='B.' surname='Campbell' fullname='B. Campbell'/>
-                    <author initials='H.' surname='Tschofenig' fullname='H. Tschofenig'/>
-                    <date year='2012' month='October'/>
-                    <abstract>
-                        <t>
-                            This document establishes an IETF URN Sub-namespace for use with OAuth-related
-                            specifications. This document is not an Internet Standards Track specification; it is
-                            published for informational purposes.
-                        </t>
-                    </abstract>
-                </front>
-                <seriesInfo name='RFC' value='6755'/>
-                <seriesInfo name='DOI' value='10.17487/RFC6755'/>
-            </reference>
             <reference anchor="IANA.OAuth.Parameters" target="http://www.iana.org/assignments/oauth-parameters">
                 <front>
                     <title>OAuth Parameters</title>
@@ -885,6 +819,42 @@
 
                 <seriesInfo name='World Wide Web Consortium LastCall' value='WD-cors-20120403' />
                 <format type='HTML' target='http://www.w3.org/TR/2012/WD-cors-20120403' />
+            </reference>
+            <reference anchor='RFC5849' target='https://www.rfc-editor.org/info/rfc5849'>
+                <front>
+                    <title>The OAuth 1.0 Protocol</title>
+                    <author initials='E.' surname='Hammer-Lahav' fullname='E. Hammer-Lahav' role='editor'>
+                        <organization/>
+                    </author>
+                    <date year='2010' month='April'/>
+                    <abstract>
+                        <t>OAuth provides a method for clients to access server resources on behalf of a resource owner
+                            (such as a different client or an end-user). It also provides a process for end-users to
+                            authorize third-party access to their server resources without sharing their credentials
+                            (typically, a username and password pair), using user-agent redirections. This document is
+                            not an Internet Standards Track specification; it is published for informational purposes.
+                        </t>
+                    </abstract>
+                </front>
+                <seriesInfo name='RFC' value='5849'/>
+                <seriesInfo name='DOI' value='10.17487/RFC5849'/>
+            </reference>
+            <reference anchor='RFC6755' target='https://www.rfc-editor.org/info/rfc6755'>
+                <front>
+                    <title>An IETF URN Sub-Namespace for OAuth</title>
+                    <author initials='B.' surname='Campbell' fullname='B. Campbell'/>
+                    <author initials='H.' surname='Tschofenig' fullname='H. Tschofenig'/>
+                    <date year='2012' month='October'/>
+                    <abstract>
+                        <t>
+                            This document establishes an IETF URN Sub-namespace for use with OAuth-related
+                            specifications. This document is not an Internet Standards Track specification; it is
+                            published for informational purposes.
+                        </t>
+                    </abstract>
+                </front>
+                <seriesInfo name='RFC' value='6755'/>
+                <seriesInfo name='DOI' value='10.17487/RFC6755'/>
             </reference>
             <reference anchor='RFC6454' target='https://www.rfc-editor.org/info/rfc6454'>
                 <front>
