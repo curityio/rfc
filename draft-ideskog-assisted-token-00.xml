@@ -72,7 +72,7 @@
             </t>
 
             <t>
-                Another goal of the assisted token flow is to simply integration of the client and the authorization
+                Another goal of the assisted token flow is to simplify integration of the client with the authorization
                 server. Though <xref target="RFC6749"/> resulted in a much simpler integration for client applications
                 compared to its predecessor, <xref target="RFC5849"/>, developers still struggle with the many inputs
                 required to perform the various OAuth flows. For this reason, the assisted token flow introduces a new
@@ -81,7 +81,7 @@
                 a response_type parameter in the authorization request. This coupled with the use of a dynamic iframe
                 and HTML's postMessage interface for communication between the client and the authorization server means
                 that redirect_uri and state parameter are also unnecessary. Consequently, client developers only need
-                to provide a client_id and handle the postMessage that fired by the authorization server in order to
+                to provide a client_id and handle the postMessage that is fired by the authorization server in order to
                 implement OAuth.
             </t>
 
@@ -308,6 +308,7 @@
                                     The authorization server SHOULD prompt the user for consent before returning
                                     information to the client. If it cannot obtain consent, it MUST return an error.
                                 </t>
+
                             </list>
 
                             Other values may be provided in this list; the authorization server MUST ignore them
@@ -322,8 +323,8 @@
             </section>
 
             <section title="Assisted Token Response" anchor="assisted-token-response">
-                <t>The response from the assisted token endpoint is an HTML document that includes a script which
-                    invokes the HTML postMessage interface to send either the parent window (in the case shown in
+                <t>The response from the assisted token endpoint is an HTML document that executes a script which
+                    invokes the HTML postMessage interface to send a message to either the parent window (in the case shown in
                     <xref target="assisted-token-flow"/>) or the opener (in the case illustrated in
                     <xref target="assisted-token-login-consent-flow"/>). The origin that this event is posted to is
                     that of the client. The contents of this message is a JSON object with the following fields:
@@ -345,9 +346,8 @@
 
                         <t hangText="sub">
                             RECOMMENDED. A locally unique and never reassigned identifier within the authorization
-                            server for the user, which is intended to be consumed by the client. It MUST NOT exceed
-                            255 ASCII (<xref target="USASCII"/>) characters in length. The sub value is a case sensitive
-                            string.
+                            server for the user, which is intended to be consumed by the client. The sub value is
+                            a case sensitive string.
                         </t>
 
                         <t hangText="token_type">
@@ -471,13 +471,13 @@
                 <list style="hanging">
                     <t hangText="assisted_token_endpoint">
                         <vspace/>
-                        OPTIONAL.
+                        REQUIRED.
                         URL of the authorization server's assisted token endpoint defined in
                         <xref target="assisted-token-endpoint"/>.
                     </t>
                     <t hangText="grant_types_supported">
                         <vspace/>
-                        OPTIONAL.
+                        REQUIRED.
                         A JSON array specified in Section 2. of
                         <xref target="I-D.ietf-oauth-discovery"/>
                         which should contain the value "urn:ietf:params:oauth:grant-type:assisted_token" as defined in
