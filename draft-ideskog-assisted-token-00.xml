@@ -243,9 +243,6 @@
                     issued by the authorization server using the assisted token endpoint MUST use the client's
                     pre-configured scope or the authorization server's pre-defined default if none have been configured
                     for the client.
-					
-					-- instead of MUST, wouldn a SHOULD use the client's preconfigured scope strong enough?
-					-- an assisted-token-issued Access Token could also have an empty scope?
                 </t>
 
                 <t>
@@ -264,8 +261,6 @@
                 <t>
                     The authorization server SHOULD NOT return an error if a scope has not been pre-configured for the
                     client; only if the authorization server does not have a pre-defined default scope.
-					
-					-- ^^ can't the pre-defined default scope be the empty scope, so this is no longer an issue?
                 </t>
             </section>
 
@@ -309,11 +304,6 @@
                                     to probing for existing authentication and/or consent.
                                 </t>
 
-                                <t hangText="login">
-                                    The Authorization Server SHOULD prompt the user for reauthentication. If it cannot 
-                                    reauthenticate the user, it MUST return an error, typically login_required.
-                                </t>
-
                                 <t hangText="consent">
                                     The authorization server SHOULD prompt the user for consent before returning
                                     information to the client. If it cannot obtain consent, it MUST return an error.
@@ -333,7 +323,7 @@
             </section>
 
             <section title="Assisted Token Response" anchor="assisted-token-response">
-                <t>The response from the assisted token endpoint is an HTML document executes a script which
+                <t>The response from the assisted token endpoint is an HTML document that executes a script which
                     invokes the HTML postMessage interface to send a message to either the parent window (in the case shown in
                     <xref target="assisted-token-flow"/>) or the opener (in the case illustrated in
                     <xref target="assisted-token-login-consent-flow"/>). The origin that this event is posted to is
@@ -356,13 +346,8 @@
 
                         <t hangText="sub">
                             RECOMMENDED. A locally unique and never reassigned identifier within the authorization
-                            server for the user, which is intended to be consumed by the client. It MUST NOT exceed
-                            255 ASCII (<xref target="USASCII"/>) characters in length. The sub value is a case sensitive
-                            string.
-							
-							-- ^^ talking ASCII in a JSON message seems confusing; just stick with length, and maybe
-							-- refer to the 'sub' parameter's syntax in the appendix, where it can be ABNF notation,
-							-- like https://tools.ietf.org/html/rfc6749#appendix-A
+                            server for the user, which is intended to be consumed by the client. The sub value is
+                            a case sensitive string.
                         </t>
 
                         <t hangText="token_type">
@@ -486,21 +471,17 @@
                 <list style="hanging">
                     <t hangText="assisted_token_endpoint">
                         <vspace/>
-                        OPTIONAL.
+                        REQUIRED.
                         URL of the authorization server's assisted token endpoint defined in
                         <xref target="assisted-token-endpoint"/>.
-						
-						-- Why is this OPTIONAL, while two lines above that support MUST be declared? Suggest to use RECOMMEND if not REQUIRED.
                     </t>
                     <t hangText="grant_types_supported">
                         <vspace/>
-                        OPTIONAL.
+                        REQUIRED.
                         A JSON array specified in Section 2. of
                         <xref target="I-D.ietf-oauth-discovery"/>
                         which should contain the value "urn:ietf:params:oauth:grant-type:assisted_token" as defined in
                         <xref target="client-metadata"/>.
-
-						-- Same: why OPTIONAL? Suggest to use RECOMMEND if not REQUIRED.
                     </t>
                 </list>
             </t>
