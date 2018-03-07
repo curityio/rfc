@@ -48,9 +48,9 @@
                 The OAuth 2.0 authorization flow for Single Page Applications (SPAs), often referred to as the assisted
                 token flow, enables OAuth clients to request user authorization written in scripting languages, like
                 JavaScript, with a simplified integration compared to the implicit grant type flow. Communication does
-                not rely on redirection of the user agent, but instead leverages HTML's iframe element and postMessage
-                interface. This communication is done using an additional endpoint, the assisted token endpoint, which
-                this document defines.
+                not rely on redirection of the user agent, but instead leverages HTML's iframe element, child windows, 
+                and the postMessage interface. This communication is done using an additional endpoint, the assisted 
+                token endpoint, which this document defines.
             </t>
         </abstract>
     </front>
@@ -62,13 +62,13 @@
                 flow, provides clients written in scripting languages, like JavaScript, with a simplified integration
                 (compared to the implicit grant type flow) and ensures that end users are not redirected away from the
                 current page in order to obtain authorization from the resource owner. The communication between the
-                client and the authorization server takes place within an HTML iframe element that is only displayed
-                when interactive user interaction is required; this is the case when authentication and/or authorization
-                are necessary. To communicate the result from this iframe to the client application, HTML's postMessage
-                interface is used instead of the redirection endpoint defined in Section 3.1.2 of
-                <xref format="title" target="RFC6749"/>. This difference is important for many SPAs which take time to
-                reload and may not be able to recreate the same state prior to the user being redirected to the
-                authorization server.
+                client and the authorization server takes place within an HTML iframe element or child window that is
+                only displayed when interactive user interaction is required; this is the case when authentication
+                and/or authorization are necessary. To communicate the result from this iframe or child window to the
+                client application, HTML's postMessage interface is used instead of the redirection endpoint defined in
+                Section 3.1.2 of <xref format="title" target="RFC6749"/>. This difference is important for many SPAs
+                which take time to reload and may not be able to recreate the same state prior to the user being 
+                redirected to the authorization server.
             </t>
 
             <t>
@@ -78,11 +78,11 @@
                 required to perform the various OAuth flows. For this reason, the assisted token flow introduces a new
                 endpoint called the assisted token endpoint rather than extending and reusing the token endpoint
                 defined in Section 3.2 of <xref target="RFC6749"/>. As a result, client developers do not need to specify
-                a response_type parameter in the authorization request. This coupled with the use of a dynamic iframe
-                and HTML's postMessage interface for communication between the client and the authorization server means
-                that redirect_uri and state parameter are also unnecessary. Consequently, client developers only need
-                to provide a client_id and handle the postMessage that is fired by the authorization server in order to
-                implement OAuth.
+                a response_type parameter in the authorization request. This coupled with the use of HTML's postMessage
+                interface for communication between the client and the authorization server means that the redirect_uri
+                and state parameters are also unnecessary. Consequently, client developers only need to provide a
+                client_id, create a dynamic iframe or open a child window, and handle the postMessage that is fired by
+                the authorization server in order to implement OAuth.
             </t>
 
             <t>This interaction is shown in <xref target="assisted-token-flow"/>.</t>
@@ -140,12 +140,12 @@
 |           Client           |                      | Authorization |
 | +--------------------------+                      |     Server    |
 | |              +-----------+        Client        |               |
-| |--(A)-------->|           |--(B)-- Identifier -->|               |
+| |--(E)-------->|           |--(F)-- Identifier -->|               |
 | |              |           |                      |               |
-| |              |  Visible  |--(C)-- User -------->|               |
+| |              |  Visible  |--(G)-- User -------->|               |
 | |              |  iframe   |        authenticates |               |
-| |<-(E)- Token -|           |                      |               |
-| |              |           |<-(D)-- HTML with ----|               |
+| |<-(I)- Token -|  or child |                      |               |
+| |              |  window   |<-(H)-- HTML with ----|               |
 | |              +-----------+        postMessage   |               |
 | +--------------------------+        including     |               |
 |                            |        access token  |               |
@@ -158,21 +158,22 @@
                 The flow shown in <xref target="assisted-token-login-consent-flow"/> includes the following steps:
 
                 <list style="empty">
-                    <t>(A) The client creates a <spanx>visible</spanx> iframe after receiving an indication from the
-                        authorization server that user interaction is required.As in the previous flow, the src
-                        attribute of this iframe is the URL of the authorization server's assisted token endpoint.</t>
+                    <t>(E) The client creates a <spanx>visible</spanx> iframe or pops open a child window after
+                        receiving an indication from the authorization server that user interaction is required. As in
+                        the previous flow, the src attribute value of this iframe or the input to the open method of
+                        the user agents's window object is the URL of the authorization server's assisted token
+                        endpoint.</t>
 
-                    <t>(B) The query string of the src attribute of the visible iframe includes, at a minimum, the
-                        client identifier.</t>
+                    <t>(F) The query string of this URL includes, at a minimum, the client identifier.</t>
 
-                    <t>(C) The authorization server prompts the resource owner to authenticate and/or authorize the
+                    <t>(G) The authorization server prompts the resource owner to authenticate and/or authorize the
                         client.</t>
 
-                    <t>(D) The authorization server returns an HTML document that includes a script that is executing;
+                    <t>(H) The authorization server returns an HTML document that includes a script that is executed;
                         this fires an event which is communicated to the client using an HTML window.postMessage.</t>
 
-                    <t>(E) The client handles this event -- the payload of which is an access token; the client then
-                        closes the iframe that it previously opened to facilitate user interaction.</t>
+                    <t>(I) The client handles this event -- the payload of which is an access token; the client then
+                        closes the iframe or child window that it previously opened to facilitate user interaction.</t>
                 </list>
             </t>
         </section>
@@ -656,6 +657,16 @@
                     appropriate action, such as authenticating the user anew or request consent, before issuing a new
                     token. If the token is stored by the application, however, this kind of verification cannot be
                     performed by the authorization server without an explicit request to validate a stored token.
+            <section title="Visibility of User Agent's Address Bar" anchor="visibility-of-user-agents-address-bar">
+                <t>
+                    When the authorization server and client are provided by separate parties, it is important that the
+                    resource owner is able to distinguish the two. The only safe way of doing so is by examination of
+                    the user agent's address bar where the validity of the certificate and location can be made. In
+                    such situations, whenever user interaction is required, the client SHOULD open the assisted token
+                    endpoint in a new browser window rather than a hidden iframe. The authorization serer MAY take any
+                    measures deemed appropriate in a deployment to ensure that the client has not framed the user's
+                    manual interaction; however, the necessity for interactive user authentication and/or consent
+                    SHOULD be possible for the client to determine in a hidden iframe.
                 </t>
             </section>
         </section>
@@ -951,7 +962,7 @@
             </t>
 
             <t>
-                Mark Dobrinic
+                Mark Dobrinic, Karl McGuinness
             </t>
         </section>
 
