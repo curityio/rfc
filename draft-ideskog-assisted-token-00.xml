@@ -203,8 +203,8 @@
         <section title="Assisted Token Endpoint" anchor="assisted-token-endpoint">
             <t>
                 The means through which the client obtains the location of the assisted token endpoint is either by
-                using the authorization server's metadata <xref target="authorization-server-metadata"/>,the service
-                documentation, or some other method that is beyond the scope of this specification.
+                using the authorization server's metadata as set forth in <xref target="authorization-server-metadata"/>,
+                the service documentation, or some other method that is beyond the scope of this specification.
             </t>
 
             <t>
@@ -562,14 +562,15 @@
                     CSP allows the authorization server to specify multiple origins in a single response header field
                     and to constrain these using flexible patterns (see <xref target="CSP-2"/> for details). This
                     standard provides a robust mechanism for protecting against click-jacking when combining policies
-                    that restrict "child-src" which script source are allowed to execute using "script-src" policies.
+                    that restrict "child-src" with the sources of scripts that are allowed to execute by using
+                    "script-src" policies.
                 </t>
                 <t>
                     Because some user agents do not support <xref target="CSP-2"/>, this technique SHOULD be combined with
                     others. In particular, the authorization server SHOULD return an "X-Frame-Options" response header
                     on the assisted token endpoint (and, if applicable, other endpoints used to authenticate the user
                     in a specific deployment). As defined in <xref target="RFC7034"/>, this header will cause user
-                    agents that support this header (but not CSP) to block framing from any origin that is not
+                    agents that support it (but not CSP) to block framing from any origin that is not
                     specified in this header's value. Because this header's value can only include one origin, the
                     framer should use the "for_origin" parameter (as specified in
                     <xref target="assisted-token-request"/>) to include its own origin.
@@ -593,9 +594,9 @@
                     Because the client applications that use the assisted token flow are written in scripting languages
                     like JavaScript and are hosted in Web pages, users may keep such applications open in their user
                     agents for a prolonged period of time. During such period, the token issued to the client may
-                    expire. To ensure that such expired tokens left remnant in the user agent are benign, a Handle
-                    Token SHOULD always be issued by the assisted token endpoint. This ensures that no identity data
-                    is exposed (even when the token is not yet expired) and that an unrevoked token does not increase
+                    expire or be revoked. To ensure that such expired tokens left remnant in the user agent are benign,
+                    a Handle Token SHOULD always be issued by the assisted token endpoint. This ensures that no identity
+                    data is exposed (even when the token is not yet expired) and that a revoked token does not increase
                     risks.
                 </t>
             </section>
@@ -621,7 +622,7 @@
                     provided with an event object that contains an origin property. A client application MUST compare
                     this with that of the authorization server before consuming the message. Otherwise, it runs the
                     risk of processing messages posted from untrusted origins. An example of a proper message handler
-                    is shown in the following JavaScript listing:
+                    is shown in the following non-normative, JavaScript listing:
                 </t>
                 <figure anchor="f_arwmwmrm" title="Comparing the origin of the postMessage event with that of the authorization server">
                     <artwork>
@@ -648,15 +649,19 @@
                     accompanying documentation on how to safely persist tokens. The authorization server MAY also
                     provide script libraries that perform this action according to best common practices. The
                     authorization server MAY also store the token in an HTTP cookie in its own DNS domain (rather than
-                    that of the client) using the assisted token endpoint's path. This would elevate any storage
-                    requirements from the client application developer. Besides simplifying the programming model for
-                    developers, this technique allows the authorization server to check the validity of the token and
-                    determine if the token has expired or if the associated grant has been revoked in subsequent
-                    requests to the assisted token endpoint; this will be possible because the requests will include
-                    the token in the HTTP Cookie request header. In such cases, the authorization server can take the
-                    appropriate action, such as authenticating the user anew or request consent, before issuing a new
-                    token. If the token is stored by the application, however, this kind of verification cannot be
-                    performed by the authorization server without an explicit request to validate a stored token.
+                    that of the client) using the assisted token endpoint's path. In some cases, this would elevate any
+                    storage requirements from the client application developer. Besides simplifying the programming
+                    model for developers, this technique allows the authorization server to check the validity of the
+                    token and determine if the token has expired or if the associated grant has been revoked in
+                    subsequent requests to the assisted token endpoint; this will be possible because the requests will
+                    include the token in the HTTP Cookie request header. In such cases, the authorization server can
+                    take the appropriate action, such as authenticating the user anew or request consent, before
+                    issuing a new token. If the token is stored by the application, however, this kind of verification
+                    cannot be performed by the authorization server without an explicit request to validate a stored
+                    token.
+                </t>
+            </section>
+
             <section title="Visibility of User Agent's Address Bar" anchor="visibility-of-user-agents-address-bar">
                 <t>
                     When the authorization server and client are provided by separate parties, it is important that the
