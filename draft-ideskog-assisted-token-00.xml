@@ -141,11 +141,11 @@
 | +--------------------------+                      |     Server    |
 | |              +-----------+        Client        |               |
 | |--(E)-------->|           |--(F)-- Identifier -->|               |
-| |              |           |                      |               |
-| |              |  Visible  |--(G)-- User -------->|               |
-| |              |  iframe   |        authenticates |               |
-| |<-(I)- Token -|  or child |                      |               |
-| |              |  window   |<-(H)-- HTML with ----|               |
+| |              |  Visible  |                      |               |
+| |              |  iframe   |--(G)-- User -------->|               |
+| |              |  or child |        authenticates |               |
+| |<-(I)- Token -|  window   |                      |               |
+| |              |           |<-(H)-- HTML with ----|               |
 | |              +-----------+        postMessage   |               |
 | +--------------------------+        including     |               |
 |                            |        access token  |               |
