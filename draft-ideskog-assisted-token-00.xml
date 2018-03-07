@@ -281,7 +281,7 @@
                 <t>
                     <list hangIndent="8" style="hanging">
                         <t hangText="client_id">
-                            REQUIRED. The client identifier as described in Section 2.2 of<xref target="RFC6749"/>.
+                            REQUIRED. The client identifier as described in Section 2.2 of <xref target="RFC6749"/>.
                         </t>
 
                         <t hangText="for_origin">
@@ -454,12 +454,24 @@
                 metadata field sent to the client registration endpoint (as defined in Section 3. of
                 <xref target="RFC7591"/>). If the authorization server allows the client to register with this grant
                 type, the "grant_types" included in the response MUST include the value
-                "urn:ietf:params:oauth:grant-type:assisted_token".
+                "urn:ietf:params:oauth:grant-type:assisted_token". The inclusion of this value in the "grant_types"
+                field is done despite the fact that the client will not use this grant type at the token endpoint but
+                rather the <xref target="assisted-token-endpoint"> assisted token endpoint</xref>.
             </t>
+
             <t>
-                The inclusion of this value in the "grant_types" field is done despite the fact that the client will
-                not use this grant type at the token endpoint but rather the <xref target="assisted-token-endpoint">
-                assisted token endpoint</xref>.
+                The following client metadata field is defined by this specification. It MAY be included in a
+                registration request, as set forth in Section 2. of <xref target="RFC7591"/>.
+            </t>
+
+            <t>
+                <list style="hanging">
+                    <t hangText="allowed_origins">
+                        <vspace/>
+                        Array of origin strings for use in sending messages from the authorization server to the
+                        client using the HTML's postMessage interface.
+                    </t>
+                </list>
             </t>
         </section>
 
