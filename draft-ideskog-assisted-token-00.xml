@@ -761,8 +761,8 @@
                     </abstract>
                 </front>
 
-                <seriesInfo name='Internet-Draft' value='draft-ietf-oauth-discovery-08'/>
-                <format type='TXT' target='http://www.ietf.org/internet-drafts/draft-ietf-oauth-discovery-08.txt'/>
+                <seriesInfo name='Internet-Draft' value='draft-ietf-oauth-discovery-10'/>
+                <format type='TXT' target='http://www.ietf.org/internet-drafts/draft-ietf-oauth-discovery-10.txt'/>
             </reference>
             <reference anchor='RFC2119' target='https://www.rfc-editor.org/info/rfc2119'>
                 <front>
