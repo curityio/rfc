@@ -7,7 +7,7 @@ There are two ways to view this document:
 
 ## Using Firefox
 
-To use Firefox, just open the XML file directly. It will use the referenced XSLT to style the document. It will not look the same way as an RFC published by the IETF though. To get that look, you need to use `xml2rfc`.
+To use Firefox, just open the XML file directly. It will use the referenced XSLT to style the document. If it doesn't, you may need to access `about:config` and set `security.fileuri.strict_origin_policy` to `false`. The rendered result will not look the same way as an RFC published by the IETF. To get that look, you need to use `xml2rfc`.
 
 ## Using `xml2rfc`
 
