@@ -1,4 +1,4 @@
-# The OAuth 2.0 Authorization Framework: Claims Request Parameter
+# The OAuth 2.0 Authorization Framework: Claims Subsystem
 
 ## Abstract
 
@@ -12,11 +12,23 @@ This specification is designed to be compatible with [OpenID Connect](https://ex
 
 As stated in [section 1.4 of RFC 6749](https://tools.ietf.org/html/rfc6749#section-1.4), an Access Token represents the specific scope and duration of access. The requested scope is verified by the Authorization Server according to its policy, and the perhaps-different scope is granted by the Resource Owner. The requested and granted scope may vary due to the Authorization Server's policy and/or the Resource Owner's limitation of the granted scope. The resulting scope is enforced by the Resource Server. The way in which the Client indicates the intended scope of access is by the `scope` request parameter defined in section [3.3 of RFC 6749](https://tools.ietf.org/html/rfc6749#section-3.3). This specification defines a more sophisticated instrument to achieve this same purpose.
 
-At times, the existing mechanism is too limited. In some uses cases, for example, a Client may need to request particular Claims from an Authorization Server. It may also do this to request specific Claim Values. Furthermore, a client may need to indicate to the Authorization Server that certain Claims are essential for its ability to operate. In such cases, the grant is of no use to the Client if the Resource Owner does not comply. Another example of when the existing `scope` parameter is insufficient is when the Client knows that some Claim is required by a particular Resource Server. The extent of a Client's knowledge is usually limited to knowing that a Claim is needed in an Access Token; however, in some cases, it may also know that a Claim should be restricted to Rccess Tokens issued to a particular Resource Server. In these situations, the existing mechanism for stipulating the scope of access is insufficient. 
+At times, this existing mechanism is too limited. In some uses cases, for example, a Client may need to request particular Claims from an Authorization Server. It may also do this to request specific Claim Values. Furthermore, a Client may need to indicate to the Authorization Server that certain Claims are essential for its ability to operate. In such cases, the grant is of little use to the Client if the Resource Owner does not comply. Another example of when the existing `scope` parameter is insufficient is when the Client knows that some Claim is required by a particular Resource Server. The extent of a Client's knowledge is usually limited to knowing that a Claim is needed in an Access Token; however, in some cases, it may also know that a Claim should be restricted to Access Tokens issued to a particular Resource Server. In these situations, the existing mechanism for stipulating the scope of access is insufficient. 
 
 To accommodate these use cases and requirements, this specification defines a new request parameter that can be used when the Client obtains an authorization grant, as described in [section 1.3 of RFC 6749](https://tools.ietf.org/html/rfc6749#section-1.3) and [section 2.1 of the token exchange draft](https://tools.ietf.org/html/draft-ietf-oauth-token-exchange-19#section-2.1). For each request wherein these five grant types -- authorization code, implicit, resource owner password credentials, client credentials, and token exchange -- are sought, this specification defines a new parameter called `claims`. It can be used by a Client with any of these to request that certain Claims and/or particular Claim Values be authorized by the Resource Owner. The value of this parameter is a JavaScript Object Notation (JSON) object [[JSON](https://tools.ietf.org/html/rfc7159)]. This can also be used to indicate to the Authorization Server that the Client considers some or all of the Claims to be required. The Client can also use this object to indicate that certain Claim Values are preferred or essential to its ability to operate on behalf of the Resource Owner.
 
-During a refresh request (as described in [section 1.5 of RFC 6749](https://tools.ietf.org/html/rfc6749#section-1.5)), the `claims` parameter defined herein can also be used to alter the resulting scope of access. This can be used, for example, to lessen the scope by including a certain subset of Claims that should be in the new Access Token. After such, a client may increase the scope in a subsequent refresh request by including additional Claim Names in the JSON object value of the `claims` authorization request parameter. When it does so, the Client cannot, however, expand the scope or change the Claim Values from those initially authorized by the Resource Owner.  
+During a refresh request (as described in [section 1.5 of RFC 6749](https://tools.ietf.org/html/rfc6749#section-1.5)), the `claims` parameter defined herein can also be used to alter the resulting scope of access. This can be used, for example, to lessen the scope by including a certain subset of Claims that should be in the new Access Token. After such, a Client may increase the scope in a subsequent refresh request by including additional Claim Names in the JSON object value of the `claims` authorization request parameter. When it does so, the Client cannot, however, expand the scope or change the Claim Values from those initially authorized by the Resource Owner.
+
+This specification also stipulates how the authorized Claim Names are returns from an authorization request and the result of introspecting a token.
+
+### 1.1 Claims vis-à-vis Scope Tokens
+
+As previously stated, Claims relate to Scope Tokens. How exactly is beyond the extent of this specification. Instead, this document provides a framework in which these two constructs can be used together or independently. That said, however, there are at least three common ways that Claims will be used:
+
+1. Not at all (in which case this specification is irrelevant).
+2. In lieu of Scope Tokens.
+3. Together with Scope Tokens.
+
+The first and second option are straightforward. The third, however, will require a specification to define the relation between the two in order to achieve interoperability. For instance, OpenID Connect core specification relates Claims to Scope Tokens by grouping certain Claims into various Scope Tokens. This grouping of Claims into various Scope Tokens is RECOMMENDED when simultaneously using Claims and Scope Tokens to request authorization.
 
 ### 1.2 Notational Conventions
 
@@ -36,7 +48,11 @@ In addition to the terms defined in the references specifications, this document
 
 "Claim Value Query Object" has the meaning ascribed to it in section 3.1.
 
+"Critical Claim" has the meaning ascribed to it in section 3.2.
+
 "Essential Claim" is a Claim specified by the Client as being necessary to ensure a smooth authorization experience for a specific task requested by the Resource Owner.
+
+"Scope Token" is a case-sensitive string joined by spaces together with other such strings and included in the the `scope` request parameter of an authorization request (i.e., a `scope-token` as set forth in the ABNF of [section 3.3 of RFC 6749](https://tools.ietf.org/html/rfc6749#section-3.3)).
 
 "Voluntary Claim" is a Claim specified by the Client as being useful but not essential for the specific task requested by the Resource Owner.
 
@@ -55,7 +71,7 @@ When a Client requests authorization from the Resource Owner indirectly via the 
 |        |<-(B)-- Authorization Grant ---|               |
 |        |                               |               |
 |        |--(C)-- Authorization Grant -->|               |
-| Client |                               |               |
+|        |                               |               |
 |        |<-(D)----- Access Token -------|               |
 +--------+    (including granted claims) +---------------+
 </pre>
@@ -79,7 +95,7 @@ TBD
 
 The `claims` request parameter value is a UTF-8 encoded JSON object ("Claims Request Object") specifying requested Claims. Prior to transmission to the Authorization Server it is also form-URL-encoded as appropriate. The Claims Request Object is not intended to be a mechanism that the Client may use to instruct the Authorization Server to assert specific Claims. Instead, it is a simple query language that a Client can use to request certain Claims or to specify that it would like the Authorization Server to obtain authorization from the Resource Owner for a Claim, perhaps with a particular Claim Value. The Claims Request Object provides a Client with a more structured method of requesting the scope of access that the Resource Owner authorizes it for. 
 
-The top-level members of the Claims Request Object MUST include at least one Claims Sink. The only specific Claims Sink defined by this specification is `access_token`. Additionally, this specification also sets forth a mechanism by which a Client may signal to the Authorization Server which Claims it prefers to be included in an Access Token that it intends to furnish to a particular Resource Server; this is done by using an absolute URI of the target service or resource as a Claims Sink. Other properties of a Claims Request Object MAY be present; any that are not understood by the Authorization Server MUST be ignored.
+The top-level members of the Claims Request Object SHOULD include at least one Claims Sink. The only specific Claims Sink defined by this specification is `access_token`. Additionally, this specification also sets forth a mechanism by which a Client may signal to the Authorization Server which Claims it prefers to be included in an Access Token that it intends to furnish to a particular Resource Server; this is done by using an absolute URI of the target service or resource as a Claims Sink. A Claims Request Object MAY also contain the member `crit` to indicate parts of the Claims Request Object that the Authorization Server MUST understand if the `crit` member itself is understood. Other members of a Claims Request Object MAY be present; any that are not understood by the Authorization Server MUST be ignored.
 
 An example of a Claims Request Object that is provided to the Authorization Server as the value of the `claims` request parameter during an authorization request, refresh request or token exchange request is as follows: 
 
@@ -108,15 +124,13 @@ When the value is `null`, it indicates that the Claim with the associated Claim 
 *values*
 > OPTIONAL. Requests that the Claim be returned with one of a set of values, with the values appearing in order of preference.		
 
-A Claims Value Query Object with none of the OPTIONAL properties is equivalent to a value of `null`, and the Authorization Server MUST treat it in the exact same manner.
-
-The properties `value` and `values` are mutually exclusive. If the Client sends a Claim Value Query Object with both, the Authorization Server must return an error as described in section XX below.
+The properties `value` and `values` are mutually exclusive. If the Client sends a Claim Value Query Object with both, the Authorization Server MUST return an error as described in section XX below.
 
 By requesting Essential Claims, the Client indicates to the Authorization Server (who indicates to the Resource Owner) that releasing these Claims will ensure a smooth authorization for the specific task requested by that Resource Owner. If the Claims are not available because the Resource Owner did not authorize their release or they are not present, the Authorization Server MUST NOT generate an error when Claims are not returned.
 
 Other members of the Claim Value Query Object MAY be defined to provide additional information about the requested Claims. Any members of the Claims Value Query Object that is not understood by the Authorization Server MUST be ignored.
 
-A non-normative example of the two possible values for a Claim Value Query Object is shown in the following listing:
+A non-normative example of the two possible types of values for a Claim Value Query Object is shown in the following listing:
 
 <pre>
 {
@@ -129,7 +143,7 @@ A non-normative example of the two possible values for a Claim Value Query Objec
 }
 </pre>
 
-In this example, there are two Claim Names which the Client is requesting: `https://example.com/claim1` and `fname`. The values associated with these are Claim Value Query Objects. The former is a simple query where the Client has no preference on a particular value. For this reason, the Client specifies the value `null`. In the later case, the Client has more precise needs: it desires the Authorization Server to assert a Claim Value of `John` for the Claim Name `fname`. In such situations the Authorization Server MAY issue a Claim with the Claim Name `first_name` but with some other Claim Value than `John`. Both are Voluntary Claims.
+In this example, there are two Claim Names which the Client is requesting: `https://example.com/claim1` and `fname`. The values associated with these are Claim Value Query Objects. The former is a simple query where the Client has no preference on a particular value. For this reason, the Client specifies the value `null`. In the later case, the Client has more precise needs: it desires the Authorization Server to assert a Claim Value of `John` for the Claim Name `fname`. In such situations the Authorization Server MAY issue a Claim with the Claim Name `fname` but with some other Claim Value than `John`. Both are Voluntary Claims.
 
 An example of an Essential Claim is shown in the following non-normative listing:
 
@@ -145,7 +159,7 @@ An example of an Essential Claim is shown in the following non-normative listing
 
 This query indicates that the Client would like the Authorization Server to issue an Access Token with a scope that includes a Claim with the Claim Name `consentId`. To ensure a smooth authorization experience at the Resource Server where the Client will present the resulting Access Token, the Client has indicated that the `consentId` Claim is required, making it an Essential Claim. 
 
-As described above, a Client may also indicate that it wishes the Authorization Server to assert a Claim having a Claim Value that the Client has some preference of. A non-normative example of such a query is this:
+As described above, a Client may also indicate that it wishes the Authorization Server to assert a Claim having a Claim Value that the Client has some preference for. A non-normative example of such a query is this:
 
 <pre>
 {
@@ -162,9 +176,9 @@ As described above, a Client may also indicate that it wishes the Authorization 
 }
 </pre>
 
-In this example, the Client is requesting that the Authorization Server assert two Essential Claims: one named `accountId` and another named `paymentId`. In the former case, the Client requests that the Claim Value be `act-123` and/or `act-456`. In the later case, a Claim named `paymentId` is requested by the Client to have a Claim Value of `pid-123456`. Again, the Authorization Server MUST NOT return an error if the Resource Owner does not authorize both of these Claims or if they are non-existed. This is merely a request for a certain scope of access.
+In this example, the Client is requesting that the Authorization Server assert two Essential Claims: one named `accountId` and another named `paymentId`. In the former case, the Client requests that the Claim Value be `act-123` or `act-456`. In the later case, a Claim named `paymentId` is requested by the Client to have a Claim Value of `pid-123456`. Again, the Authorization Server MUST NOT return an error if the Resource Owner does not authorize both of these Claims or if they are non-existent. This is merely a request for a certain scope of access.
 
-Another example inspired by the Revised Directive on Payment Services (PSD2) is shown in the following listing:
+Another example inspired by the Revised Directive on Payment Services (PSD2) is shown in the following non-normative listing:
 
 <pre>
 {
@@ -181,10 +195,12 @@ Another example inspired by the Revised Directive on Payment Services (PSD2) is 
 			"essential" : true
 		},
 		"creditorName" : {
-			"value" : "Merchant123"
+			"value" : "Merchant123",
+			"essential" : true
 		},
 		"creditorAccount/iban" : {
-			"value" : "DE02100100109307118603"		
+			"value" : "DE02100100109307118603",
+			"essential" : true
 		},
 		"remittanceInformationUnstructured" : {
 			"value" : "Ref Number Merchant",
@@ -194,7 +210,7 @@ Another example inspired by the Revised Directive on Payment Services (PSD2) is 
 }
 </pre>
 
-In this example, the Client is requesting (but not forcing) the Authorization Server to obtain authorization from the Resource Owner for five Essential Claims: `instructedAmount`, `debtorAccount/iban`, `creditorName`, `creditorAccount/iban`, `remittanceInformationUnstructured`. The Claim Value Query Object associated with each of these Claim Names has a particular value the Client strongly prefers. One interesting case is the value of the `instructedAmount` Essential Claim; the query for the value of this Claim is a JSON object with two properties. The Authorization Server might use this Claims Request Object to obtainer the Resource Owner's consent before granting them, for instance. It might also check these values against a data source before asserting them. Based on the Resource Owner's choice or the data source lookup results, the Authorization Server may not issue the Claims at all or may do so with some other value. For example, the Authorization Server may actually find that the `instructedAmount` value requested exceeds its policy's allowed limit and only prompt the Resource Owner to authorize €100.
+In this example, the Client is requesting (but not forcing) the Authorization Server to obtain authorization from the Resource Owner for five Essential Claims: `instructedAmount`, `debtorAccount/iban`, `creditorName`, `creditorAccount/iban`, and `remittanceInformationUnstructured`. The Claim Value Query Object associated with each of these Claim Names has a particular value the Client strongly prefers. One interesting case is the value of the `instructedAmount` Essential Claim; the query for the value of this Claim is a JSON object with two properties. The Authorization Server might use this Claims Request Object to obtainer the Resource Owner's consent before granting them, for instance. It might also check these values against a data source before asserting them. Based on the Resource Owner's choice or the data source lookup results, the Authorization Server may not issue the Claims at all or may do so with some other value. For example, the Authorization Server may actually find that the `instructedAmount` value requested exceeds its policy's allowed limit and only prompt the Resource Owner to authorize €100.
 
 TODO: Move to resource indicator section
 
@@ -221,7 +237,34 @@ Another interesting example of how structured scope of access can be requested i
 }
 </pre>
 
-This example shows how a Client may request Claims defined by the Electronic Signatures and Infrastructures (ESI) Protocols for remote digital signature creation. Like the previous example, the Claims Request Object for the `access_token` Claims Sink includes a Claim Value Query Object for the `documentDigests` Claim that includes a JSON object with multiple properties.
+This example shows how a Client may request Claims defined by the Electronic Signatures and Infrastructures (ESI) Protocols for remote digital signature creation. Like the previous example, the Claims Request Object for the `access_token` Claims Sink includes a Claim Value Query Object for the `documentDigests` Claim that includes a JSON object with multiple properties. 
+
+These illustrative examples hopefully impress upon the reader the versatility of this query language and the Authorization Server's prerogative to assert any Claims with any Claim Values it chooses in its sole discretion. If the Client's needs are stronger than preferential, it MAY use the `crit` member of the Claims Request Object.
+
+### 3.2 Critical Members of a Claims Request Object
+
+As described previously, the Client can indicate to the Authorization Server that certain Claims are preferential or essential to the smooth operation of the Client. At times, however, the Client's needs are stronger and require certain Claims to be asserted. In such situations, the Client would rather the Authorization Server return an error than grant access with different Claims than those requested. This is not always possible for an Authorization Server, however, and a Client MUST NOT assume that the Authorization Server can be controlled in this manner. To know if this interaction pattern in supported, the Client must have a priori knowledge gained by some means not defined by this specification or by the presence of a true value in the Authorization Server's `critical_claims_supported` metadata. (See section 7 below.) An Authorization Server is RECOMMENDED to support this capability unless it cannot. When it does, the Authorization Server MUST issue any Claim denoted as critical or it MUST return an error. The error must be `invalid_claim` as described below. 
+
+A Client indicates to the Authorization Server that it must understand certain Claims and be able to assert them by including a list of JSON Pointers [[RFC 6901](https://tools.ietf.org/html/rfc6901)] associated with the `crit` member of the Claims Request Object. Each such Claim that the elements of this list point to is a "Critical Claim". The JSON Pointers in this list MUST refer to members of the Claims Request Object and MUST NOT point to elements within the list itself. If any JSON Pointer leads to an element of the JSON Pointer list, the Authorization Server MUST return an error with a code of `invalid_request` if it supports Critical Claims. When the JSON Pointers are valid, if the Authorization Server does not understand any of the Claims pointed to by any of the elements of this list, the Authorization Server MUST return an error of `invalid_claim`. Likewise, if the Authorization Server is unable to assert a Critical Claim (and it supports Critical Claims), it MUST return the same error. If a Critical Claim is requested with a certain value (as in the following example), the Authorization Server MUST assert the Claim with that exact Claim Value. If it's not able to (e.g., because the Resource Owner does not have an attribute with that particular value), the Authorization Server MUST return an error with a code of `invalid_claim` unless it does not support Critical Claims.
+
+A non-normative example of a Claims Request Object with a Critical Claim is shown in the following listing:
+
+<pre>
+{
+	"crit" : ["/access_token/verified_claims/verification/trust_framework/value"],
+	"access_token" : {
+		"verified_claims" : {
+			"verification" : {
+				"trust_framework" : {
+					"value" : "de_aml"
+				}
+			}
+		}
+	}
+}
+</pre>
+
+In this example, the `value` member of the JSON object associated with `trust_framework` must be understood by the Authorization Server because it is pointed by the element of the Critical Claims list. The way in which the Authorization Server understands this particular query is beyond the scope of this specification. The only part of this example that is germane is the `crit` member of the Claims Request Object which requires the Authorization Server to understand and assert a particular Claim Value. If it cannot and if it supports Critical Claims, it must return an error.
 
 ## 4. Obtaining Authorization
 
@@ -229,9 +272,65 @@ As stated in [section 4 of RFC 6749](https://tools.ietf.org/html/rfc6749#section
 
 ### 4.1 Authorization Code Grant
 
-TBD
+#### 4.1.1 Authorization Request
+
+When a Client seeks to obtain authorization using the authorization code flow defined in section [4.1 of RFC 6749](https://tools.ietf.org/html/rfc6749#section-4.1), the client MAY include the following additional query component that it sends to the authorization endpoint URI:
+
+*claims*
+> OPTIONAL. A Claims Request Object as described in Section 3.
+
+The value of this parameter must use the "application/x-www-form-urlencoded" format defined in [Appendix B of RFC 6749](https://tools.ietf.org/html/rfc6749#appendix-B).
+
+#### 4.1.2 Error Response
+
+If the Authorization Server understands the `claims` request parameter but does not support it, it MUST redirect the user-agent of the Resource Owner to the Client's redirection endpoint as described in [section 4.1.2.1 of RFC 6749](https://tools.ietf.org/html/rfc6749#section-4.1.2.1) with one of the following `error` values:
+
+*claims_not_supported*
+> The Authorization Server does not support the `claims` request parameter, and the Client should not use it when requesting authorization.
+
+*invalid_request*
+> The Authorization Server MAY use this less descriptive error code to indicate that the claims request parameter is not accepted. It is RECOMMENDED to use `claims_not_supported` instead, however. 
+
+*invalid_claim*
+> When a Client makes a request for a Critical Claim, and the Authorization Server cannot assert such a claim because it is invalid, unknown, or malformed, this error results.
+
+#### 4.1.3 Access Token Response
+
+In a non-error case, the Authorization Server MAY include details about the claims that the Resource Owner authorized. This is done by augmenting the response defined in [section 4.1.4 of RFC 6749](https://tools.ietf.org/html/rfc6749#section-4.1.4). In particular, the Authorization Server MAY include the following response member in the JSON object returned from the token endpoint:
+
+*claims*
+> OPTIONAL, if identical to the claims requested by the client; otherwise, REQUIRED. The space-separated Claim Names granted by the Resource Owner which denote the scope of the access token.
 
 ### 4.2 Implicit Grant
+
+#### 4.2.1 Authorization Request
+
+When a Client seeks to obtain authorization using the implicit flow defined in section [4.2 of RFC 6749](https://tools.ietf.org/html/rfc6749#section-4.2), the client MAY include the following additional query component that it sends to the authorization endpoint URI:
+
+*claims*
+> OPTIONAL. A Claims Request Object as described in Section 3.
+
+The value of this parameter must use the "application/x-www-form-urlencoded" format defined in [Appendix B of RFC 6749](https://tools.ietf.org/html/rfc6749#appendix-B).
+
+#### 4.2.2 Access Token Response
+
+In a non-error case, the Authorization Server MAY include details about the claims that the Resource Owner authorized. This is done by augmenting the response defined in [section 4.2.2 of RFC 6749](https://tools.ietf.org/html/rfc6749#section-4.2.2). In particular, the Authorization Server MAY include the following response parameter included on the fragment component of the redirection    URI:
+
+*claims*
+> OPTIONAL, if identical to the claims requested by the client; otherwise, REQUIRED. The space-separated Claim Names granted by the Resource Owner which denote the scope of the access token.
+
+#### 4.1.3 Error Response
+
+If the Authorization Server understands the `claims` request parameter but does not support it, it MUST redirect the user-agent of the Resource Owner to the Client's redirection endpoint as described in [section 4.2.2.1 of RFC 6749](https://tools.ietf.org/html/rfc6749#section-4.2.2.1) with one of the following `error` values:
+
+*claims_not_supported*
+> The Authorization Server does not support the `claims` request parameter, and the Client should not use it when requesting authorization.
+
+*invalid_request*
+> The Authorization Server MAY use this less descriptive error code to indicate that the claims request parameter is not accepted. It is RECOMMENDED to use `claims_not_supported` instead, however. 
+
+*invalid_claim*
+> When a Client makes a request for a Critical Claim, and the Authorization Server cannot assert such a claim because it is invalid, unknown, or malformed, this error results.
 
 ### 4.3 Resource Owner Password Credentials Grant
 
@@ -247,6 +346,11 @@ An Authorization Server that supports the `claims` request parameter SHOULD decl
 
 *claims_parameter_supported*
 > OPTIONAL. A boolean value indicating that the Authorization Server supports the `claims` request parameter or not. A value of true indicates that it is supported. A value of false, a null value, or the absence of the property means that the `claims` request parameter is not supported by the Authorization Server. 	
+
+*critical_claims_supported*
+> OPTIONAL. A boolean value indicating that the Authorization Server supports the possibility for the Client to indicate that certain parts of a Claims Request Object MUST be understood by the Authorization Server. A value of false, a null value, or the absence of this member means that the Authorization Server MAY not support this interaction pattern, and the Client MUST NOT assume that it does.
+
+If the Authorization Server returns a value of false for `claims_parameter_supported` and true for `critical_claims_supported`, the interpretation by the Client is undefined. It is RECOMMENDED that the Client assume that the Authorization Server is misconfigured and that it not attempt to request claims in a manner defined by this specification.
 
 A non-normative example of an Authorization Server metadata response which indicates that the `claims` request parameter is supported is shown in the following listing:
 
@@ -279,11 +383,12 @@ Content-Type: application/json
 		"http://server.example.com/service_documentation.html",
 	"ui_locales_supported" : 
 		["en-US", "en-GB", "en-CA", "fr-FR", "fr-CA"],
-	"claims_parameter_supported" : true
+	"claims_parameter_supported" : true,
+	"critical_claims_supported" : true
 }
 </pre>	
 
-Note the last property in particular.
+Note the last two members in particular.
 
 ## 8. Security Considerations 
 
