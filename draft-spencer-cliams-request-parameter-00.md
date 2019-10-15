@@ -243,7 +243,7 @@ These illustrative examples hopefully impress upon the reader the versatility of
 
 ### 3.2 Critical Members of a Claims Request Object
 
-As described previously, the Client can indicate to the Authorization Server that certain Claims are preferential or essential to the smooth operation of the Client. At times, however, the Client's needs are stronger and require certain Claims to be asserted. In such situations, the Client would rather the Authorization Server return an error than grant access with different Claims than those requested. This is not always possible for an Authorization Server, however, and a Client MUST NOT assume that the Authorization Server can be controlled in this manner. To know if this interaction pattern in supported, the Client must have a priori knowledge gained by some means not defined by this specification or by the presence of a true value in the Authorization Server's `critical_claims_supported` metadata. (See section 8 below.) An Authorization Server is RECOMMENDED to support this capability unless it cannot. When it does, the Authorization Server MUST issue any Claim denoted as critical or it MUST return an error. The error must be `invalid_claim` as described below. 
+As described previously, the Client can indicate to the Authorization Server that certain Claims are preferential or essential to the smooth operation of the Client. At times, however, the Client's needs are stronger and require certain Claims to be asserted. In such situations, the Client would rather the Authorization Server return an error than grant access with different Claims than those requested. This is not always possible for an Authorization Server, however, and a Client MUST NOT assume that the Authorization Server can be controlled in this manner. To know if this interaction pattern in supported, the Client must have a priori knowledge gained by some means not defined by this specification or by the presence of a true value in the Authorization Server's `critical_claims_supported` metadata. (See section 9 below.) An Authorization Server is RECOMMENDED to support this capability unless it cannot. When it does, the Authorization Server MUST issue any Claim denoted as critical or it MUST return an error. The error must be `invalid_claim` as described below. 
 
 A Client indicates to the Authorization Server that it must understand certain Claims and be able to assert them by including a list of JSON Pointers [[RFC 6901](https://tools.ietf.org/html/rfc6901)] associated with the `crit` member of the Claims Request Object. Each such Claim that the elements of this list point to is a "Critical Claim". The JSON Pointers in this list MUST refer to members of the Claims Request Object and MUST NOT point to elements within the list itself. If any JSON Pointer leads to an element of the JSON Pointer list, the Authorization Server MUST return an error with a code of `invalid_request` if it supports Critical Claims. When the JSON Pointers are valid, if the Authorization Server does not understand any of the Claims pointed to by any of the elements of this list, the Authorization Server MUST return an error of `invalid_claim`. Likewise, if the Authorization Server is unable to assert a Critical Claim (and it supports Critical Claims), it MUST return the same error. If a Critical Claim is requested with a certain value (as in the following example), the Authorization Server MUST assert the Claim with that exact Claim Value. If it's not able to (e.g., because the Resource Owner does not have an attribute with that particular value), the Authorization Server MUST return an error with a code of `invalid_claim` unless it does not support Critical Claims.
 
@@ -392,7 +392,11 @@ If the request is invalid due to the value of this parameter, the Authorization 
 
 ## 7. Token Introspection 
 
-## 8. Authorization Server Metadata
+## 8. Requesting Claims for a Particular Protected Resource
+
+TBD
+
+## 9. Authorization Server Metadata
 
 An Authorization Server that supports the `claims` request parameter SHOULD declare this fact by including the following property in the Authorization Server metadata response ([RFC 8414](https://tools.ietf.org/html/rfc8414#section-3.2)):
 
@@ -442,13 +446,13 @@ Content-Type: application/json
 
 Note the last two members in particular.
 
-## 9. Security Considerations 
+## 10. Security Considerations 
 
-## 10. Privacy Considerations
+## 11. Privacy Considerations
 
-## 11. IANA Considerations
+## 12. IANA Considerations
 
-## 12. Normative References
+## 13. Normative References
 
 TBD
 
