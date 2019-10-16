@@ -1,4 +1,4 @@
-# The OAuth 2.0 Authorization Framework: Claims Subsystem
+# The OAuth 2.0 Authorization Framework: Claims
 
 ## Abstract
 
