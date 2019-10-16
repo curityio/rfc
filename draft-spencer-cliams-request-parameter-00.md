@@ -245,7 +245,7 @@ These illustrative examples hopefully impress upon the reader the versatility of
 
 As described previously, the Client can indicate to the Authorization Server that certain Claims are preferential or essential to the smooth operation of the Client. At times, however, the Client's needs are stronger and require certain Claims to be asserted. In such situations, the Client would rather the Authorization Server return an error than grant access with different Claims than those requested. This is not always possible for an Authorization Server, however, and a Client MUST NOT assume that the Authorization Server can be controlled in this manner. To know if this interaction pattern in supported, the Client must have a priori knowledge gained by some means not defined by this specification or by the presence of a true value in the Authorization Server's `critical_claims_supported` metadata. (See section 9 below.) An Authorization Server is RECOMMENDED to support this capability unless it cannot. When it does, the Authorization Server MUST issue any Claim denoted as critical or it MUST return an error. The error must be `invalid_claim` as described below. 
 
-A Client indicates to the Authorization Server that it must understand certain Claims and be able to assert them by including a list of JSON Pointers [[RFC 6901](https://tools.ietf.org/html/rfc6901)] associated with the `crit` member of the Claims Request Object. Each such Claim that the elements of this list point to is a "Critical Claim". The JSON Pointers in this list MUST refer to members of the Claims Request Object and MUST NOT point to elements within the list itself. If any JSON Pointer leads to an element of the JSON Pointer list, the Authorization Server MUST return an error with a code of `invalid_request` if it supports Critical Claims. When the JSON Pointers are valid, if the Authorization Server does not understand any of the Claims pointed to by any of the elements of this list, the Authorization Server MUST return an error of `invalid_claim`. Likewise, if the Authorization Server is unable to assert a Critical Claim (and it supports Critical Claims), it MUST return the same error. If a Critical Claim is requested with a certain value (as in the following example), the Authorization Server MUST assert the Claim with that exact Claim Value. If it's not able to (e.g., because the Resource Owner does not have an attribute with that particular value), the Authorization Server MUST return an error with a code of `invalid_claim` unless it does not support Critical Claims.
+A Client indicates to the Authorization Server that it must understand certain Claims and be able to assert them by including a list of JSON Pointers [[RFC 6901](https://tools.ietf.org/html/rfc6901)] associated with the `crit` member of the Claims Request Object. Each such Claim that the elements of this list point to is a "Critical Claim". The JSON Pointers in this list MUST refer to members of the Claims Request Object and MUST NOT point to elements within the list itself. If any JSON Pointer refers to an element of the JSON Pointer list, the Authorization Server MUST return an error with a code of `invalid_request` if it supports Critical Claims. When the JSON Pointers are valid, if the Authorization Server does not understand any of the Claims pointed to by any of the elements of this list, the Authorization Server MUST return an error of `invalid_claim`. Likewise, if the Authorization Server is unable to assert a Critical Claim (and it supports Critical Claims), it MUST return the same error. If a Critical Claim is requested with a certain value (as in the following example), the Authorization Server MUST assert the Claim with that exact Claim Value. If it's not able to (e.g., because the Resource Owner does not have an attribute with that particular value), the Authorization Server MUST return an error with a code of `invalid_claim` unless it does not support Critical Claims.
 
 A non-normative example of a Claims Request Object with a Critical Claim is shown in the following listing:
 
@@ -265,6 +265,17 @@ A non-normative example of a Claims Request Object with a Critical Claim is show
 </pre>
 
 In this example, the `value` member of the JSON object associated with `trust_framework` must be understood by the Authorization Server because it is pointed by the element of the Critical Claims list. The way in which the Authorization Server understands this particular query is beyond the scope of this specification. The only part of this example that is germane is the `crit` member of the Claims Request Object which requires the Authorization Server to understand and assert a particular Claim Value. If it cannot and if it supports Critical Claims, it must return an error.
+
+It is not uncommon for a Claim Name to defined as a URI containing slashes ('/', %x2F). When such a Claim is critical, the escaping described in [section 3 of RFC 6901](https://tools.ietf.org/html/rfc6901#section-3) MUST be used, as in the following non-normative example:
+
+<pre>
+{
+	"crit" : ["/access_token/https:~1~1example.com~1claims1"],
+	"access_token" : {
+		"https://exmaple.com/claim1" : null,
+	}
+}
+</pre>
 
 ## 4. Obtaining Authorization
 
