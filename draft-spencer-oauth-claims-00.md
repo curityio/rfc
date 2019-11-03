@@ -2,9 +2,9 @@
 
 ## Abstract
 
-This specification extends the [OAuth 2.0 framework](https://tools.ietf.org/html/rfc6749) to include a simple query language that can be used by Clients to request certain Claims from an Authorization Server. This mechanism can be used during the authorization request and refresh request. It also defines a response parameter of the token and introspection endpoints that indicate to the caller which Claims were authorized by the Resource Owner. Lastly, it stipulates how this request parameter can be used during token exchange, and how Clients may request that certain Claims be placed in an Access Token intended for a particular Resource Server. 
+This document extends the [OAuth 2.0 framework](https://tools.ietf.org/html/rfc6749) to include a simple query language that can be used by Clients to request certain Claims from an Authorization Server. This mechanism can be used during the authorization request and refresh request. It also defines a response parameter of the token and introspection endpoints that indicate to the caller which Claims were authorized by the Resource Owner. Lastly, it stipulates how this request parameter can be used during token exchange, and how Clients may request that certain Claims be placed in an Access Token intended for a particular Resource Server. 
 
-This specification is designed to be compatible with [OpenID Connect](https://example.com) but does not require the Authorization Server to support that protocol.
+This document is designed to be compatible with [OpenID Connect](https://example.com) but does not require the Authorization Server to support that protocol.
 
 <!-- TOC -->
 
@@ -405,7 +405,19 @@ If the request is invalid due to the value of this parameter, the Authorization 
 
 ## 8. Requesting Claims for a Particular Protected Resource
 
-TBD
+As described in the [Resource Indicators for OAuth 2.0 draft specification](https://tools.ietf.org/html/draft-ietf-oauth-resource-indicators-08) and in the introduction of this document, there are occasions when a Client may need to signal to the Authorization Server which Resource Servers it intends to submit an access token to. Using the mechanism defined there -- namely the `resource` request parameter -- results in "the requested access rights of the token [being] the cartesian product of all the scopes at all the target services." This crossproduct may produce access tokens that are too widely scoped per Resource Server. The specification explains how access can be downscoped to avoid this. That specification does not provide a way for the originally granted access to be constrained to a different scope per Resource Server though. As a result, this downscoping is only possible from the fully granted scope to some subset. This is pictographically shown in the following figure:
+
+Granted Scope of Access for resources
+  \- Down
+
+When only Scopes Tokens are used or only Claims are used instead (option one and two from section 1.1 above), then this limitation is inconsequential. When option three -- using both Claims and Scope Tokens together, however, it is possible to perform more fine-grained downscoping of an access token. To see how, consider the following non-normative example where various Claims are grouped together into various Scope Tokens.
+
+| Scope Token | Claims                       |
+|-------------|------------------------------|
+| calendar    | appointments scheduling      |
+| contacts    | contacts_read contacts_write |
+
+In this example, the granted scope of "calendar contacts" is equivalent to the set of Claims [appointments, scheduling, contacts_read, contacts_write]. What some Client may wish to achieve is to restrict the scope of any access token issued to the Resource Server available at http://calendar.example.com to only the Claims in 
 
 ## 9. Authorization Server Metadata
 
