@@ -1,0 +1,1500 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<!DOCTYPE rfc PUBLIC "-//IETF//DTD RFC 2629//EN" "http://xml2rfc.tools.ietf.org/authoring/rfc2629.dtd">
+
+<?rfc compact="yes" ?>
+<?rfc sortrefs="yes" ?>
+<?rfc strict="yes" ?>
+<?rfc subcompact="no" ?>
+<?rfc symrefs="yes"?>
+<?rfc toc="yes"?>
+<?rfc tocdepth="3"?>
+<?rfc tocindent="yes"?>
+<?rfc tocompact="yes"?>
+
+<rfc ipr="trust200902" category="std" docName="draft-spencer-oauth-claims-00">
+    <front>
+        <title abbrev="Claims">The OAuth 2.0 Authorization Framework: Claims</title>
+
+        <author fullname="Travis Spencer" initials="T." surname="Spencer">
+            <organization>Curity AB</organization>
+
+            <address>
+                <email>travis@curity.io</email>
+                <uri>http://travisspencer.com/</uri>
+            </address>
+        </author>
+
+        <date day="4" month="November" year="2019"/>
+
+        <area>Security</area>
+        <workgroup>OAuth Working Group</workgroup>
+
+        <keyword>RFC</keyword>
+        <keyword>Request for Comments</keyword>
+        <keyword>JSON</keyword>
+        <keyword>Claim</keyword>
+        <keyword>Assertion</keyword>
+        <keyword>OAuth</keyword>
+
+        <abstract>
+            <t>
+                This document extends the OAuth 2.0 framework to include a
+                simple query language that can be used by Clients to request
+                certain Claims from an Authorization Server. This mechanism can
+                be used during the authorization request and refresh request. It
+                also defines a response parameter of the token and introspection
+                endpoints that indicates to the caller which Claims were
+                authorized by the Resource Owner. Lastly, it stipulates how this
+                request parameter can be used during token exchange, and how
+                Clients may request that certain Claims be placed in an Access
+                Token intended for a particular Resource Server.
+            </t>
+        </abstract>
+    </front>
+
+    <middle>
+        <section title="Introduction" anchor="introduction">
+            <t>
+                As stated in Section 1.4 of <xref target="RFC6749"/>, an
+                Access Token represents the specific scope and duration of
+                access. The requested scope is verified by the Authorization
+                Server according to its policy, and the perhaps-different scope
+                is granted by the Resource Owner. The requested and granted
+                scope may vary due to the Authorization Server's policy and/or
+                the Resource Owner's limitation of the granted scope. The
+                resulting scope is enforced by the Resource Server. The way in
+                which the Client indicates the intended scope of access is by
+                the <spanx style="verb">scope</spanx> request parameter defined
+                in Section 3.3 of <xref target="RFC6749"/>. This specification
+                defines a more sophisticated instrument to achieve this same
+                purpose.
+            </t>
+
+            <t>
+                At times, this existing mechanism is too limited. In some uses
+                cases, for example, a Client may need to request particular
+                Claims from an Authorization Server. It may also do this to
+                request specific Claim Values. Furthermore, a Client may need
+                to indicate to the Authorization Server that certain Claims are
+                essential for its ability to operate. In such cases, the grant
+                is of little use to the Client if the Resource Owner does not
+                comply. Another example of when the existing
+                <spanx style="verb">scope</spanx> parameter is insufficient is
+                when the Client knows that some Claim is required by a
+                particular Resource Server. The extent of a Client's knowledge
+                is usually limited to knowing that a Claim is needed in an
+                Access Token; however, in some cases, it may also know that a
+                Claim should be restricted to Access Tokens issued to a
+                particular Resource Server. In these situations, the existing
+                mechanism for stipulating the scope of access is insufficient.
+            </t>
+
+            <t>
+                To accommodate these use cases and requirements, this
+                specification defines a new request parameter that can be used
+                when the Client obtains an authorization grant, as described in
+                Section 1.3 of <xref target="RFC6749"/> and Section 2.1 of
+                <xref target="I-D.ietf-oauth-token-exchange"/>. For each request
+                wherein these six grant types -- authorization, code, implicit,
+                resource owner password credentials, client credentials, and
+                token exchange -- are sought, this specification defines a new
+                parameter called <spanx style="verb">claims</spanx>. It can be
+                used by a Client with any of these to request that certain
+                Claims and/or particular Claim Values be authorized by the
+                Resource Owner. The value of this parameter is a
+                JavaScript Object Notation (JSON) object <xref target="RFC8259"
+                />. This can also be used to indicate to the Authorization
+                Server that the Client considers some or all of the Claims to be
+                required. The Client can also use this object to indicate that
+                certain Claim Values are preferred or essential to its ability
+                to operate on behalf of the Resource Owner.
+            </t>
+
+            <t>
+                During a refresh request (as described in Section 1.5 of
+                <xref target="RFC6749"/>, the <spanx style="verb">claims</spanx>
+                parameter defined herein can also be used to alter the resulting
+                scope of access. This can be used, for example, to lessen the
+                scope by including a certain subset of Claims that should be in
+                the new Access Token. After such, a Client may increase the
+                scope in a subsequent refresh request by including additional
+                Claim Names in the JSON object value of the <spanx style="verb">
+                claims</spanx> authorization request parameter. When it does so,
+                the Client cannot, however, expand the scope or change the Claim
+                Values from those initially authorized by the Resource Owner.
+            </t>
+
+            <t>
+                This specification also stipulates how the authorized Claim
+                Names are returns from an authorization request and the result
+                of introspecting a token.
+            </t>
+
+            <t>
+                This specification is designed to be compatible with OpenID
+                Connect <xref target="OpenID.Core"/> but does not require the
+                Authorization Server to support that protocol.
+            </t>
+
+            <section title="Claims vis-a-vis Scope Tokens"
+                     anchor="claims-vis-a-vis-scope-tokens">
+                <t>
+                    As previously stated, Claims relate to Scope Tokens. How
+                    exactly is beyond the extent of this specification. Instead,
+                    this document provides a framework in which these two
+                    constructs can be used together or independently. That said,
+                    however, there are at least three common ways that Claims
+                    will be used:
+
+                    <list style="numbers">
+                        <t>Not at all (in which case this specification is
+                            irrelevant).</t>
+                        <t>In lieu of Scope Tokens.</t>
+                        <t>Together with Scope Tokens.</t>
+                    </list>
+
+                    The first and second option are straightforward. The third,
+                    however, will require a specification to define the
+                    relation between the two in order to achieve
+                    interoperability. For instance, OpenID Connect core
+                    specification relates Claims to Scope Tokens by grouping
+                    certain Claims into various Scope Tokens. This grouping of
+                    Claims into various Scope Tokens is RECOMMENDED when
+                    simultaneously using Claims and Scope Tokens to request
+                    authorization.
+                </t>
+            </section>
+
+            <section title="Notational Conventions"
+                     anchor="notational-conventions">
+                <t>
+                    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+                    NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
+                    "OPTIONAL" in this document are to be interpreted as described in
+                    <xref target="RFC2119"/>.
+                </t>
+
+                <t>
+                    Unless otherwise noted, all the protocol parameter names and
+                    values are case sensitive.
+                </t>
+            </section>
+
+            <section title="Terminology" anchor="terminology">
+                <t>In addition to the terms defined in the references
+                    specifications, this document uses the following terms:
+
+                    <list style="hanging">
+                        <t hangText="Claims Sink">
+                            <vspace/>
+                            The location or destination where the Authorization
+                            Server MAY include all requested Claims that are
+                            authorized by the Resource Owner. An Access Token
+                            intended for an unspecified Resource Server or an
+                            Access Token the Client intends to send to a
+                            particular Resource Server or an ID token (when the
+                            OpenID Connect profile of this specification is
+                            used) are examples of Claims Sinks.
+                        </t>
+                        <t hangText="Claims Request Object">
+                            <vspace/>
+                            Has the meaning ascribed to it in <xref
+                                target="claims-request-object"/>.
+                        </t>
+
+                        <t hangText="Claims Sink Query Object">
+                            <vspace/>
+                            Has the meaning ascribed to it in <xref
+                                target="requesting-particular-claim-names-and-claim-values"/>.
+                        </t>
+
+                        <t hangText="Claim Value Query Object">
+                            <vspace/>
+                            Has the meaning ascribed to it in <xref
+                                target="requesting-particular-claim-names-and-claim-values"/>.
+                        </t>
+
+                        <t hangText="Critical Claim">
+                            <vspace/>
+                            Has the meaning ascribed to it in <xref
+                                target="critical-members-of-a-claims-request-object"/>.
+                        </t>
+
+                        <t hangText="Essential Claim">
+                            <vspace/>
+                            A Claim specified by the Client as being necessary
+                            to ensure a smooth authorization experience for a
+                            specific task requested by the Resource Owner.
+                        </t>
+
+                        <t hangText="Scope Token">
+                            <vspace/>
+                            A case-sensitive string joined by spaces together
+                            with other such strings and included in the the
+                            <spanx style="verb">scope</spanx> request parameter
+                            of an authorization request (i.e., a
+                            <spanx style="verb">scope-token</spanx> as set
+                            forth in the ABNF of Section 3.3 of
+                            <xref target="RFC6749"/>).
+                        </t>
+
+                        <t hangText="Voluntary Claim">
+                            <vspace/>
+                            A Claim specified by the Client as being useful but
+                            not essential for the specific task requested by
+                            the Resource Owner.
+                        </t>
+                    </list>
+                </t>
+            </section>
+        </section>
+
+        <section title="Protocol Flow" anchor="protocol-flow">
+            <section title="Authorization Request" anchor="authorization-request">
+               <t>
+                   When a Client requests authorization from the Resource Owner
+                   indirectly via the Authorization Server, the protocol flow
+                   MAY include a query for certain Claims. Based on the policy
+                   of the Authorization Server and the delegated access of the
+                   Resource Owner certain Claims MAY be granted. Given an
+                   authorization grant, the Authorization Server informs the
+                   Client as to which Claims were actually issued (if different
+                   from those requested). This message exchange pattern is
+                   shown in
+                   <xref target="authorization-request-protocol-flow"/>:
+               </t>
+
+                <figure title="Protocol Flow that Includes Requested and
+                    Granted Claims" anchor="authorization-request-protocol-flow">
+                    <artwork type="ascii-art"><![CDATA[
++--------+                               +---------------+
+| Client |--(A)- Authorization Request ->| Authorization |
+|        |     (including claims request |    Server     |
+|        |              parameter)       |               |
+|        |                               |               |
+|        |<-(B)-- Authorization Grant ---|               |
+|        |                               |               |
+|        |--(C)-- Authorization Grant -->|               |
+|        |                               |               |
+|        |<-(D)----- Access Token -------|               |
++--------+    (including granted claims) +---------------+
+]]>
+                    </artwork>
+                </figure>
+
+                <t>
+                    The steps in the flow illustrated in Figure 1 are generally
+                    the same as those described in Section 1.2 of
+                    <xref target="RFC6749"/> with a few important distinctions:
+
+                    <list style="symbols">
+                        <t>The authorization request (A) is performed
+                            indirectly via the Authorization Server and not
+                            directly to the Resource Owner.
+                        </t>
+                        <t>During the authorization request (A), the Client
+                            includes a Claims Request Object as the
+                            corresponding value of the
+                            <spanx style="verb">claims</spanx> request
+                            parameter, as described in Section 3.1 below.<!-- FIXME: Use correct ref -->
+                        </t>
+                        <t>After obtaining (B) and presenting the authorization
+                            grant (C), the response MAY include an Access Token
+                            and a possibly-empty list of Claim Names that were
+                            authorized (D). If the asserted Claims embodied by
+                            the Access Token differ from those requested (A),
+                            then the Authorization Server MUST include a list
+                            of authorized Claim Names in the authorization
+                            response (D).</t>
+                    </list>
+                </t>
+            </section>
+
+            <section title="Refresh Request" anchor="refresh-request">
+                <t>TBD</t>
+            </section>
+
+            <section title="Token Exchange Request" anchor="token-exchange-request">
+                <t>TBD</t>
+            </section>
+        </section>
+
+        <section title="Claims Request Object" anchor="claims-request-object">
+            <t>
+                The <spanx style="verb">claims</spanx> request parameter value
+                is a UTF-8 encoded JSON object ("Claims Request Object")
+                specifying requested Claims. Prior to transmission to the
+                Authorization Server it is also form-URL-encoded as appropriate.
+                The Claims Request Object is not intended to be a mechanism that
+                the Client may use to instruct the Authorization Server to
+                assert specific Claims. Instead, it is a simple query language
+                that a Client can use to request certain Claims or to specify
+                that it would like the Authorization Server to obtain
+                authorization from the Resource Owner for a Claim, perhaps with
+                a particular Claim Value. The Claims Request Object provides a
+                Client with a more structured method of requesting the scope of
+                access that the Resource Owner authorizes it for.
+            </t>
+            <t>
+                The top-level members of the Claims Request Object SHOULD
+                include at least one Claims Sink. The only specific Claims Sink
+                defined by this specification is
+                <spanx style="verb">access_token</spanx>. Additionally,
+                this specification also sets forth a mechanism by which a Client
+                may signal to the Authorization Server which Claims it prefers
+                to be included in an Access Token that it intends to furnish to
+                a particular Resource Server; this is done by using an absolute
+                URI of the target service or resource as a Claims Sink. A Claims
+                Request Object MAY also contain the member
+                <spanx style="verb">crit</spanx> to indicate parts of the
+                Claims Request Object that the Authorization Server MUST
+                understand if the <spanx style="verb">crit</spanx> member
+                itself is understood. Other members of a Claims Request Object
+                MAY be present; any that are not understood by the Authorization
+                Server MUST be ignored.
+            </t>
+            <t>
+                An example of a Claims Request Object that is provided to the
+                Authorization Server as the value of the <spanx
+                style="verb">claims</spanx> request parameter provided during an
+                authorization request, refresh request or token exchange
+                request is shown in
+                <xref target="example-claims-request-object"/>.
+
+                <figure anchor="example-claims-request-object"
+                        title="Example of a Claims Request Object">
+                    <artwork>
+                        <![CDATA[
+{
+    "access_token" : {
+
+    }
+}]]>
+                    </artwork>
+                </figure>
+
+                In this non-normative example, the
+                <spanx style="verb">access_token</spanx> property is the
+                Claims Sink. It is the location where the Authorization Server
+                MAY include any of the requested Claims that the Resource Owner
+                authorizes. If the Authorization Server uses the requested
+                Claims from a particular Claims Sink to derive or determine
+                alternative Claims which it asserts, it is RECOMMENDED to
+                consider the Client's request to include those alternative
+                Claims in the same requested Claims Sink.
+            </t>
+
+            <section title="Requesting Particular Claim Names and Claim Values"
+                     anchor="requesting-particular-claim-names-and-claim-values">
+                <t>
+                    Within the Claims Request Object, a Claims Sink is
+                    associated with another JSON object ("Claims Sink Query
+                    Object"). This object contains properties that have the name
+                    of a Claim which the Client is requesting the Authorization
+                    Server to assert. The possible values associated with each
+                    of these is <spanx style="verb">null</spanx> or another
+                    JSON object ("Claim Value Query Object").
+                </t>
+
+                <t>
+                    When the value is <spanx style="verb">null</spanx>, it
+                    indicates that the Claim with the associated Claim Name is a
+                    Voluntary Claim, and the Client has no specific requirements
+                    on the Claim Value. Conversely, when the Claim Value Query
+                    Object is not <spanx style="verb">null</spanx> it is a
+                    JSON object with the following properties:
+
+                    <list hangIndent="8" style="hanging">
+                        <t hangText="essential">
+                            <vspace/>
+                            OPTIONAL. Indicates whether the Claim being
+                            requested is an Essential Claim. If the value is
+                            <spanx style="verb">true</spanx>, this indicates
+                            that the Claim is an Essential Claim. If the value
+                            is<spanx style="verb">false</spanx> or if this
+                            property is not include, then the Claim is a
+                            Voluntary Claim.
+                        </t>
+
+                        <t hangText="value">
+                            <vspace/>
+                            OPTIONAL. Requests that the Claim be returned with
+                            a particular value.
+                        </t>
+
+                        <t hangText="values">
+                            <vspace/>
+                            OPTIONAL. Requests that the Claim be returned with
+                            one of a set of values, with the values appearing
+                            in order of preference.
+                        </t>
+                    </list>
+                </t>
+
+                <t>
+                    The properties <spanx style="verb">value</spanx> and
+                    <spanx style="verb">values</spanx> are mutually exclusive.
+                    If the Client sends a Claim Value Query Object with both,
+                    the Authorization Server MUST return an error as described
+                    in section XX below. <!-- FIXME: reference -->
+                </t>
+
+                <t>
+                    By requesting Essential Claims, the Client indicates to the
+                    Authorization Server (who indicates to the Resource Owner)
+                    that releasing these Claims will ensure a smooth
+                    authorization for the specific task requested by that
+                    Resource Owner. If the Claims are not available because the
+                    Resource Owner did not authorize their release or they are
+                    not present, the Authorization Server MUST NOT generate an
+                    error when Claims are not returned.
+                </t>
+
+                <t>
+                    Other members of the Claim Value Query Object MAY be defined
+                    to provide additional information about the requested
+                    Claims. Any members of the Claims Value Query Object that is
+                    not understood by the Authorization Server MUST be ignored.
+                </t>
+
+                <t>
+                    A non-normative example of the two possible types of values
+                    for a Claim Value Query Object is shown in
+                    <xref target="example-claim-value-query-object"/>.
+
+                    <figure anchor="example-claim-value-query-object"
+                            title="Example of a Claim Value Query Object">
+                        <artwork>
+                            <![CDATA[
+{
+    "access_token" : {
+        "https://exmaple.com/claim1" : null,
+        "fname" : {
+            "value" : "John"
+        }
+    }
+}]]>
+                        </artwork>
+                    </figure>
+
+                    In this example, there are two Claim Names which the Client
+                    is requesting
+                    <spanx style="verb">https://example.com/claim1</spanx> and
+                    <spanx style="verb">fname</spanx>. The values associated
+                    with these are Claim Value Query Objects. The former is a
+                    simple query where the Client has no preference on a
+                    particular value. For this reason, the Client specifies the
+                    value<spanx style="verb">null</spanx>. In the later case,
+                    the Client has more precise needs: it desires the
+                    Authorization Server to assert a Claim Value of
+                    <spanx style="verb">John</spanx> for the Claim Name
+                    <spanx style="verb">fname</spanx>. In such situations the
+                    Authorization Server MAY issue a Claim with the Claim Name
+                    <spanx style="verb">fname</spanx> but with some other Claim
+                    Value than <spanx style="verb">John</spanx>. Both are
+                    Voluntary Claims.
+                </t>
+
+                <t>
+                    An example of an Essential Claim is shown in the
+                    non-normative listing of
+                    <xref target="example-essential-claim-value-query"/>.
+
+                    <figure anchor="example-essential-claim-value-query"
+                            title="Example of querying for an Essential Claim">
+                        <artwork>
+                            <![CDATA[
+{
+    "access_token" : {
+        "consentId" : {
+            "essential" : true
+        }
+    }
+}]]>
+                        </artwork>
+                    </figure>
+
+                    This query indicates that the Client would like the
+                    Authorization Server to issue an Access Token with a scope
+                    that includes a Claim with the Claim Name <spanx
+                        style="verb">consentId</spanx>. To ensure a smooth
+                    authorization experience at the Resource Server where the
+                    Client will present the resulting Access Token, the Client
+                    has indicated that the <spanx style="verb">consentId</spanx>
+                    Claim is required, making it an Essential Claim.
+                </t>
+
+                <t>
+                    As described above, a Client may also indicate that it
+                    wishes the Authorization Server to assert a Claim having a
+                    Claim Value that the Client has some preference for. A
+                    non-normative example of such a query is show in
+                    <xref target="example-essential-claim-value-with-certain-value"/>.
+
+                    <figure anchor="example-essential-claim-value-with-certain-value"
+                            title="Example of querying for an Essential Claim with Certain Values">
+                        <artwork>
+                            <![CDATA[
+{
+    "access_token" : {
+        "accountId" : {
+            "values" : ["act-123", "act-456"],
+            "essential" : true
+        },
+        "paymentId" : {
+            "value" : "pid-123456",
+            "essential" : true
+        }
+    }
+}]]>
+                        </artwork>
+                    </figure>
+
+                    In this example, the Client is requesting that the
+                    Authorization Server assert two Essential Claims: one named
+                    <spanx style="verb">accountId</spanx> and another named
+                    <spanx style="verb">paymentId</spanx>. In the former case,
+                    the Client requests that the Claim Value be
+                    <spanx style="verb">act-123</spanx> or
+                    <spanx style="verb">act-456</spanx>. In the later case, a
+                    Claim named <spanx style="verb">paymentId</spanx> is
+                    requested by the Client to have a Claim Value of
+                    <spanx style="verb">pid-123456</spanx>. Again, the
+                    Authorization Server MUST NOT return an error if the
+                    Resource Owner does not authorize both of these Claims or
+                    if they are non-existent. This is merely a request for a
+                    certain scope of access.
+                </t>
+
+                <t>
+                    Another example inspired by the Revised Directive on
+                    Payment Services (PSD2) is shown in the
+                    non-normative listing of <xref target="psd2-example"/>.
+
+                    <figure anchor="psd2-example"
+                            title="PSD2-related Example">
+                        <artwork>
+                            <![CDATA[
+{
+    "access_token" : {
+        "instructedAmount" : {
+            "value" : {
+                "amount" : 123.50,
+                "currency" : "EUR"
+            },
+            "essential" : true
+        },
+        "debtorAccount/iban" : {
+            "value" : "DE40100100103307118608",
+            "essential" : true
+        },
+        "creditorName" : {
+            "value" : "Merchant123",
+            "essential" : true
+        },
+        "creditorAccount/iban" : {
+            "value" : "DE02100100109307118603",
+            "essential" : true
+        },
+        "remittanceInformationUnstructured" : {
+            "value" : "Ref Number Merchant",
+            "essential" : true
+        }
+    }
+}]]>
+                        </artwork>
+                    </figure>
+
+                    In this example, the Client is requesting (but not forcing)
+                    the Authorization Server to obtain authorization from the
+                    Resource Owner for five Essential Claims:
+                    <spanx style="verb">instructedAmount</spanx>,
+                    <spanx style="verb">debtorAccount/iban</spanx>,
+                    <spanx style="verb">creditorName</spanx>,
+                    <spanx style="verb">creditorAccount/iban</spanx>, and
+                    <spanx style="verb">remittanceInformationUnstructured</spanx>.
+                    The Claim Value Query Object associated with each of these
+                    Claim Names has a particular value the Client strongly
+                    prefers. One interesting case is the value of the
+                    <spanx style="verb">instructedAmount</spanx> Essential
+                    Claim; the query for the value of this Claim is a JSON
+                    object with two properties. The Authorization Server might
+                    use this Claims Request Object to obtainer the Resource
+                    Owner's consent before granting them, for instance. It
+                    might also check these values against a data source before
+                    asserting them. Based on the Resource Owner's choice or the
+                    data source lookup results, the Authorization Server may
+                    not issue the Claims at all or may do so with some other
+                    value. For example, the Authorization Server may actually
+                    find that the <spanx style="verb">instructedAmount</spanx>
+                    value requested exceeds its policy's allowed limit and only
+                    prompt the Resource Owner to authorize €100.
+                </t>
+
+                <t>
+                    <!-- TODO: Move to resource indicator section -->
+                    Another interesting example of how structured scope of
+                    access can be requested is shown in the listing of
+                    <xref target="esi-example"/>.
+
+                    <figure anchor="esi-example"
+                            title="ESI-related Example">
+                        <artwork>
+                            <![CDATA[
+{
+    "access_token" : {
+        "credentialID" : {
+            "value" : "qes_eidas",
+            "essential" : true
+        },
+        "documentDigests" : {
+            "value" : {
+                "hash":"sTOgwOm+474gFj0q0x1iSNspKqbcse4IeiqlDg/HWuI=",
+                "label":"Mobile Subscription Contract"
+            },
+            "essential" : true
+        },
+        "hashAlgorithmOID" : {
+            "value" : "2.16.840.1.101.3.4.2.1"
+        }
+    }
+}]]>
+                        </artwork>
+                    </figure>
+
+                    This example shows how a Client may request Claims defined
+                    by the Electronic Signatures and Infrastructures (ESI)
+                    Protocols for remote digital signature creation. Like the
+                    previous example, the Claims Request Object for the
+                    <spanx style="verb">access_token</spanx> Claims Sink
+                    includes a Claim Value Query Object for the
+                    <spanx style="verb">documentDigests</spanx> Claim that
+                    includes a JSON object with multiple properties.
+                </t>
+
+                <t>
+                    These illustrative examples hopefully impress upon the
+                    reader the versatility of this query language and the
+                    Authorization Server's prerogative to assert any Claims with
+                    any Claim Values it chooses in its sole discretion. If the
+                    Client's needs are stronger than preferential, it MAY use
+                    the <spanx style="verb">crit</spanx> member of the
+                    Claims Request Object.
+                </t>
+            </section>
+
+            <section title="Critical Members of a Claims Request Object" 
+                     anchor="critical-members-of-a-claims-request-object">
+                <t>
+                    As described previously, the Client can indicate to the
+                    Authorization Server that certain Claims are preferential or
+                    essential to the smooth operation of the Client. At times,
+                    however, the Client's needs are stronger and require certain
+                    Claims to be asserted. In such situations, the Client would
+                    rather the Authorization Server return an error than grant
+                    access with different Claims than those requested. This is
+                    not always possible for an Authorization Server, however,
+                    and a Client MUST NOT assume that the Authorization Server
+                    can be controlled in this manner. To know if this
+                    interaction pattern in supported, the Client must have a
+                    priori knowledge gained by some means not defined by this
+                    specification or by the presence of a true value in the
+                    Authorization Server's
+                    <spanx style="verb">critical_claims_supported</spanx>
+                    metadata. (See section 9 below.) An Authorization
+                    Server is RECOMMENDED to support this capability unless it
+                    cannot. When it does, the Authorization Server MUST issue
+                    any Claim denoted as critical or it MUST return an error.
+                    The error must be <spanx style="verb">invalid_claim</spanx>
+                    as described below.
+                </t>
+
+                <t>
+                    A Client indicates to the Authorization Server that it must
+                    understand certain Claims and be able to assert them by
+                    including a list of JSON Pointers
+                    <xref target="RFC6901"/>
+                    associated with the <spanx style="verb">crit</spanx> member
+                    of the Claims Request Object. Each such Claim that the
+                    elements of this list point to is a "Critical Claim". The
+                    JSON Pointers in this list MUST refer to members of the
+                    Claims Request Object and MUST NOT point to elements within
+                    the list itself. If any JSON Pointer refers to an element of
+                    the JSON Pointer list, the Authorization Server MUST return
+                    an error with a code of
+                    <spanx style="verb">invalid_request</spanx> if it supports
+                    Critical Claims. When the JSON Pointers are valid, if the
+                    Authorization Server does not understand any of the Claims
+                    pointed to by any of the elements of this list, the
+                    Authorization Server MUST return an error of
+                    <spanx style="verb">invalid_claim</spanx>. Likewise, if
+                    the Authorization Server is unable to assert a Critical
+                    Claim (and it supports Critical Claims), it MUST return the
+                    same error. If a Critical Claim is requested with a certain
+                    value (as in the following example), the Authorization
+                    Server MUST assert the Claim with that exact Claim Value. If
+                    it's not able to (e.g., because the Resource Owner does not
+                    have an attribute with that particular value), the
+                    Authorization Server MUST return an error with a code of
+                    <spanx style="verb">invalid_claim</spanx> unless it does
+                    not support Critical Claims.
+                </t>
+
+                <t>
+                    A non-normative example of a Claims Request Object with a
+                    Critical Claim is shown in
+                    <xref target="crit-claim-example"/>.
+
+                    <figure anchor="crit-claim-example"
+                            title="Example of a Request Containing a Critical Claim">
+                        <artwork>
+                            <![CDATA[
+{
+    "crit" : [
+        "/access_token/verified_claims/verification/trust_framework"
+    ],
+    "access_token" : {
+        "verified_claims" : {
+            "verification" : {
+                "trust_framework" : {
+                    "value" : "de_aml"
+                }
+            }
+        }
+    }
+}]]>
+                        </artwork>
+                    </figure>
+
+                    In this example, the
+                    <spanx style="verb">trust_framework</spanx>member of the
+                    JSON object associated with
+                    <spanx style="verb">verification</spanx> must be
+                    understood by the Authorization Server because it is
+                    pointed by the element of the Critical Claims list. The way
+                    in which the Authorization Server understands this
+                    particular query is beyond the scope of this specification.
+                    The only part of this example that is germane is the
+                    <spanx style="verb">crit</spanx> member of the Claims
+                    Request Object which requires the Authorization Server to
+                    understand and assert a particular Claim Value. If it
+                    cannot and if it supports Critical Claims, it must return
+                    an error.
+                </t>
+
+                <t>
+                    It is not uncommon for a Claim Name to defined as a URI
+                    containing slashes ('/', %x2F). When such a Claim is
+                    critical, the escaping described in Section 3 of
+                    <xref target="RFC6901"/> MUST be used, as in the
+                    non-normative listing of
+                    <xref target="escaped-critical-claim-example"/>.
+
+                    <figure anchor="escaped-critical-claim-example"
+                            title="Example of Escaping the JSON Pointer used to Refer to a Critical Claim with a Name Containing a Slash">
+                        <artwork>
+                            <![CDATA[
+{
+    "crit" : ["/access_token/https:~1~1example.com~1claims1"],
+    "access_token" : {
+        "https://exmaple.com/claim1" : null,
+    }
+}]]>
+                        </artwork>
+                    </figure>
+                </t>
+            </section>
+        </section>
+
+        <section title="Obtaining Authorization"
+                 anchor="obtaining-authorization">
+            <t>
+                As stated in Section 4 of <xref target="RFC6749"/>, a request
+                for an Access Token requires the Client to obtain authorization
+                from the Resource Owner. As described there and above, this
+                can be done using various grant types. To make a request for
+                certain Claims, the <spanx style="verb">claims</spanx> request
+                parameter defined herein is used when requesting an
+                authorization code, implicit, resource owner password
+                credentials, or client credentials grant type. The
+                <spanx style="verb">claims</spanx> request parameter MAY also
+                be used with additional grant type that use the extension
+                mechanism defined in Section 4.5 of <xref target="RFC6749"/>
+                if so profiled by some other specification.
+            </t>
+
+            <section title="Authorization Code Grant"
+                     anchor="authorization-code-grant">
+                <section title="Authorization Request"
+                         anchor="authorization-code-grant-authorization-request">
+                    <t>
+                        When a Client seeks to obtain authorization using
+                        the authorization code grant type defined in
+                        Section 4.1 of <xref target="RFC6749"/>, the client
+                        MAY include the following additional query
+                        component that it sends to the authorization
+                        endpoint URI:
+
+                        <list hangIndent="8" style="hanging">
+                                <t hangText="claims">
+                                    <vspace/>
+                                    OPTIONAL. A Claims Request Object as
+                                    described in
+                                    <xref target="claims-request-object"/>.
+                                </t>
+                        </list>
+
+                        The value of this parameter must use the
+                        <spanx style="verb">application/x-www-form-urlencoded</spanx>
+                        format defined in Appendix B of
+                        <xref target="RFC6749"/>.
+                    </t>
+                </section>
+
+                <section title="Error Response"
+                         anchor="authorization-code-grant-error-response">
+                    <t>
+                        If the Authorization Server understands the
+                        <spanx style="verb">claims</spanx> request
+                        parameter but does not support it, it MUST
+                        redirect the user-agent of the Resource Owner to
+                        the Client's redirection endpoint as described in
+                        Section 4.1.2.1 of <xref target="RFC6749"/> with
+                        one of the following
+                        <spanx style="verb">error</spanx> values:
+
+                        <list hangIndent="8" style="hanging">
+                            <t hangText="claims_not_supported">
+                                <vspace/>
+                                The Authorization Server does not support
+                                the <spanx style="verb">claims</spanx>
+                                request parameter, and the Client should
+                                not use it when requesting authorization.
+                            </t>
+
+                            <t hangText="invalid_request">
+                                <vspace/>
+                                The Authorization Server MAY use this less
+                                descriptive error code to indicate that
+                                the claims request parameter is not
+                                accepted. It is RECOMMENDED to use
+                                <spanx style="verb">claims_not_supported</spanx>
+                                instead, however.
+                            </t>
+
+                            <t hangText="invalid_claim">
+                                <vspace/>
+                                When a Client makes a request for a
+                                Critical Claim, and the Authorization
+                                Server cannot assert such a claim because
+                                it is invalid, unknown, or malformed, this
+                                error results.
+                            </t>
+                        </list>
+                    </t>
+                </section>
+
+                <section title="Access Token Response"
+                         anchor="authorization-code-grant-access-token-response">
+                    <t>
+                        In a non-error case, the Authorization Server MAY
+                        include details about the Claims that the Client
+                        is authorized for. This is done by augmenting the
+                        response defined in Section 4.1.4 of
+                        <xref target="RFC6749"/>. In particular, the
+                        Authorization Server MAY include the following
+                        response member in the JSON object returned from
+                        the token endpoint:
+
+                        <list style="hanging" hangIndent="8">
+                            <t hangText="claims">
+                                <vspace/>
+                                OPTIONAL, if identical to the claims
+                                requested by the client; otherwise,
+                                REQUIRED. The space-separated Claim Names
+                                granted by the Resource Owner which denote
+                                the scope of the access token.
+                            </t>
+                        </list>
+                    </t>
+                </section>
+            </section>
+
+            <section title="Implicit Flow" anchor="implicit-flow">
+                <section title="Authorization Request"
+                         anchor="implicit-flow-authorization-request">
+                    <t>
+                        When a Client seeks to obtain authorization using
+                        the implicit grant type defined in Section 4.2 of
+                        <xref target="RFC6749"/>, the client MAY include
+                        the following additional query component that it
+                        sends to the authorization endpoint URI:
+
+                        <list hangIndent="8" style="hanging">
+                            <t hangText="claims">
+                                <vspace/>
+                                OPTIONAL. A Claims Request Object as
+                                described in
+                                <xref target="claims-request-object"/>.
+                            </t>
+                        </list>
+
+                        The value of this parameter must use the
+                        <spanx style="verb">application/x-www-form-urlencoded</spanx>
+                        format defined in Appendix B of
+                        <xref target="RFC6749"/>.
+                    </t>
+                </section>
+
+                <section title="Access Token Response"
+                         anchor="implicit-flow-authorization-response">
+                    <t>
+                        In a non-error case, the Authorization Server MAY
+                        include details about the Claims that the Client is
+                        authorized for. This is done by augmenting the
+                        response defined in Section 4.2.2 of
+                        <xref target="RFC6749"/>. In particular, the
+                        Authorization Server MAY include the following
+                        response parameter included on the fragment
+                        component of the redirection URI:
+
+                        <list style="hanging" hangIndent="8">
+                            <t hangText="claims">
+                                <vspace/>
+                                OPTIONAL, if identical to the claims
+                                requested by the client; otherwise,
+                                REQUIRED. The space-separated Claim Names
+                                granted by the Resource Owner which denote
+                                the scope of the access token.
+                            </t>
+                        </list>
+                    </t>
+                </section>
+
+                <section title="Error Response"
+                         anchor="implicit-flow-error-response">
+                    <t>
+                        If the Authorization Server understands the
+                        <spanx style="verb">claims</spanx> request
+                        parameter but does not support it, it MUST
+                        redirect the user-agent of the Resource Owner to
+                        the Client's redirection endpoint as described in
+                        Section 4.2.2.1 of <xref target="RFC6749"/> with
+                        one of the following
+                        <spanx style="verb">error</spanx> values:
+
+                        <list style="hanging" hangIndent="8">
+                            <t hangText="claims_not_supported">
+                                <vspace/>
+                                The Authorization Server does not support
+                                the <spanx style="verb">claims</spanx>
+                                request parameter, and the Client should
+                                not use it when requesting authorization.
+                            </t>
+
+                            <t hangText="invalid_request">
+                                <vspace/>
+                                The Authorization Server MAY use this less
+                                descriptive error code to indicate that the
+                                claims request parameter is not accepted.
+                                It is RECOMMENDED to use
+                                <spanx style="verb">claims_not_supported</spanx>
+                                instead, however.
+                            </t>
+
+                            <t hangText="invalid_claim">
+                                <vspace/>
+                                When a Client makes a request for a
+                                Critical Claim, and the Authorization
+                                Server cannot assert such a claim because
+                                it is invalid, unknown, or malformed, this
+                                error results.
+                            </t>
+                        </list>
+                    </t>
+                </section>
+            </section>
+
+            <section title="Resource Owner Password Credentials Grant"
+                     anchor="resource-owner-password-credentials-grant">
+                <section title="Access Token Request"
+                         anchor="ropc-access-token-request">
+                    <t>
+                        When a Client seeks to obtain authorization using
+                        the resource owner password credentials grant type
+                        defined in Section 4.3 of <xref target="RFC6749"/>,
+                        the Client MAY include the following additional
+                        parameter using the
+                        <spanx style="verb">application/x-www-form-urlencoded</spanx>
+                        format per Appendix B of <xref target="RFC6749"/>
+                        with a character encoding of UTF-8 in the HTTP
+                        request entity-body:
+
+                        <list style="hanging" hangIndent="8">
+                            <t hangText="claims">
+                                <vspace/>
+                                OPTIONAL. A Claims Request Object as
+                                described in
+                                <xref target="claims-request-object"/>.
+                            </t>
+                        </list>
+                    </t>
+                </section>
+
+                <section title="Access Token Response"
+                         anchor="ropc-access-token-response">
+                    <t>
+                        In a non-error case, the Authorization Server MAY
+                        include details about the Claims that the Client is
+                        authorized for. This is done by augmenting the
+                        response defined in Section 4.3.3 of
+                        <xref target="RFC6749"/>. In particular, the
+                        Authorization Server MAY include the following
+                        response member in the JSON object returned from
+                        the token endpoint:
+
+                        <list hangIndent="8" style="hanging">
+                            <t hangText="claims">
+                                <vspace/>
+                                OPTIONAL, if identical to the claims
+                                requested by the client; otherwise,
+                                REQUIRED. The space-separated Claim Names
+                                the Client is authorized for which denote
+                                the scope of the access token.
+                            </t>
+                        </list>
+
+                        If the request is invalid due to the value of this
+                        parameter, the Authorization Server returns an
+                        error with one of the following error codes:
+
+                        <list style="hanging" hangIndent="8">
+                            <t hangText="claims_not_supported">
+                                <vspace/>
+                                The Authorization Server does not support
+                                the <spanx style="verb">claims</spanx>
+                                request parameter, and the Client should
+                                not use it when requesting an access token.
+                            </t>
+
+                            <t hangText="invalid_request">
+                                <vspace/>
+                                The Authorization Server MAY use this less
+                                descriptive error code to indicate that
+                                the claims request parameter is not
+                                accepted. It is RECOMMENDED to use
+                                <spanx style="verb">claims_not_supported</spanx>
+                                instead, however.
+                            </t>
+
+                            <t hangText="invalid_claim">
+                                <vspace/>
+                                When a Client makes a request for a
+                                Critical Claim, and the Authorization
+                                Server cannot assert such a claim because
+                                it is invalid, unknown, or malformed, this
+                                error results.
+                            </t>
+                        </list>
+                    </t>
+                </section>
+            </section>
+
+            <section title="Client Credentials Grant"
+                     anchor="client-credentials-grant">
+                <section title="Access Token Request"
+                         anchor="cc-access-token-request">
+                    <t>
+                        When a Client seeks to obtain authorization using
+                        the client credentials grant type defined in
+                        Section 4.4 of <xref target="RFC6749"/>, the Client
+                        MAY include the following additional parameter
+                        using the
+                        <spanx style="verb">application/x-www-form-urlencoded</spanx>
+                        format per Appendix B of <xref target="RFC6749"/>
+                        with a character encoding of UTF-8 in the HTTP
+                        request entity-body:
+
+                        <list hangIndent="8" style="hanging">
+                            <t hangText="claims">
+                                <vspace/>
+                                OPTIONAL. A Claims Request Object as
+                                described in  <xref
+                                    target="claims-request-object"/>.
+                            </t>
+                        </list>
+                    </t>
+                </section>
+
+                <section title="Access Token Response"
+                         anchor="cc-access-token-response">
+                    <t>
+                        In a non-error case, the Authorization Server MAY
+                        include details about the Claims that the Client
+                        is authorized for. This is done by augmenting the
+                        response defined in Section 4.4.3 of
+                        <xref target="RFC6749"/>. In particular, the
+                        Authorization Server MAY include the following
+                        response member in the JSON object returned from
+                        the token endpoint:
+
+                        <list hangIndent="8" style="hanging">
+                            <t hangText="claims">
+                                <vspace/>
+                                OPTIONAL, if identical to the claims
+                                requested by the Client; otherwise,
+                                REQUIRED. The space-separated Claim Names
+                                the Client is authorized for which denote
+                                the scope of the access token.
+                            </t>
+                        </list>
+
+                        If the request is invalid due to the value of this
+                        parameter, the Authorization Server returns an
+                        error with one of the following error codes:
+
+                        <list hangIndent="8" style="hanging">
+                            <t hangText="claims_not_supported">
+                                <vspace/>
+                                The Authorization Server does not support
+                                the <spanx style="verb">claims</spanx>
+                                request parameter, and the Client should
+                                not use it when requesting an access token.
+                            </t>
+
+                            <t hangText="invalid_request">
+                                <vspace/>
+                                The Authorization Server MAY use this less
+                                descriptive error code to indicate that
+                                the claims request parameter is not
+                                accepted. It is RECOMMENDED to use
+                                <spanx style="verb">claims_not_supported</spanx>
+                                instead, however.
+                            </t>
+
+                            <t hangText="invalid_claim">
+                                <vspace/>
+                                When a Client makes a request for a
+                                Critical Claim, and the Authorization
+                                Server cannot assert such a claim because
+                                it is invalid, unknown, or malformed, this
+                                error results.
+                            </t>
+                        </list>
+                    </t>
+                </section>
+            </section>
+        </section>
+
+        <section title="Token Refresh" anchor="token-refresh">
+            <t>TBD</t>
+        </section>
+
+        <section title="Token Exchange" anchor="token-exhange">
+            <t>TBD</t>
+        </section>
+
+        <section title="Token Introspection" anchor="token-introspection">
+            <t>TBD</t>
+        </section>
+
+        <section title="Requesting Claims for a Particular Protected Resource">
+            <t>TBD</t>
+        </section>
+
+        <section title="Authorization Server Metadata" anchor="authorization-server-metadata">
+            <t>
+                An Authorization Server that supports the
+                <spanx style="verb">claims</spanx> request parameter SHOULD
+                declare this fact by including the following property in the
+                Authorization Server metadata response
+                (<xref target="RFC8414"/>):
+
+                <list style="hanging">
+                    <t hangText="claims_parameter_supported">
+                        <vspace/>
+                        OPTIONAL. A boolean value indicating that the
+                        Authorization Server supports the
+                        <spanx style="verb">claims</spanx> request parameter or
+                        not. A value of <spanx style="verb">true</spanx>
+                        indicates that it is supported. A value of
+                        <spanx style="verb">false</spanx>, a
+                        <spanx style="verb">null</spanx> value, or the absence
+                        of the property means that the
+                        <spanx style="verb">claims</spanx> request parameter is
+                        not supported by the Authorization Server.
+                    </t>
+
+                    <t hangText="critical_claims_supported">
+                        <vspace/>
+                        OPTIONAL. A boolean value indicating that the
+                        Authorization Server supports the possibility for the
+                        Client to indicate that certain parts of a Claims
+                        Request Object MUST be understood by the Authorization
+                        Server. A value of <spanx style="verb">false</spanx>,
+                        a <spanx style="verb">null</spanx> value, or the
+                        absence of this member means that the Authorization
+                        Server MAY not support this interaction pattern, and
+                        the Client MUST NOT assume that it does.
+                    </t>
+                </list>
+
+                If the Authorization Server returns a value of
+                <spanx style="verb">false</spanx> for
+                <spanx style="verb">claims_parameter_supported</spanx> and
+                true for<spanx style="verb">critical_claims_supported</spanx>,
+                the interpretation by the Client is undefined. It is
+                RECOMMENDED that the Client assume that the Authorization
+                Server is misconfigured and that it not attempt to request
+                claims in a manner defined by this specification.
+            </t>
+
+            <t>
+                A non-normative example of an Authorization Server metadata
+                response which indicates that the
+                <spanx style="verb">claims</spanx> request parameter is
+                supported is shown in
+                <xref target="authorization-server-metadata-example"/>.
+
+                <figure anchor="authorization-server-metadata-example"
+                        title="Example of Metadata of an Authorization Server
+                        that Supports the Claims Request Parameter and
+                        Critical Claims">
+                    <artwork>
+                        <![CDATA[
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "issuer" :
+        "https://server.example.com",
+    "authorization_endpoint" :
+        "https://server.example.com/authorize",
+    "token_endpoint" :
+        "https://server.example.com/token",
+    "token_endpoint_auth_methods_supported" :
+        ["client_secret_basic", "private_key_jwt"],
+    "token_endpoint_auth_signing_alg_values_supported" :
+        ["RS256", "ES256"],
+    "userinfo_endpoint" :
+        "https://server.example.com/userinfo",
+    "jwks_uri" :
+        "https://server.example.com/jwks.json",
+    "registration_endpoint" :
+        "https://server.example.com/register",
+    "scopes_supported" :
+        ["openid", "profile", "email", "address", "phone",
+         "offline_access"],
+    "response_types_supported" :
+        ["code", "code token"],
+    "service_documentation" :
+        "http://server.example.com/service_documentation.html",
+    "ui_locales_supported" :
+        ["en-US", "en-GB", "en-CA", "fr-FR", "fr-CA"],
+    "claims_parameter_supported" : true,
+    "critical_claims_supported" : true
+}]]>
+                    </artwork>
+                </figure>
+
+                Note the last two members in particular.
+            </t>
+        </section>
+
+        <section title="Security Considerations" anchor="security-considerations">
+            <t>TBD</t>
+        </section>
+
+        <section title="Privacy Considerations" anchor="privacy-considerations">
+            <t>TBD</t>
+        </section>
+
+        <section title="IANA Considerations" anchor="iana-considerations">
+            <t>TBD</t>
+        </section>
+    </middle>
+
+    <back>
+        <references title="Normative References">
+            <reference anchor='RFC2119' target='https://www.rfc-editor.org/info/rfc2119'>
+                <front>
+                    <title>Key words for use in RFCs to Indicate Requirement Levels</title>
+                    <author initials='S.' surname='Bradner' fullname='S. Bradner'><organization /></author>
+                    <date year='1997' month='March' />
+                    <abstract><t>In many standards track documents several words are used to signify the requirements in the specification.  These words are often capitalized. This document defines these words as they should be interpreted in IETF documents.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t></abstract>
+                </front>
+                <seriesInfo name='BCP' value='14'/>
+                <seriesInfo name='RFC' value='2119'/>
+                <seriesInfo name='DOI' value='10.17487/RFC2119'/>
+            </reference>
+            <reference anchor='RFC6749' target='https://www.rfc-editor.org/info/rfc6749'>
+                <front>
+                    <title>The OAuth 2.0 Authorization Framework</title>
+                    <author initials='D.' surname='Hardt' fullname='D. Hardt' role='editor'>
+                        <organization/>
+                    </author>
+                    <date year='2012' month='October'/>
+                    <abstract>
+                        <t>The OAuth 2.0 authorization framework enables a third-party application to obtain limited
+                            access to an HTTP service, either on behalf of a resource owner by orchestrating an approval
+                            interaction between the resource owner and the HTTP service, or by allowing the third-party
+                            application to obtain access on its own behalf. This specification replaces and obsoletes
+                            the OAuth 1.0 protocol described in RFC 5849. [STANDARDS-TRACK]
+                        </t>
+                    </abstract>
+                </front>
+                <seriesInfo name='RFC' value='6749'/>
+                <seriesInfo name='DOI' value='10.17487/RFC6749'/>
+            </reference>
+            <reference anchor='RFC6901' target='https://www.rfc-editor.org/info/rfc6901'>
+                <front>
+                    <title>JavaScript Object Notation (JSON) Pointer</title>
+                    <author initials='P.' surname='Bryan' fullname='P. Bryan' role='editor'><organization /></author>
+                    <author initials='K.' surname='Zyp' fullname='K. Zyp'><organization /></author>
+                    <author initials='M.' surname='Nottingham' fullname='M. Nottingham' role='editor'><organization /></author>
+                    <date year='2013' month='April' />
+                    <abstract><t>JSON Pointer defines a string syntax for identifying a specific value within a JavaScript Object Notation (JSON) document.</t></abstract>
+                </front>
+                <seriesInfo name='RFC' value='6901'/>
+                <seriesInfo name='DOI' value='10.17487/RFC6901'/>
+            </reference>
+            <reference anchor='RFC7519' target='https://www.rfc-editor.org/info/rfc7519'>
+                <front>
+                    <title>JSON Web Token (JWT)</title>
+                    <author initials='M.' surname='Jones' fullname='M. Jones'><organization /></author>
+                    <author initials='J.' surname='Bradley' fullname='J. Bradley'><organization /></author>
+                    <author initials='N.' surname='Sakimura' fullname='N. Sakimura'><organization /></author>
+                    <date year='2015' month='May' />
+                    <abstract><t>JSON Web Token (JWT) is a compact, URL-safe means of representing claims to be transferred between two parties.  The claims in a JWT are encoded as a JSON object that is used as the payload of a JSON Web Signature (JWS) structure or as the plaintext of a JSON Web Encryption (JWE) structure, enabling the claims to be digitally signed or integrity protected with a Message Authentication Code (MAC) and/or encrypted.</t></abstract>
+                </front>
+                <seriesInfo name='RFC' value='7519'/>
+                <seriesInfo name='DOI' value='10.17487/RFC7519'/>
+            </reference>
+            <reference anchor='RFC8259' target='https://www.rfc-editor.org/info/rfc8259'>
+                <front>
+                    <title>The JavaScript Object Notation (JSON) Data Interchange Format</title>
+                    <author initials='T.' surname='Bray' fullname='T. Bray' role='editor'><organization /></author>
+                    <date year='2017' month='December' />
+                    <abstract><t>JavaScript Object Notation (JSON) is a lightweight, text-based, language-independent data interchange format.  It was derived from the ECMAScript Programming Language Standard.  JSON defines a small set of formatting rules for the portable representation of structured data.</t><t>This document removes inconsistencies with other specifications of JSON, repairs specification errors, and offers experience-based interoperability guidance.</t></abstract>
+                </front>
+                <seriesInfo name='STD' value='90'/>
+                <seriesInfo name='RFC' value='8259'/>
+                <seriesInfo name='DOI' value='10.17487/RFC8259'/>
+            </reference>
+            <reference anchor='RFC8414' target='https://www.rfc-editor.org/info/rfc8414'>
+                <front>
+                    <title>OAuth 2.0 Authorization Server Metadata</title>
+                    <author initials='M.' surname='Jones' fullname='M. Jones'><organization /></author>
+                    <author initials='N.' surname='Sakimura' fullname='N. Sakimura'><organization /></author>
+                    <author initials='J.' surname='Bradley' fullname='J. Bradley'><organization /></author>
+                    <date year='2018' month='June' />
+                    <abstract><t>This specification defines a metadata format that an OAuth 2.0 client can use to obtain the information needed to interact with an OAuth 2.0 authorization server, including its endpoint locations and authorization server capabilities.</t></abstract>
+                </front>
+                <seriesInfo name='RFC' value='8414'/>
+                <seriesInfo name='DOI' value='10.17487/RFC8414'/>
+            </reference>
+
+<!--            <reference anchor="IANA.OAuth.Parameters" target="http://www.iana.org/assignments/oauth-parameters">-->
+<!--                <front>-->
+<!--                    <title>OAuth Parameters</title>-->
+<!--                    <author>-->
+<!--                        <organization>IANA</organization>-->
+<!--                    </author>-->
+<!--                    <date/>-->
+<!--                </front>-->
+<!--            </reference>-->
+        </references>
+
+        <references title="Informative References">
+            <reference anchor="OpenID.Core" target="http://openid.net/specs/openid-connect-core-1_0.html">
+                <front>
+                    <title>OpenID Connect Core 1.0</title>
+
+                    <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
+                        <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
+                    </author>
+
+                    <author fullname="John Bradley" initials="J." surname="Bradley">
+                        <organization abbrev="Ping Identity">Ping Identity</organization>
+                    </author>
+
+                    <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
+                        <organization abbrev="Microsoft">Microsoft</organization>
+                    </author>
+
+                    <author fullname="Breno de Medeiros" initials="B." surname="de Medeiros">
+                        <organization abbrev="Google">Google</organization>
+                    </author>
+
+                    <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
+                        <organization abbrev="Salesforce">Salesforce</organization>
+                    </author>
+
+                    <date day="25" month="February" year="2014"/>
+                </front>
+
+                <seriesInfo name="OpenID Foundation" value="Standards" />
+            </reference>
+
+            <reference anchor='I-D.ietf-oauth-token-exchange'>
+                <front>
+                    <title>OAuth 2.0 Token Exchange</title>
+
+                    <author initials='M' surname='Jones' fullname='Michael Jones'>
+                        <organization />
+                    </author>
+
+                    <author initials='A' surname='Nadalin' fullname='Anthony Nadalin'>
+                        <organization />
+                    </author>
+
+                    <author initials='B' surname='Campbell' fullname='Brian Campbell'>
+                        <organization />
+                    </author>
+
+                    <author initials='J' surname='Bradley' fullname='John Bradley'>
+                        <organization />
+                    </author>
+
+                    <author initials='C' surname='Mortimore' fullname='Chuck Mortimore'>
+                        <organization />
+                    </author>
+
+                    <date month='July' day='21' year='2019' />
+                </front>
+
+                <seriesInfo name='Internet-Draft'
+                            value='draft-ietf-oauth-token-exchange-19' />
+
+                <format type='TXT'
+                        target='http://www.ietf.org/internet-drafts/draft-ietf-oauth-token-exchange-19.txt' />
+            </reference>
+        </references>
+
+        <section anchor="Acknowledgements" title="Acknowledgements">
+            <t>
+                The following individuals contributed ideas, feedback, and wording to this specification:
+            </t>
+
+            <t>
+                Mark Dobrinic, Jacob Ideskog
+            </t>
+        </section>
+
+        <section title="Document History" anchor="document-history">
+            <?rfc subcompact="yes"?>
+            <t>
+                [[ to be removed by the RFC editor before publication as an RFC ]]
+            </t>
+            <t>
+                -00
+                <list style='symbols'>
+                    <t>
+                        Initial draft.
+                    </t>
+                </list>
+            </t>
+        </section>
+    </back>
+</rfc>
