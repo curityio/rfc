@@ -21,7 +21,6 @@
 
             <address>
                 <email>travis@curity.io</email>
-                <uri>http://travisspencer.com/</uri>
             </address>
         </author>
 
@@ -182,8 +181,15 @@
             </section>
 
             <section title="Terminology" anchor="terminology">
-                <t>In addition to the terms defined in the references
-                    specifications, this document uses the following terms:
+                <t>
+                    This specification uses the terms "Access Token",
+                    "Authorization Code", "Authorization Endpoint",
+                    "Authorization Grant", "Authorization Server", "Client",
+                    "Client Secret", "Grant Type", "Redirection URI",
+                    "Refresh Token", "Resource Owner", "Resource Server",
+                    and "Token Endpoint" defined by <xref target="RFC6749"/>;
+                    "Claim", "Claim Name", and "Claim Value" defined by
+                    <xref target="RFC7519"/>; and the following defined herein:
 
                     <list style="hanging">
                         <t hangText="Claims Sink">
@@ -979,7 +985,7 @@
                         <spanx style="verb">claims</spanx> request
                         parameter but does not support it, it MUST
                         redirect the user-agent of the Resource Owner to
-                        the Client's redirection endpoint as described in
+                        the Client's redirection URI as described in
                         Section 4.2.2.1 of <xref target="RFC6749"/> with
                         one of the following
                         <spanx style="verb">error</spanx> values:
