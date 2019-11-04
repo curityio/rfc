@@ -186,7 +186,7 @@
                     This specification uses the terms "Access Token",
                     "Authorization Code", "Authorization Endpoint",
                     "Authorization Grant", "Authorization Server", "Client",
-                    "Client Secret", "Grant Type", "Redirection URI",
+                    "Grant Type", "Redirection URI",
                     "Refresh Token", "Resource Owner", "Resource Server",
                     and "Token Endpoint" defined by <xref target="RFC6749"/>;
                     "Claim", "Claim Name", and "Claim Value" defined by
@@ -355,7 +355,9 @@
                         </artwork>
                     </figure>
 
-                    Downscoping in this flow is achieved when the client requests a subset of the claims authorized by the resource owner.
+                    Downscoping in this flow is achieved when the client
+                    requests a subset of the claims authorized by the resource
+                    owner.
                 </t>
 
                 <t>
@@ -366,9 +368,12 @@
                     The client MAY also send a claim value in the claim value
                     query object(s) of the request. When it does, the
                     authorization server SHOULD consider this request when
-                    asserting the claim; if it is a critical claim, the
-                    requested claim value MUST be asserted or an error MUST
-                    result.
+                    asserting the claim but it MAY return an error if asserting
+                    a different claim value is against its policy or exceeds the
+                    authorization granted by the resource owner. If it is a
+                    critical claim, the requested claim value MUST be asserted
+                    or an error MUST result if the authorization server supports
+                    critical claims.
                 </t>
 
                 <t>
