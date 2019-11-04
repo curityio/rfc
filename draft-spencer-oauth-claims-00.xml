@@ -1519,7 +1519,20 @@
         </section>
 
         <section title="Token Introspection" anchor="token-introspection">
-            <t>TBD</t>
+            <t>
+                This specification defines an additional top-level member in
+                the JSON <xref target="RFC8259"/> object of the Authorization
+                Server's introspection endpoint response as stipulated in
+                Section 2.2 of <xref target="RFC7662"/>.
+
+                <list hangIndent="8" style="hanging">
+                    <t hangText="claims">
+                        <vspace/>
+                        OPTIONAL. The space-separated Claim Names granted by the Resource
+                        Owner which denote the scope of the access token.
+                    </t>
+                </list>
+            </t>
         </section>
 
         <section title="Requesting Claims for a Particular Protected Resource">
