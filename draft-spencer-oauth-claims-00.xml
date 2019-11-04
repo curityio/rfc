@@ -126,12 +126,12 @@
 
             <t>
                 This specification also stipulates how the authorized claim
-                Names are returns from an authorization request and the result
+                names are returns from an authorization request and the result
                 of introspecting a token.
             </t>
 
             <t>
-                This specification is designed to be compatible with the OpenID
+                This specification is designed to be compatible with OpenID
                 Connect <xref target="OpenID.Core"/> but does not require the
                 authorization server to support that protocol.
             </t>
@@ -299,6 +299,7 @@
                         <t>The authorization request (A) is performed
                             indirectly via the authorization server and not
                             directly to the resource owner.
+							<i>MD: what does this mean? isn't this following rfc6749?</i>
                         </t>
                         <t>During the authorization request (A), the client
                             includes a claims request object as the
@@ -337,7 +338,7 @@
                     authorization server when it presents a refresh token to
                     the token endpoint. This update to the flow wherein a client
                     refreshes an access token to narrow the scope of access to
-                    a particular set of claims as shown in
+                    a particular set of claims is shown in
                     <xref target="refresh-token-flow"/>.
 
                     <figure title="Narrowing the Scope of Access to a
@@ -562,7 +563,7 @@
                 <t>
                     Other members of the claim value query object MAY be defined
                     to provide additional information about the requested
-                    claims. Any members of the claims value query object that is
+                    claims. Any members of the claims value query object that are
                     not understood by the authorization server MUST be ignored.
                 </t>
 
@@ -577,7 +578,7 @@
                             <![CDATA[
 {
     "access_token" : {
-        "https://exmaple.com/claim1" : null,
+        "https://example.com/claim1" : null,
         "fname" : {
             "value" : "John"
         }
@@ -843,7 +844,7 @@
                     the authorization server is unable to assert a critical
                     claim (and it supports critical claims), it MUST return the
                     same error. If a critical claim is requested with a certain
-                    value (as in the following example), the uthorization
+                    value (as in the following example), the authorization
                     server MUST assert the claim with that exact claim value. If
                     it's not able to (e.g., because the resource owner does not
                     have an attribute with that particular value), the
@@ -908,9 +909,9 @@
                         <artwork>
                             <![CDATA[
 {
-    "crit" : ["/access_token/https:~1~1example.com~1claims1"],
+    "crit" : ["/access_token/https:~1~1example.com~1claim1"],
     "access_token" : {
-        "https://exmaple.com/claim1" : null,
+        "https://example.com/claim1" : null,
     }
 }]]>
                         </artwork>
@@ -939,7 +940,7 @@
                             <![CDATA[
 {
     "?" : {
-        "https://exmaple.com/claim1" : null,
+        "https://example.com/claim1" : null,
     }
 }]]>
                         </artwork>
@@ -1047,10 +1048,37 @@
                         format defined in Appendix B of
                         <xref target="RFC6749"/>.
                     </t>
+					
+					<t>
+						A non-normative example of a request to the authorization 
+						endpoint, with URL-encoded value for the claims parameter, 
+						is shown in figure <xref target="example-authorize-request-with-claims"/>:
+	                    <figure anchor="example-authorize-request-with-claims"
+	                            title="Non-normative example of using the claims parameter to the authorize endpoint">
+						
+								<artwork>
+                            <![CDATA[
+https://as.example.com/authorize?client_id=client-one
+	&response_type=code
+	&claims=%7B%0A%20%20%22access_token%22%20%3A%20%7B%20%0A
+		%20%20%20%20%22https%3A%2F%2Fexample.com%2Fclaim1%22%20%3A
+		%20null%2C%0A%20%20%20%20%22fname%22%20%3A%20%7B%0A%20%20
+		%20%20%20%20%22value%22%20%3A%20%22John%22%0A%20%20%20%20
+		%7D%0A%20%20%7D%0A%7D
+]]>
+							</artwork>
+						</figure>
+						Line breaks and indentation are only added for readability.
+					</t>
                 </section>
 
                 <section title="Error Response"
                          anchor="authorization-code-grant-error-response">
+                    <t>
+                        <i>MD: This paragraph might be generalized, so it can
+                            be referred to from all flows (code, implicit, ropc, 
+                            cc, refresh); those could be the same IINM</i>
+                    </t>
                     <t>
                         If the authorization server understands the
                         <spanx style="verb">claims</spanx> request
@@ -1075,7 +1103,8 @@
                                 The authorization server MAY use this
                                 less-descriptive error code to indicate that
                                 the claims request parameter value is not
-                                accepted. It is, however, RECOMMENDED that the
+                                accepted, e.g. because it is syntactically 
+                                incorrect. It is, however, RECOMMENDED that the
                                 authorization server return
                                 <spanx style="verb">claims_not_supported</spanx>
                                 or <spanx style="verb">invalid_claims</spanx> as
@@ -1118,7 +1147,8 @@
                                 requested by the client; otherwise,
                                 REQUIRED. The space-separated claim names
                                 granted by the resource owner which denote
-                                the scope of the access token.
+                                the scope of the access token that is
+                                returned in the same response.
                             </t>
                         </list>
                     </t>
@@ -1170,7 +1200,8 @@
                                 requested by the client; otherwise,
                                 REQUIRED. The space-separated claim names
                                 granted by the resource owner which denote
-                                the scope of the access token.
+                                the scope of the access token that is
+                                returned in the same response
                             </t>
                         </list>
                     </t>
@@ -1443,7 +1474,7 @@
                         If the client includes a claims request object in the
                         request, it SHOULD ensure that the claim names in the
                         claims value query object(s) are ones that were authorized
-                        by the resource owner. It can do this by remember what
+                        by the resource owner. It can do this by remembering what
                         was originally requested and/or from the authorization
                         server's response to its authorization request which
                         will include the list of claim names if they differ from
