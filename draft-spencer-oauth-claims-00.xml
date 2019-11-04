@@ -319,7 +319,73 @@
             </section>
 
             <section title="Refresh Request" anchor="refresh-request">
-                <t>TBD</t>
+                <t>
+                    As described in Section 1.5 of <xref target="RFC6749"/> and
+                    further explained in section 6 thereof, a Client that was
+                    issued a Refresh Token MAY use this to narrow the scope of
+                    access for an access token. It does this by sending the
+                    <spanx style="verb">scope</spanx> request parameter in step
+                    (G) of Figure 2 of <xref target="RFC6749"/>. At times, the
+                    Client might want to be more explicit about which Claims
+                    should be included in the refreshed Access Token or about
+                    where those Claims should be asserted.
+                </t>
+
+                <t>
+                    To address this need, this document defines an additional
+                    input parameter that the Client may send to the
+                    Authorization Server when it presents a Refresh Token to
+                    the token endpoint.
+                </t>
+
+                <t>
+                    This update to the flow wherein a Client refreshes an
+                    access token to narrow the scope of access to a particular
+                    set of Claims is shown in
+                    <xref target="refresh-token-flow"/>.
+
+                    <figure title="Narrowing the Scope of Access to a
+                    Particular Set of Claims" anchor="refresh-token-flow">
+                        <artwork type="ascii-art"><![CDATA[
++--------+                               +---------------+
+| Client |--(A)----- Refresh Token ----->| Authorization |
+|        |     (including claims request |    Server     |
+|        |              parameter)       |               |
+|        |                               |               |
+|        |<-(B)------ Access Token ------|               |
+|        |    (including granted claims) |               |
++--------+     & Optional Refresh Token  +---------------+
+]]>
+                        </artwork>
+                    </figure>
+                </t>
+            </section>
+
+            <section title="Token Introspection" anchor="token-introspection-response">
+                <t>
+                    <xref target="RFC7662"/> stipulates that the introspection
+                    endpoint of an Authorization Server must return a JSON
+                    <xref target="RFC8259"/> document representing the meta
+                    information surrounding the token, including its scope. This
+                    specification extends that object to include the Claims
+                    that the Resource Owner authorized the client for. This
+                    request/response interaction pattern is shown in
+                    <xref target="introspection-flow"/>.
+
+                    <figure title="Introspecting an Access Token and Obtaining Granted Claims" anchor="introspection-flow">
+                        <artwork type="ascii-art"><![CDATA[
++--------+                               +---------------+
+| Client |--(A)----- Access Token -----> | Authorization |
+|        | send to introspection endpoint|    Server     |
+|        |                               |               |
+|        |                               |               |
+|        |<-(B)------ JSON object -------|               |
+|        |    including granted claims   |               |
++--------+                               +---------------+
+]]>
+                        </artwork>
+                    </figure>
+                </t>
             </section>
 
             <section title="Token Exchange Request" anchor="token-exchange-request">
@@ -1466,6 +1532,16 @@ Content-Type: application/json
                 </front>
                 <seriesInfo name='RFC' value='7519'/>
                 <seriesInfo name='DOI' value='10.17487/RFC7519'/>
+            </reference>
+            <reference anchor='RFC7662' target='https://www.rfc-editor.org/info/rfc7662'>
+                <front>
+                    <title>OAuth 2.0 Token Introspection</title>
+                    <author initials='J.' surname='Richer' fullname='J. Richer' role='editor'><organization /></author>
+                    <date year='2015' month='October' />
+                    <abstract><t>This specification defines a method for a protected resource to query an OAuth 2.0 authorization server to determine the active state of an OAuth 2.0 token and to determine meta-information about this token. OAuth 2.0 deployments can use this method to convey information about the authorization context of the token from the authorization server to the protected resource.</t></abstract>
+                </front>
+                <seriesInfo name='RFC' value='7662'/>
+                <seriesInfo name='DOI' value='10.17487/RFC7662'/>
             </reference>
             <reference anchor='RFC8259' target='https://www.rfc-editor.org/info/rfc8259'>
                 <front>
