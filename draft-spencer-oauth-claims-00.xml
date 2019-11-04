@@ -813,7 +813,7 @@
                     capability unless it cannot. When it does, the Authorization
                     Server MUST issue any Claim denoted as critical or it MUST
                     return an error. The error must be
-                    <spanx style="verb">invalid_claim</spanx> as described below
+                    <spanx style="verb">invalid_claims</spanx> as described below
                     in Section <xref target="obtaining-authorization"/>.
                 </t>
 
@@ -835,7 +835,7 @@
                     Authorization Server does not understand any of the Claims
                     pointed to by any of the elements of this list, the
                     Authorization Server MUST return an error of
-                    <spanx style="verb">invalid_claim</spanx>. Likewise, if
+                    <spanx style="verb">invalid_claims</spanx>. Likewise, if
                     the Authorization Server is unable to assert a Critical
                     Claim (and it supports Critical Claims), it MUST return the
                     same error. If a Critical Claim is requested with a certain
@@ -844,7 +844,7 @@
                     it's not able to (e.g., because the Resource Owner does not
                     have an attribute with that particular value), the
                     Authorization Server MUST return an error with a code of
-                    <spanx style="verb">invalid_claim</spanx> unless it does
+                    <spanx style="verb">invalid_claims</spanx> unless it does
                     not support Critical Claims.
                 </t>
 
@@ -1073,11 +1073,11 @@
                                 accepted. It is, however, RECOMMENDED that the
                                 Authorization Server return
                                 <spanx style="verb">claims_not_supported</spanx>
-                                or <spanx style="verb">invalid_claim</spanx> as
+                                or <spanx style="verb">invalid_claims</spanx> as
                                 appropriate.
                             </t>
 
-                            <t hangText="invalid_claim">
+                            <t hangText="invalid_claims">
                                 <vspace/>
                                 When a Client makes a request for a Critical
                                 Claim, and the Authorization Server cannot
@@ -1200,11 +1200,11 @@
                                 It is, however, RECOMMENDED that the
                                 Authorization Server return
                                 <spanx style="verb">claims_not_supported</spanx>
-                                or <spanx style="verb">invalid_claim</spanx> as
+                                or <spanx style="verb">invalid_claims</spanx> as
                                 appropriate.
                             </t>
 
-                            <t hangText="invalid_claim">
+                            <t hangText="invalid_claims">
                                 <vspace/>
                                 When a Client makes a request for a Critical
                                 Claim, and the Authorization Server cannot
@@ -1293,11 +1293,11 @@
                                 accepted. It is, however, RECOMMENDED that the
                                 Authorization Server return
                                 <spanx style="verb">claims_not_supported</spanx>
-                                or <spanx style="verb">invalid_claim</spanx> as
+                                or <spanx style="verb">invalid_claims</spanx> as
                                 appropriate.
                             </t>
 
-                            <t hangText="invalid_claim">
+                            <t hangText="invalid_claims">
                                 <vspace/>
                                 When a Client makes a request for a Critical
                                 Claim, and the Authorization Server cannot
@@ -1386,11 +1386,11 @@
                                 accepted. It is, however, RECOMMENDED that the
                                 Authorization Server return
                                 <spanx style="verb">claims_not_supported</spanx>
-                                or <spanx style="verb">invalid_claim</spanx> as
+                                or <spanx style="verb">invalid_claims</spanx> as
                                 appropriate.
                             </t>
 
-                            <t hangText="invalid_claim">
+                            <t hangText="invalid_claims">
                                 <vspace/>
                                 When a Client makes a request for a Critical
                                 Claim, and the Authorization Server cannot
@@ -1491,11 +1491,11 @@
                                 accepted. It is, however, RECOMMENDED that the
                                 Authorization Server return
                                 <spanx style="verb">claims_not_supported</spanx>
-                                or <spanx style="verb">invalid_claim</spanx> as
+                                or <spanx style="verb">invalid_claims</spanx> as
                                 appropriate.
                             </t>
 
-                            <t hangText="invalid_claim">
+                            <t hangText="invalid_claims">
                                 <vspace/>
                                 When a Client makes a request for a Critical
                                 Claim, and the Authorization Server cannot
