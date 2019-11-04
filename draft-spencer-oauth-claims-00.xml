@@ -126,7 +126,7 @@
 
             <t>
                 This specification also stipulates how the authorized claim
-                names are returns from an authorization request and the result
+                names are returned from an authorization request and the result
                 of introspecting a token.
             </t>
 
@@ -1452,103 +1452,100 @@ Host: server.example.com
                 in a refresh request. This specification extends the
                 request and response of this flow as described in the following
                 subsections.
-
-                <section title="Token Refresh Request">
-                    <t>
-                        When performing a token refresh request, the client MAY
-                        send the following parameter using the
-                        <spanx style="verb">application/x-www-form-urlencoded</spanx>
-                        format per Appendix B of <xref target="RFC6749"/> with
-                        a character encoding of UTF-8 in the HTTP request
-                        entity-body:
-
-                        <list hangIndent="8" style="hanging">
-                            <t hangText="claims">
-                                <vspace/>
-                                OPTIONAL. A claims request object as described in
-                                <xref target="claims-request-object"/>.
-                            </t>
-                        </list>
-
-                        If the client includes a claims request object in the
-                        request, it SHOULD ensure that the claim names in the
-                        claims value query object(s) are ones that were authorized
-                        by the resource owner. It can do this by remembering what
-                        was originally requested and/or from the authorization
-                        server's response to its authorization request which
-                        will include the list of claim names if they differ from
-                        those originally requested.
-                    </t>
-                </section>
-
-                <section title="Access Refresh Response"
-                         anchor="refresh-access-token-response">
-                    <t>
-                        In a non-error case, the authorization server MAY
-                        include details about the claims that the client
-                        is authorized for. This is done by augmenting the
-                        response defined in Section 5.1 of
-                        <xref target="RFC6749"/>. In particular, the
-                        authorization server MAY include the following
-                        response member in the JSON object returned from
-                        the token endpoint:
-
-                        <list hangIndent="8" style="hanging">
-                            <t hangText="claims">
-                                <vspace/>
-                                OPTIONAL, if identical to the claims
-                                requested by the client; otherwise,
-                                REQUIRED. The space-separated claim names
-                                the client is authorized for which denote
-                                the scope of the access token that is
-                                returned in the same response.
-                            </t>
-                        </list>
-
-                        If the request is invalid due to the value of the
-                        value of the <spanx style="verb">claims</spanx>
-                        parameter, the authorization server returns an
-                        error with one of the following error codes:
-
-                        <list hangIndent="8" style="hanging">
-                            <t hangText="claims_not_supported">
-                                <vspace/>
-                                The authorization server understands but does not support
-                                the <spanx style="verb">claims</spanx>
-                                request parameter, and the client SHOULD
-                                NOT use it when requesting an access token.
-                            </t>
-
-                            <t hangText="invalid_request">
-                                <vspace/>
-                                The authorization server MAY use this
-                                less-descriptive error code to indicate that
-                                the claims request parameter value is not
-                                accepted, e.g., because it is syntactically
-                                incorrect. It is, however, RECOMMENDED that the
-                                authorization server return
-                                <spanx style="verb">claims_not_supported</spanx>
-                                or <spanx style="verb">invalid_claims</spanx> as
-                                appropriate.
-                            </t>
-
-                            <t hangText="invalid_claims">
-                                <vspace/>
-                                When a client makes a request for a critical
-                                claim, and the authorization server cannot
-                                assert such a claim because it is invalid,
-                                unknown, or malformed, this error results. If
-                                the request includes only claim names in the
-                                claims request object which are disallowed
-                                according to the authorization server's policy,
-                                this error (or the less-descriptive alternative,
-                                <spanx style="verb">invalid_request</spanx>)
-                                MUST result.
-                            </t>
-                        </list>
-                    </t>
-                </section>
             </t>
+
+            <section title="Token Refresh Request">
+                <t>
+                    When performing a token refresh request, the client MAY
+                    send the following parameter using the
+                    <spanx style="verb">application/x-www-form-urlencoded</spanx>
+                    format per Appendix B of <xref target="RFC6749"/> with
+                    a character encoding of UTF-8 in the HTTP request
+                    entity-body:
+
+                    <list hangIndent="8" style="hanging">
+                        <t hangText="claims">
+                            <vspace/>
+                            OPTIONAL. A claims request object as described in
+                            <xref target="claims-request-object"/>.
+                        </t>
+                    </list>
+
+                    If the client includes a claims request object in the
+                    request, it SHOULD ensure that the claim names in the
+                    claims value query object(s) are ones that were authorized
+                    by the resource owner. It can do this by remembering what
+                    was originally requested and/or from the authorization
+                    server's response to its authorization request which
+                    will include the list of claim names if they differ from
+                    those originally requested.
+                </t>
+            </section>
+
+            <section title="Access Refresh Response"
+                     anchor="refresh-access-token-response">
+                <t>
+                    In a non-error case, the authorization server MAY include
+                    details about the claims that the client is authorized for.
+                    This is done by augmenting the response defined in Section
+                    5.1 of<xref target="RFC6749"/>. In particular, the
+                    authorization server MAY include the following response
+                    member in the JSON object returned from the token endpoint:
+
+                    <list hangIndent="8" style="hanging">
+                        <t hangText="claims">
+                            <vspace/>
+                            OPTIONAL, if identical to the claims requested by
+                            the client; otherwise, REQUIRED. The
+                            space-separated claim names the client is
+                            authorized for which denote the scope of the access
+                            token that is returned in the same response.
+                        </t>
+                    </list>
+
+                    If the request is invalid due to the value of the value of
+                    the <spanx style="verb">claims</spanx> parameter, the
+                    authorization server returns an error with one of the
+                    following error codes:
+
+                    <list hangIndent="8" style="hanging">
+                        <t hangText="claims_not_supported">
+                            <vspace/>
+                            The authorization server understands but does not
+                            support the <spanx style="verb">claims</spanx>
+                            request parameter, and the client SHOULD NOT use
+                            it when requesting an access token.
+                        </t>
+
+                        <t hangText="invalid_request">
+                            <vspace/>
+                            The authorization server MAY use this
+                            less-descriptive error code to indicate that the
+                            claims request parameter value is not accepted,
+                            e.g., because it is syntactically incorrect. It
+                            is, however, RECOMMENDED that the authorization
+                            server return
+                            <spanx style="verb">claims_not_supported</spanx>
+                            or <spanx style="verb">invalid_claims</spanx> as
+                            appropriate.
+                        </t>
+
+                        <t hangText="invalid_claims">
+                            <vspace/>
+                            When a client makes a request for a critical claim,
+                            and the authorization server cannot assert such a
+                            claim because it is invalid, unknown, or malformed,
+                            this error results. If the request includes only
+                            claim names in the claims request object which are
+                            disallowed according to the authorization
+                            server's policy, this error (or the
+                            less-descriptive alternative,
+                            <spanx style="verb">invalid_request</spanx>)
+                            MUST result.
+                        </t>
+                    </list>
+                </t>
+            </section>
         </section>
 
         <section title="Token Exchange" anchor="token-exhange">
