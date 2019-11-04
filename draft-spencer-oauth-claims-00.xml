@@ -1596,6 +1596,14 @@ Host: server.example.com
                         not supported by the authorization server.
                     </t>
 
+                    <t hangText="claims_supported">
+                        <vspace/>
+                        RECOMMENDED. JSON array containing a list of the claim
+                        names of the Claims that the authorization server MAY
+                        be able to supply values for. Note that for privacy or
+                        other reasons, this might not be an exhaustive list.
+                    </t>
+
                     <t hangText="critical_claims_supported">
                         <vspace/>
                         OPTIONAL. A boolean value indicating that the
@@ -1663,12 +1671,13 @@ Content-Type: application/json
     "ui_locales_supported" :
         ["en-US", "en-GB", "en-CA", "fr-FR", "fr-CA"],
     "claims_parameter_supported" : true,
-    "critical_claims_supported" : true
+    "critical_claims_supported" : true,
+    "claims_supported" : ["sub", "http://example.com/monkey" ]
 }]]>
                     </artwork>
                 </figure>
 
-                Note the last two members in particular.
+                Note the last three members in particular.
             </t>
         </section>
 
