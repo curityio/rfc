@@ -276,16 +276,16 @@
                     Granted Claims" anchor="authorization-request-protocol-flow">
                     <artwork type="ascii-art"><![CDATA[
 +--------+                               +---------------+
-| Client |--(A)- Authorization Request ->| Authorization |
-|        |     (including claims request |    Server     |
-|        |              parameter)       |               |
+| Client |--(A)- Authorization request ->| Authorization |
+|        |     including claims request  |    Server     |
+|        |              parameter        |               |
 |        |                               |               |
-|        |<-(B)-- Authorization Grant ---|               |
+|        |<-(B)-- Authorization grant ---|               |
 |        |                               |               |
-|        |--(C)-- Authorization Grant -->|               |
+|        |--(C)-- Authorization grant -->|               |
 |        |                               |               |
-|        |<-(D)----- Access Token -------|               |
-+--------+    (including granted claims) +---------------+
+|        |<-(D)-Access token including --|               |
++--------+       granted claims names    +---------------+
 ]]>
                     </artwork>
                 </figure>
@@ -335,30 +335,30 @@
                     To address this need, this document defines an additional
                     input parameter that the Client may send to the
                     Authorization Server when it presents a Refresh Token to
-                    the token endpoint.
-                </t>
-
-                <t>
-                    This update to the flow wherein a Client refreshes an
-                    access token to narrow the scope of access to a particular
-                    set of Claims is shown in
+                    the token endpoint. This update to the flow wherein a Client
+                    refreshes an access token to narrow the scope of access to
+                    a particular set of Claims as shown in
                     <xref target="refresh-token-flow"/>.
 
                     <figure title="Narrowing the Scope of Access to a
                     Particular Set of Claims" anchor="refresh-token-flow">
                         <artwork type="ascii-art"><![CDATA[
 +--------+                               +---------------+
-| Client |--(A)----- Refresh Token ----->| Authorization |
-|        |     (including claims request |    Server     |
-|        |              parameter)       |               |
+| Client |--(A)----- Refresh token ----->| Authorization |
+|        |     including claims request  |    Server     |
+|        |              parameter        |               |
 |        |                               |               |
-|        |<-(B)------ Access Token ------|               |
-|        |    (including granted claims) |               |
-+--------+     & Optional Refresh Token  +---------------+
+|        |<-(B)------ Access token ------|               |
+|        | including granted claim names |               |
++--------+     & optional refresh token  +---------------+
 ]]>
                         </artwork>
                     </figure>
+
+                    Downscoping in this flow is achieved when the Client requests a subset of the Claims authorized by the Resource Owner.
                 </t>
+
+                <t>The Client MAY request to change the Claims Sink where the authorized Claims should be asserted using this flow. If the Client does so, it is RECOMMENDED that the Authorization Server accept this change baring any policy to the contrary. The Client MAY also send a Claim Value in the Claim Value Query Object(s) of the request. When it does, the Authorization Server SHOULD consider this request when asserting the Claim; if it is a Critical Claim, the requested Claim Value MUST be asserted or an error MUST result.</t>
             </section>
 
             <section title="Token Introspection" anchor="token-introspection-response">
@@ -375,16 +375,25 @@
                     <figure title="Introspecting an Access Token and Obtaining Granted Claims" anchor="introspection-flow">
                         <artwork type="ascii-art"><![CDATA[
 +--------+                               +---------------+
-| Client |--(A)----- Access Token -----> | Authorization |
+| Client |--(A)----- Access token -----> | Authorization |
 |        | send to introspection endpoint|    Server     |
 |        |                               |               |
 |        |                               |               |
 |        |<-(B)------ JSON object -------|               |
-|        |    including granted claims   |               |
-+--------+                               +---------------+
+|        |    including granted claim    |               |
++--------+             names             +---------------+
 ]]>
                         </artwork>
                     </figure>
+                </t>
+
+                <t>
+                    Using this flow, a Client will be informed about the
+                    authorized Claim Names in the same way it is informed about
+                    the scope of access by way of the
+                    <spanx style="verb">scope</spanx> response parameter. Note
+                    in particular that this response will <spanx style="emph">
+                    not</spanx> include any Claim Values.
                 </t>
             </section>
 
@@ -1227,7 +1236,8 @@
                             </t>
                         </list>
 
-                        If the request is invalid due to the value of this
+                        If the request is invalid due to the value of the value
+                        of the <spanx style="verb">claims</spanx>
                         parameter, the Authorization Server returns an
                         error with one of the following error codes:
 
@@ -1312,7 +1322,8 @@
                             </t>
                         </list>
 
-                        If the request is invalid due to the value of this
+                        If the request is invalid due to the value of the
+                        value of the <spanx style="verb">claims</spanx>
                         parameter, the Authorization Server returns an
                         error with one of the following error codes:
 
@@ -1350,7 +1361,101 @@
         </section>
 
         <section title="Token Refresh" anchor="token-refresh">
-            <t>TBD</t>
+            <t>
+                As defined in Section 6 of <xref target="RFC6749"/>, a Client
+                may be provided with a Refresh Token. When it is, it can
+                present this to the token endpoint of the Authorization Server
+                in a refresh request. This specification extends the
+                request and response of this flow as described in the following
+                subsections.
+
+                <section title="Token Refresh Request">
+                    <t>
+                        When performing a token refresh request, the Client MAY
+                        send the following parameter using the
+                        <spanx style="verb">application/x-www-form-urlencoded</spanx>
+                        format per Appendix B of <xref target="RFC6749"/> with
+                        a character encoding of UTF-8 in the HTTP request
+                        entity-body:
+
+                        <list hangIndent="8" style="hanging">
+                            <t hangText="claims">
+                                <vspace/>
+                                OPTIONAL. A Claims Request Object as described in
+                                <xref target="claims-request-object"/>.
+                            </t>
+                        </list>
+
+                        If the Client includes a Claims Request Object in the
+                        request, it SHOULD ensure that the Claim Names in the
+                        Claims Value Query Object(s) are ones that were authorized
+                        by the Resource Owner. It can do this by remember what
+                        was originally requested and/or from the Authorization
+                        Server's response to its authorization request which
+                        will include the list of Claim Names if they differ from
+                        those originally requested.
+                    </t>
+                </section>
+
+                <section title="Access Refresh Response"
+                         anchor="refresh-access-token-response">
+                    <t>
+                        In a non-error case, the Authorization Server MAY
+                        include details about the Claims that the Client
+                        is authorized for. This is done by augmenting the
+                        response defined in Section 5.1 of
+                        <xref target="RFC6749"/>. In particular, the
+                        Authorization Server MAY include the following
+                        response member in the JSON object returned from
+                        the token endpoint:
+
+                        <list hangIndent="8" style="hanging">
+                            <t hangText="claims">
+                                <vspace/>
+                                OPTIONAL, if identical to the claims
+                                requested by the Client; otherwise,
+                                REQUIRED. The space-separated Claim Names
+                                the Client is authorized for which denote
+                                the scope of the access token.
+                            </t>
+                        </list>
+
+                        If the request is invalid due to the value of the
+                        value of the <spanx style="verb">claims</spanx>
+                        parameter, the Authorization Server returns an
+                        error with one of the following error codes:
+
+                        <list hangIndent="8" style="hanging">
+                            <t hangText="claims_not_supported">
+                                <vspace/>
+                                The Authorization Server does not support
+                                the <spanx style="verb">claims</spanx>
+                                request parameter, and the Client SHOULD
+                                NOT use it when requesting an access token.
+                            </t>
+
+                            <t hangText="invalid_request">
+                                <vspace/>
+                                The Authorization Server MAY use this less
+                                descriptive error code to indicate that
+                                the claims request parameter is not
+                                accepted. It is RECOMMENDED to use
+                                <spanx style="verb">claims_not_supported</spanx>
+                                instead, however.
+                            </t>
+
+                            <t hangText="invalid_claim">
+                                <vspace/>
+                                When a Client makes a request for a
+                                Critical Claim, and the Authorization
+                                Server cannot assert such a claim because
+                                it is invalid, unknown, or malformed, this
+                                error results.
+                            </t>
+                        </list>
+                    </t>
+                </section>
+            </t>
         </section>
 
         <section title="Token Exchange" anchor="token-exhange">
