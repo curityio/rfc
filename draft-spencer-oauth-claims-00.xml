@@ -345,9 +345,11 @@
             </t>
             <t>
                 The top-level members of the Claims Request Object SHOULD
-                include at least one Claims Sink. The only specific Claims Sink
-                defined by this specification is
-                <spanx style="verb">access_token</spanx>. Additionally,
+                include at least one Claims Sink. The only specific Claims Sinks
+                defined by this specification are
+                <spanx style="verb">access_token</spanx>,
+                <spanx style="verb">*</spanx>, and
+                <spanx style="verb">?</spanx>. Additionally,
                 this specification also sets forth a mechanism by which a Client
                 may signal to the Authorization Server which Claims it prefers
                 to be included in an Access Token that it intends to furnish to
@@ -362,7 +364,7 @@
                 Server MUST be ignored.
             </t>
             <t>
-                An example of a Claims Request Object that is provided to the
+                An example of a Claims Request Object that is sent to the
                 Authorization Server as the value of the <spanx
                 style="verb">claims</spanx> request parameter provided during an
                 authorization request, refresh request or token exchange
@@ -706,15 +708,17 @@
                     can be controlled in this manner. To know if this
                     interaction pattern in supported, the Client must have a
                     priori knowledge gained by some means not defined by this
-                    specification or by the presence of a true value in the
-                    Authorization Server's
+                    specification or by the presence of a <spanx style="verb">
+                    true</spanx> value in the Authorization Server's
                     <spanx style="verb">critical_claims_supported</spanx>
-                    metadata. (See section 9 below.) An Authorization
-                    Server is RECOMMENDED to support this capability unless it
-                    cannot. When it does, the Authorization Server MUST issue
-                    any Claim denoted as critical or it MUST return an error.
-                    The error must be <spanx style="verb">invalid_claim</spanx>
-                    as described below.
+                    metadata. (See section
+                    <xref target="authorization-server-metadata"/> below.) An
+                    Authorization Server is RECOMMENDED to support this
+                    capability unless it cannot. When it does, the Authorization
+                    Server MUST issue any Claim denoted as critical or it MUST
+                    return an error. The error must be
+                    <spanx style="verb">invalid_claim</spanx> as described below
+                    in Section <xref target="obtaining-authorization"/>.
                 </t>
 
                 <t>
@@ -775,7 +779,7 @@
                     </figure>
 
                     In this example, the
-                    <spanx style="verb">trust_framework</spanx>member of the
+                    <spanx style="verb">trust_framework</spanx> member of the
                     JSON object associated with
                     <spanx style="verb">verification</spanx> must be
                     understood by the Authorization Server because it is
@@ -810,6 +814,91 @@
 }]]>
                         </artwork>
                     </figure>
+                </t>
+            </section>
+
+            <section title="Special Claims Sinks">
+                <t>
+                    A Client may know that it needs a particular Claim; however,
+                    it may not be aware which Claims Sink the Claim should be
+                    included in. The Client prefers to leave this determination
+                    to the Authorization Server. In such cases, the Client MAY
+                    use the Claims Sink <spanx style="verb">?</spanx> (%x3F) as
+                    mentioned in Section <xref target="claims-request-object"/>
+                    above. This special Claim Sink may result in the Claim being
+                    issued in the Access Token or any other Claims Sink that the
+                    Authorization Server deems appropriate. A non-normative
+                    example of a Claims Request Object indicating that a
+                    particular Claim be asserted in any Claims Sink is shown in
+                    <xref target="example-any-claims-sink"/>.
+
+                    <figure anchor="example-any-claims-sink"
+                            title="Example Requesting a Claim to be Asserted in Any Claims Sink">
+                        <artwork>
+                            <![CDATA[
+{
+    "?" : {
+        "https://exmaple.com/claim1" : null,
+    }
+}]]>
+                        </artwork>
+                    </figure>
+                </t>
+
+                <t>
+                    Similarly, there are situations where the Client wishes
+                    Claims to be asserted in all Claims Sinks the Authorization
+                    Server supports. Rather than requiring the the Client to
+                    repeat its requirement for each Claims Sink, it MAY use the
+                    special Claims Sink <spanx style="verb">*</spanx> (%x2A).
+                    This Claims Sink indicates to the Authorization Server that
+                    the Client prefers all Claims included in the Claims Request
+                    Object to be asserted in each Claim Sink that the
+                    Authorization Server supports. The two Claims Request
+                    Objects shown in Figure
+                    <xref target="example-all-claims-sink"/> and
+                    <xref target="example-comparable-to-all-claims-sink"/>
+                    are equivalent (if the Authorization Server only supports
+                    the two Claims Sinks shown in the latter).
+
+                    <figure anchor="example-all-claims-sink"
+                            title="Example Requesting a Claim to be Asserted in All Claims Sinks">
+                        <artwork>
+                            <![CDATA[
+{
+    "*" : {
+        "https://exmaple.com/claim1" : null,
+    }
+}]]>
+                        </artwork>
+                    </figure>
+
+                    <figure anchor="example-comparable-to-all-claims-sink"
+                            title="Equivalent Example of Requesting a Claim to be Asserted in All Claims Sinks">
+                        <artwork>
+                            <![CDATA[
+{
+    "access_token" : {
+        "https://exmaple.com/claim1" : null,
+    },
+    "my-good-claims-sink" : {
+        "https://exmaple.com/claim1" : null,
+    }
+}]]>
+                        </artwork>
+                    </figure>
+                </t>
+
+                <t>
+                    The use of either the Claims Sink
+                    <spanx style="verb">?</spanx> and
+                    <spanx style="verb">*</spanx> with any other Claims Sink
+                    in the same Claims Request Object is undefined. The
+                    Authorization Server SHOULD return an error or apply some other
+                    logic not defined by this specification. The Client SHOULD
+                    NOT make such queries unless it has some knowledge gained a
+                    priori about the Authorization Server's support of such a
+                    query.
                 </t>
             </section>
         </section>
@@ -996,8 +1085,8 @@
                                 <vspace/>
                                 The Authorization Server does not support
                                 the <spanx style="verb">claims</spanx>
-                                request parameter, and the Client should
-                                not use it when requesting authorization.
+                                request parameter, and the Client SHOULD
+                                NOT use it when requesting authorization.
                             </t>
 
                             <t hangText="invalid_request">
@@ -1081,8 +1170,8 @@
                                 <vspace/>
                                 The Authorization Server does not support
                                 the <spanx style="verb">claims</spanx>
-                                request parameter, and the Client should
-                                not use it when requesting an access token.
+                                request parameter, and the Client SHOULD
+                                NOT use it when requesting an access token.
                             </t>
 
                             <t hangText="invalid_request">
@@ -1166,8 +1255,8 @@
                                 <vspace/>
                                 The Authorization Server does not support
                                 the <spanx style="verb">claims</spanx>
-                                request parameter, and the Client should
-                                not use it when requesting an access token.
+                                request parameter, and the Client SHOULD
+                                NOT use it when requesting an access token.
                             </t>
 
                             <t hangText="invalid_request">
