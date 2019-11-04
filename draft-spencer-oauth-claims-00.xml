@@ -297,7 +297,7 @@
                             includes a Claims Request Object as the
                             corresponding value of the
                             <spanx style="verb">claims</spanx> request
-                            parameter, as described in Section 3.1 below.<!-- FIXME: Use correct ref -->
+                            parameter, as described in Section <xref target="requesting-particular-claim-names-and-claim-values"/> below.
                         </t>
                         <t>After obtaining (B) and presenting the authorization
                             grant (C), the response MAY include an Access Token
@@ -437,7 +437,7 @@
                     <spanx style="verb">values</spanx> are mutually exclusive.
                     If the Client sends a Claim Value Query Object with both,
                     the Authorization Server MUST return an error as described
-                    in section XX below. <!-- FIXME: reference -->
+                    in Section <xref target="obtaining-authorization"/> below.
                 </t>
 
                 <t>
