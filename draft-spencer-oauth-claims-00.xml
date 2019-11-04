@@ -156,7 +156,8 @@
                     The first and second option are straightforward. The third,
                     however, will require a specification to define the
                     relation between the two in order to achieve
-                    interoperability. For instance, OpenID Connect core
+                    interoperability. For instance, <xref target="OpenID.Core">
+                    OpenID Connect core</xref>
                     specification relates Claims to Scope Tokens by grouping
                     certain Claims into various Scope Tokens. This grouping of
                     Claims into various Scope Tokens is RECOMMENDED when
@@ -1215,7 +1216,7 @@
                 <spanx style="verb">claims</spanx> request parameter SHOULD
                 declare this fact by including the following property in the
                 Authorization Server metadata response
-                (<xref target="RFC8414"/>):
+                <xref target="RFC8414"/>:
 
                 <list style="hanging">
                     <t hangText="claims_parameter_supported">
@@ -1413,6 +1414,18 @@ Content-Type: application/json
         </references>
 
         <references title="Informative References">
+            <reference anchor='RFC5234' target='https://www.rfc-editor.org/info/rfc5234'>
+                <front>
+                    <title>Augmented BNF for Syntax Specifications: ABNF</title>
+                    <author initials='D.' surname='Crocker' fullname='D. Crocker' role='editor'><organization /></author>
+                    <author initials='P.' surname='Overell' fullname='P. Overell'><organization /></author>
+                    <date year='2008' month='January' />
+                    <abstract><t>Internet technical specifications often need to define a formal syntax.  Over the years, a modified version of Backus-Naur Form (BNF), called Augmented BNF (ABNF), has been popular among many Internet specifications.  The current specification documents ABNF. It balances compactness and simplicity with reasonable representational power.  The differences between standard BNF and ABNF involve naming rules, repetition, alternatives, order-independence, and value ranges.  This specification also supplies additional rule definitions and encoding for a core lexical analyzer of the type common to several Internet specifications.  [STANDARDS-TRACK]</t></abstract>
+                </front>
+                <seriesInfo name='STD' value='68'/>
+                <seriesInfo name='RFC' value='5234'/>
+                <seriesInfo name='DOI' value='10.17487/RFC5234'/>
+            </reference>
             <reference anchor="OpenID.Core" target="http://openid.net/specs/openid-connect-core-1_0.html">
                 <front>
                     <title>OpenID Connect Core 1.0</title>
