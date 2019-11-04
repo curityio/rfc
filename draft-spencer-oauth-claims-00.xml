@@ -358,7 +358,28 @@
                     Downscoping in this flow is achieved when the Client requests a subset of the Claims authorized by the Resource Owner.
                 </t>
 
-                <t>The Client MAY request to change the Claims Sink where the authorized Claims should be asserted using this flow. If the Client does so, it is RECOMMENDED that the Authorization Server accept this change baring any policy to the contrary. The Client MAY also send a Claim Value in the Claim Value Query Object(s) of the request. When it does, the Authorization Server SHOULD consider this request when asserting the Claim; if it is a Critical Claim, the requested Claim Value MUST be asserted or an error MUST result.</t>
+                <t>
+                    The Client MAY request to change the Claims Sink where the
+                    authorized Claims should be asserted using this flow. If the
+                    Client does so, it is RECOMMENDED that the Authorization
+                    Server accept this change baring any policy to the contrary.
+                    The Client MAY also send a Claim Value in the Claim Value
+                    Query Object(s) of the request. When it does, the
+                    Authorization Server SHOULD consider this request when
+                    asserting the Claim; if it is a Critical Claim, the
+                    requested Claim Value MUST be asserted or an error MUST
+                    result.
+                </t>
+
+                <t>
+                    There are many corner cases that can arise when implementing
+                    this flow. Most stem from policy and configuration changes
+                    of the Authorization Server which may happen between the
+                    time an access token is issued and it is refreshed. Other
+                    complications arise when Claims are used together with Scope
+                    Tokens. Both are beyond the scope of this specification and
+                    not addressed by this memo.
+                </t>
             </section>
 
             <section title="Token Introspection" anchor="token-introspection-response">
@@ -1038,7 +1059,7 @@
                         <list hangIndent="8" style="hanging">
                             <t hangText="claims_not_supported">
                                 <vspace/>
-                                The Authorization Server does not support
+                                The Authorization Server understands but does not support
                                 the <spanx style="verb">claims</spanx>
                                 request parameter, and the Client should
                                 not use it when requesting authorization.
@@ -1046,21 +1067,28 @@
 
                             <t hangText="invalid_request">
                                 <vspace/>
-                                The Authorization Server MAY use this less
-                                descriptive error code to indicate that
-                                the claims request parameter is not
-                                accepted. It is RECOMMENDED to use
+                                The Authorization Server MAY use this
+                                less-descriptive error code to indicate that
+                                the claims request parameter value is not
+                                accepted. It is, however, RECOMMENDED that the
+                                Authorization Server return
                                 <spanx style="verb">claims_not_supported</spanx>
-                                instead, however.
+                                or <spanx style="verb">invalid_claim</spanx> as
+                                appropriate.
                             </t>
 
                             <t hangText="invalid_claim">
                                 <vspace/>
-                                When a Client makes a request for a
-                                Critical Claim, and the Authorization
-                                Server cannot assert such a claim because
-                                it is invalid, unknown, or malformed, this
-                                error results.
+                                When a Client makes a request for a Critical
+                                Claim, and the Authorization Server cannot
+                                assert such a claim because it is invalid,
+                                unknown, or malformed, this error results. If
+                                the request includes only Claim Names in the
+                                Claims Request Object which are disallowed
+                                according to the Authorization Server's policy,
+                                this error (or the less-descriptive alternative,
+                                <spanx style="verb">invalid_request</spanx>)
+                                SHOULD result.
                             </t>
                         </list>
                     </t>
@@ -1158,7 +1186,7 @@
                         <list style="hanging" hangIndent="8">
                             <t hangText="claims_not_supported">
                                 <vspace/>
-                                The Authorization Server does not support
+                                The Authorization Server understands but does not support
                                 the <spanx style="verb">claims</spanx>
                                 request parameter, and the Client SHOULD
                                 NOT use it when requesting authorization.
@@ -1166,21 +1194,28 @@
 
                             <t hangText="invalid_request">
                                 <vspace/>
-                                The Authorization Server MAY use this less
-                                descriptive error code to indicate that the
-                                claims request parameter is not accepted.
-                                It is RECOMMENDED to use
+                                The Authorization Server MAY use this
+                                less-descriptive error code to indicate that the
+                                claims request parameter value is not accepted.
+                                It is, however, RECOMMENDED that the
+                                Authorization Server return
                                 <spanx style="verb">claims_not_supported</spanx>
-                                instead, however.
+                                or <spanx style="verb">invalid_claim</spanx> as
+                                appropriate.
                             </t>
 
                             <t hangText="invalid_claim">
                                 <vspace/>
-                                When a Client makes a request for a
-                                Critical Claim, and the Authorization
-                                Server cannot assert such a claim because
-                                it is invalid, unknown, or malformed, this
-                                error results.
+                                When a Client makes a request for a Critical
+                                Claim, and the Authorization Server cannot
+                                assert such a claim because it is invalid,
+                                unknown, or malformed, this error results. If
+                                the request includes only Claim Names in the
+                                Claims Request Object which are disallowed
+                                according to the Authorization Server's policy,
+                                this error (or the less-descriptive alternative,
+                                <spanx style="verb">invalid_request</spanx>)
+                                SHOULD result.
                             </t>
                         </list>
                     </t>
@@ -1236,7 +1271,7 @@
                             </t>
                         </list>
 
-                        If the request is invalid due to the value of the value
+                        If the request is invalid due to the value
                         of the <spanx style="verb">claims</spanx>
                         parameter, the Authorization Server returns an
                         error with one of the following error codes:
@@ -1244,7 +1279,7 @@
                         <list style="hanging" hangIndent="8">
                             <t hangText="claims_not_supported">
                                 <vspace/>
-                                The Authorization Server does not support
+                                The Authorization Server understands but does not support
                                 the <spanx style="verb">claims</spanx>
                                 request parameter, and the Client SHOULD
                                 NOT use it when requesting an access token.
@@ -1252,21 +1287,28 @@
 
                             <t hangText="invalid_request">
                                 <vspace/>
-                                The Authorization Server MAY use this less
-                                descriptive error code to indicate that
-                                the claims request parameter is not
-                                accepted. It is RECOMMENDED to use
+                                The Authorization Server MAY use this
+                                less-descriptive error code to indicate that
+                                the claims request parameter value is not
+                                accepted. It is, however, RECOMMENDED that the
+                                Authorization Server return
                                 <spanx style="verb">claims_not_supported</spanx>
-                                instead, however.
+                                or <spanx style="verb">invalid_claim</spanx> as
+                                appropriate.
                             </t>
 
                             <t hangText="invalid_claim">
                                 <vspace/>
-                                When a Client makes a request for a
-                                Critical Claim, and the Authorization
-                                Server cannot assert such a claim because
-                                it is invalid, unknown, or malformed, this
-                                error results.
+                                When a Client makes a request for a Critical
+                                Claim, and the Authorization Server cannot
+                                assert such a claim because it is invalid,
+                                unknown, or malformed, this error results. If
+                                the request includes only Claim Names in the
+                                Claims Request Object which are disallowed
+                                according to the Authorization Server's policy,
+                                this error (or the less-descriptive alternative,
+                                <spanx style="verb">invalid_request</spanx>)
+                                SHOULD result.
                             </t>
                         </list>
                     </t>
@@ -1322,7 +1364,7 @@
                             </t>
                         </list>
 
-                        If the request is invalid due to the value of the
+                        If the request is invalid due to the
                         value of the <spanx style="verb">claims</spanx>
                         parameter, the Authorization Server returns an
                         error with one of the following error codes:
@@ -1330,7 +1372,7 @@
                         <list hangIndent="8" style="hanging">
                             <t hangText="claims_not_supported">
                                 <vspace/>
-                                The Authorization Server does not support
+                                The Authorization Server understands but does not support
                                 the <spanx style="verb">claims</spanx>
                                 request parameter, and the Client SHOULD
                                 NOT use it when requesting an access token.
@@ -1338,21 +1380,28 @@
 
                             <t hangText="invalid_request">
                                 <vspace/>
-                                The Authorization Server MAY use this less
-                                descriptive error code to indicate that
-                                the claims request parameter is not
-                                accepted. It is RECOMMENDED to use
+                                The Authorization Server MAY use this
+                                less-descriptive error code to indicate that
+                                the claims request parameter value is not
+                                accepted. It is, however, RECOMMENDED that the
+                                Authorization Server return
                                 <spanx style="verb">claims_not_supported</spanx>
-                                instead, however.
+                                or <spanx style="verb">invalid_claim</spanx> as
+                                appropriate.
                             </t>
 
                             <t hangText="invalid_claim">
                                 <vspace/>
-                                When a Client makes a request for a
-                                Critical Claim, and the Authorization
-                                Server cannot assert such a claim because
-                                it is invalid, unknown, or malformed, this
-                                error results.
+                                When a Client makes a request for a Critical
+                                Claim, and the Authorization Server cannot
+                                assert such a claim because it is invalid,
+                                unknown, or malformed, this error results. If
+                                the request includes only Claim Names in the
+                                Claims Request Object which are disallowed
+                                according to the Authorization Server's policy,
+                                this error (or the less-descriptive alternative,
+                                <spanx style="verb">invalid_request</spanx>)
+                                SHOULD result.
                             </t>
                         </list>
                     </t>
@@ -1428,7 +1477,7 @@
                         <list hangIndent="8" style="hanging">
                             <t hangText="claims_not_supported">
                                 <vspace/>
-                                The Authorization Server does not support
+                                The Authorization Server understands but does not support
                                 the <spanx style="verb">claims</spanx>
                                 request parameter, and the Client SHOULD
                                 NOT use it when requesting an access token.
@@ -1436,21 +1485,28 @@
 
                             <t hangText="invalid_request">
                                 <vspace/>
-                                The Authorization Server MAY use this less
-                                descriptive error code to indicate that
-                                the claims request parameter is not
-                                accepted. It is RECOMMENDED to use
+                                The Authorization Server MAY use this
+                                less-descriptive error code to indicate that
+                                the claims request parameter value is not
+                                accepted. It is, however, RECOMMENDED that the
+                                Authorization Server return
                                 <spanx style="verb">claims_not_supported</spanx>
-                                instead, however.
+                                or <spanx style="verb">invalid_claim</spanx> as
+                                appropriate.
                             </t>
 
                             <t hangText="invalid_claim">
                                 <vspace/>
-                                When a Client makes a request for a
-                                Critical Claim, and the Authorization
-                                Server cannot assert such a claim because
-                                it is invalid, unknown, or malformed, this
-                                error results.
+                                When a Client makes a request for a Critical
+                                Claim, and the Authorization Server cannot
+                                assert such a claim because it is invalid,
+                                unknown, or malformed, this error results. If
+                                the request includes only Claim Names in the
+                                Claims Request Object which are disallowed
+                                according to the Authorization Server's policy,
+                                this error (or the less-descriptive alternative,
+                                <spanx style="verb">invalid_request</spanx>)
+                                SHOULD result.
                             </t>
                         </list>
                     </t>
