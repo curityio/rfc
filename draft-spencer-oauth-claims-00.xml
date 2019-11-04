@@ -296,12 +296,8 @@
                     <xref target="RFC6749"/> with a few important distinctions:
 
                     <list style="symbols">
-                        <t>The authorization request (A) is performed
-                            indirectly via the authorization server and not
-                            directly to the resource owner.
-							<i>MD: what does this mean? isn't this following rfc6749?</i>
-                        </t>
-                        <t>During the authorization request (A), the client
+                        <t>
+                            During the authorization request (A), the client
                             includes a claims request object as the
                             corresponding value of the
                             <spanx style="verb">claims</spanx> request
@@ -1048,37 +1044,35 @@
                         format defined in Appendix B of
                         <xref target="RFC6749"/>.
                     </t>
-					
-					<t>
-						A non-normative example of a request to the authorization 
-						endpoint, with URL-encoded value for the claims parameter, 
-						is shown in figure <xref target="example-authorize-request-with-claims"/>:
-	                    <figure anchor="example-authorize-request-with-claims"
-	                            title="Non-normative example of using the claims parameter to the authorize endpoint">
-						
-								<artwork>
+
+                    <t>
+                        A non-normative example of a request to the authorization
+                        endpoint with a URL-encoded value of the claims parameter
+                        is shown in
+                        <xref target="example-authorize-request-with-claims"/>
+                        (with extra line breaks for display purposes only):
+
+                        <figure anchor="example-authorize-request-with-claims"
+                                title="Example of Using the Claims Request
+                                Parameter on the Authorize Endpoint">
+
+                                <artwork>
                             <![CDATA[
-https://as.example.com/authorize?client_id=client-one
-	&response_type=code
-	&claims=%7B%0A%20%20%22access_token%22%20%3A%20%7B%20%0A
-		%20%20%20%20%22https%3A%2F%2Fexample.com%2Fclaim1%22%20%3A
-		%20null%2C%0A%20%20%20%20%22fname%22%20%3A%20%7B%0A%20%20
-		%20%20%20%20%22value%22%20%3A%20%22John%22%0A%20%20%20%20
-		%7D%0A%20%20%7D%0A%7D
+GET /authorize?client_id=s6BhdRkqt3&response_type=code&
+    claims=%7B%0A%20%20%22access_token%22%20%3A%20%7B%20%0A
+        %20%20%20%20%22https%3A%2F%2Fexample.com%2Fclaim1%22%20%3A
+        %20null%2C%0A%20%20%20%20%22fname%22%20%3A%20%7B%0A%20%20
+        %20%20%20%20%22value%22%20%3A%20%22John%22%0A%20%20%20%20
+        %7D%0A%20%20%7D%0A%7D
+Host: server.example.com
 ]]>
-							</artwork>
-						</figure>
-						Line breaks and indentation are only added for readability.
-					</t>
+                            </artwork>
+                        </figure>
+                    </t>
                 </section>
 
                 <section title="Error Response"
                          anchor="authorization-code-grant-error-response">
-                    <t>
-                        <i>MD: This paragraph might be generalized, so it can
-                            be referred to from all flows (code, implicit, ropc, 
-                            cc, refresh); those could be the same IINM</i>
-                    </t>
                     <t>
                         If the authorization server understands the
                         <spanx style="verb">claims</spanx> request
@@ -1103,7 +1097,7 @@ https://as.example.com/authorize?client_id=client-one
                                 The authorization server MAY use this
                                 less-descriptive error code to indicate that
                                 the claims request parameter value is not
-                                accepted, e.g. because it is syntactically 
+                                accepted, e.g., because it is syntactically
                                 incorrect. It is, however, RECOMMENDED that the
                                 authorization server return
                                 <spanx style="verb">claims_not_supported</spanx>
@@ -1201,7 +1195,7 @@ https://as.example.com/authorize?client_id=client-one
                                 REQUIRED. The space-separated claim names
                                 granted by the resource owner which denote
                                 the scope of the access token that is
-                                returned in the same response
+                                returned in the same response.
                             </t>
                         </list>
                     </t>
@@ -1232,8 +1226,9 @@ https://as.example.com/authorize?client_id=client-one
                                 <vspace/>
                                 The authorization server MAY use this
                                 less-descriptive error code to indicate that the
-                                claims request parameter value is not accepted.
-                                It is, however, RECOMMENDED that the
+                                claims request parameter value is not
+                                accepted, e.g., because it is syntactically.
+                                incorrect. It is, however, RECOMMENDED that the
                                 authorization server return
                                 <spanx style="verb">claims_not_supported</spanx>
                                 or <spanx style="verb">invalid_claims</spanx> as
@@ -1303,7 +1298,8 @@ https://as.example.com/authorize?client_id=client-one
                                 requested by the client; otherwise,
                                 REQUIRED. The space-separated claim names
                                 the client is authorized for which denote
-                                the scope of the access token.
+                                the scope of the access token that is
+                                returned in the same response.
                             </t>
                         </list>
 
@@ -1326,8 +1322,9 @@ https://as.example.com/authorize?client_id=client-one
                                 The authorization server MAY use this
                                 less-descriptive error code to indicate that
                                 the claims request parameter value is not
-                                accepted. It is, however, RECOMMENDED that the
-                                authorization server return
+                                accepted, accepted, e.g., because it is
+                                syntactically incorrect. It is, however,
+                                RECOMMENDED that the authorization server return
                                 <spanx style="verb">claims_not_supported</spanx>
                                 or <spanx style="verb">invalid_claims</spanx> as
                                 appropriate.
@@ -1396,7 +1393,8 @@ https://as.example.com/authorize?client_id=client-one
                                 requested by the client; otherwise,
                                 REQUIRED. The space-separated claim names
                                 the client is authorized for which denote
-                                the scope of the access token.
+                                the scope of the access token that is
+                                returned in the same response.
                             </t>
                         </list>
 
@@ -1419,7 +1417,8 @@ https://as.example.com/authorize?client_id=client-one
                                 The authorization server MAY use this
                                 less-descriptive error code to indicate that
                                 the claims request parameter value is not
-                                accepted. It is, however, RECOMMENDED that the
+                                accepted, e.g., because it is syntactically
+                                incorrect. It is, however, RECOMMENDED that the
                                 authorization server return
                                 <spanx style="verb">claims_not_supported</spanx>
                                 or <spanx style="verb">invalid_claims</spanx> as
@@ -1501,7 +1500,8 @@ https://as.example.com/authorize?client_id=client-one
                                 requested by the client; otherwise,
                                 REQUIRED. The space-separated claim names
                                 the client is authorized for which denote
-                                the scope of the access token.
+                                the scope of the access token that is
+                                returned in the same response.
                             </t>
                         </list>
 
@@ -1524,7 +1524,8 @@ https://as.example.com/authorize?client_id=client-one
                                 The authorization server MAY use this
                                 less-descriptive error code to indicate that
                                 the claims request parameter value is not
-                                accepted. It is, however, RECOMMENDED that the
+                                accepted, e.g., because it is syntactically
+                                incorrect. It is, however, RECOMMENDED that the
                                 authorization server return
                                 <spanx style="verb">claims_not_supported</spanx>
                                 or <spanx style="verb">invalid_claims</spanx> as
