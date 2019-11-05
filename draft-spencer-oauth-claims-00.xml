@@ -860,7 +860,7 @@
                             <![CDATA[
 {
     "crit" : [
-        "/access_token/verified_claims/verification/trust_framework/value"
+ "/access_token/verified_claims/verification/trust_framework/value"
     ],
     "access_token" : {
         "verified_claims" : {
