@@ -62,7 +62,7 @@
     <middle>
         <section title="Introduction" anchor="introduction">
             <t>
-                As stated in Section 1.4 of <xref target="RFC6749"/>, an
+                As stated in <xref target="RFC6749" section="1.4"/>, an
                 access token represents the specific scope and duration of
                 access. The requested scope is verified by the &as;
                 according to its policy, and the perhaps-different scope
@@ -72,7 +72,7 @@
                 resulting scope is enforced by the &rs;. The way in
                 which the &c; indicates the intended scope of access is by
                 the <tt>scope</tt> request parameter defined
-                in Section 3.3 of <xref target="RFC6749"/>. This specification
+                in <xref target="RFC6749" section="3.3"/>. This specification
                 defines a more sophisticated instrument to achieve this same
                 purpose.
             </t>
@@ -100,8 +100,8 @@
                 To accommodate these use cases and requirements, this
                 specification defines a new request parameter that can be used
                 when the &c; obtains an authorization grant, as described in
-                Section 1.3 of <xref target="RFC6749"/> and Section 2.1 of
-                <xref target="I-D.ietf-oauth-token-exchange"/>. For each request
+                <xref target="RFC6749" section="1.3"/> and
+                <xref target="I-D.ietf-oauth-token-exchange" section="2.1"/>. For each request
                 wherein these fix grant types -- authorization code, implicit,
                 resource owner password credentials, client credentials, and
                 token exchange -- are sought, this specification defines a new
@@ -118,8 +118,8 @@
             </t>
 
             <t>
-                During a refresh request (as described in Section 1.5 of
-                <xref target="RFC6749"/>), the <tt>claims</tt>
+                During a refresh request (as described in
+                <xref target="RFC6749" section="1.5"/>), the <tt>claims</tt>
                 parameter defined herein can also be used to alter the resulting
                 scope of access. This can be used, for example, to lessen the
                 scope by including a certain subset of claims that should be in
@@ -165,9 +165,8 @@
                     The first and second option are straightforward. The third,
                     however, will require a specification to define the
                     relation between the two in order to achieve
-                    interoperability. For instance, <xref target="OpenID.Core">
-                    OpenID Connect core</xref>
-                    specification relates claims to scope tokens by grouping
+                    interoperability. For instance, <xref target="OpenID.Core"/>
+                    relates claims to scope tokens by grouping
                     certain claims into various scope tokens. This grouping of
                     claims into various scope tokens is RECOMMENDED when
                     simultaneously using claims and scope tokens to request
@@ -257,8 +256,8 @@
                         <tt>scope</tt> request parameter
                         of an authorization request (i.e., a
                         <tt>scope-token</tt> as set
-                        forth in the ABNF of Section 3.3 of
-                        <xref target="RFC6749"/>).
+                        forth in the ABNF of
+                        <xref target="RFC6749" section="3.3"/>).
                     </dd>
 
                     <dt>Voluntary Claim</dt>
@@ -306,8 +305,8 @@
 
                 <t>
                     The steps in the flow illustrated in Figure 1 are generally
-                    the same as those described in Section 1.2 of
-                    <xref target="RFC6749"/> with a few important distinctions:
+                    the same as those described in
+                    <xref target="RFC6749" section="1.2"/> with a few important distinctions:
                 </t>
 
                 <ul>
@@ -316,7 +315,7 @@
                         includes a claims request object as the
                         corresponding value of the
                         <tt>claims</tt> request
-                        parameter, as described in Section <xref target="requesting-particular-claim-names-and-claim-values"/> below.
+                        parameter, as described in <xref target="requesting-particular-claim-names-and-claim-values"/> below.
                     </li>
                     <li>After obtaining (B) and presenting the authorization
                         grant (C), the response MAY include an access token
@@ -332,7 +331,7 @@
 
             <section title="Refresh Request" anchor="refresh-request">
                 <t>
-                    As described in Section 1.5 of <xref target="RFC6749"/> and
+                    As described in <xref target="RFC6749" section="1.5"/> and
                     further explained in section 6 thereof, a &c; that was
                     issued a refresh token MAY use this to narrow the scope of
                     access for an access token. It does this by sending the
@@ -560,7 +559,7 @@
                     <tt>values</tt> are mutually exclusive.
                     If the &c; sends a claim value query object with both,
                     the &as; MUST return an error as described
-                    in Section <xref target="obtaining-authorization"/> below.
+                    in <xref target="obtaining-authorization"/> below.
                 </t>
 
                 <t>
@@ -925,8 +924,8 @@
                 <t>
                     It is not uncommon for a claim name to defined as a URI
                     containing slashes (<tt>/</tt>, %x2F). When such a claim is
-                    critical, the escaping described in Section 3 of
-                    <xref target="RFC6901"/> MUST be used, as in the
+                    critical, the escaping described in
+                    <xref target="RFC6901" section="3"/> MUST be used, as in the
                     non-normative listing of
                     <xref target="escaped-critical-claim-example"/>.
                 </t>
@@ -952,7 +951,7 @@
                     included in. The &c; may prefer to leave this determination
                     to the &as;. In such cases, the &c; MAY
                     use the claims sink <tt>?</tt> (%x3F) as
-                    mentioned in Section <xref target="claims-request-object"/>
+                    mentioned in <xref target="claims-request-object"/>
                     above. This special claim sink may result in the claim being
                     issued in the access token or any other claims sink that the
                     &as; deems appropriate. A non-normative
@@ -1034,7 +1033,7 @@
         <section title="Obtaining Authorization"
                  anchor="obtaining-authorization">
             <t>
-                As stated in Section 4 of <xref target="RFC6749"/>, a request
+                As stated in <xref target="RFC6749" section="4"/>, a request
                 for an access token requires the &c; to obtain authorization
                 from the &ro;. As described there, this
                 can be done using various grant types. To make a request for
@@ -1044,7 +1043,7 @@
                 credentials, or client credentials grant type. The
                 <tt>claims</tt> request parameter MAY also
                 be used with additional grant type that use the extension
-                mechanism defined in Section 4.5 of <xref target="RFC6749"/>
+                mechanism defined in <xref target="RFC6749" section="4.5"/>
                 if so profiled by some other specification.
             </t>
 
@@ -1055,7 +1054,7 @@
                     <t>
                         When a &c; seeks to obtain authorization using
                         the authorization code grant type defined in
-                        Section 4.1 of <xref target="RFC6749"/>, the &c;
+                        <xref section="4.1" target="RFC6749"/>, the &c;
                         MAY include the following additional query
                         component that it sends to the authorization
                         endpoint URI:
@@ -1111,7 +1110,7 @@ Host: server.example.com
                         parameter, it MUST
                         redirect the user-agent of the &ro; to
                         the &c;'s redirection endpoint as described in
-                        Section 4.1.2.1 of <xref target="RFC6749"/> with
+                        <xref section="4.1.2.1" target="RFC6749"/> with
                         one of the following
                         <tt>error</tt> values:
                     </t>
@@ -1160,8 +1159,8 @@ Host: server.example.com
                         In a non-error case, the &as; MAY
                         include details about the claims that the &c;
                         is authorized for. This is done by augmenting the
-                        response defined in Section 4.1.4 of
-                        <xref target="RFC6749"/>. In particular, the
+                        response defined in
+                        <xref target="RFC6749" section="4.1.4"/>. In particular, the
                         &as; MAY include the following
                         response member in the JSON object returned from
                         the token endpoint:
@@ -1186,8 +1185,8 @@ Host: server.example.com
                          anchor="implicit-flow-authorization-request">
                     <t>
                         When a &c; seeks to obtain authorization using
-                        the implicit grant type defined in Section 4.2 of
-                        <xref target="RFC6749"/>, the &c; MAY include
+                        the implicit grant type defined in
+                        <xref target="RFC6749" section="4.2"/>, the &c; MAY include
                         the following additional query component that it
                         sends to the authorization endpoint URI:
                     </t>
@@ -1215,8 +1214,8 @@ Host: server.example.com
                         In a non-error case, the &as; MAY
                         include details about the claims that the &c; is
                         authorized for. This is done by augmenting the
-                        response defined in Section 4.2.2 of
-                        <xref target="RFC6749"/>. In particular, the
+                        response defined in
+                        <xref target="RFC6749" section="4.2.2"/>. In particular, the
                         &as; MAY include the following
                         response parameter included on the fragment
                         component of the redirection URI:
@@ -1243,7 +1242,7 @@ Host: server.example.com
                         parameter, it MUST
                         redirect the user-agent of the &ro; to
                         the &c;'s redirection URI as described in
-                        Section 4.2.2.1 of <xref target="RFC6749"/> with
+                        <xref target="RFC6749" section="4.2.2.1"/> with
                         one of the following
                         <tt>error</tt> values:
                     </t>
@@ -1294,7 +1293,7 @@ Host: server.example.com
                     <t>
                         When a &c; seeks to obtain authorization using
                         the resource owner password credentials grant type
-                        defined in Section 4.3 of <xref target="RFC6749"/>,
+                        defined in <xref section="4.3" target="RFC6749"/>,
                         the &c; MAY include the following additional
                         parameter using the
                         <tt>application/x-www-form-urlencoded</tt>
@@ -1319,8 +1318,8 @@ Host: server.example.com
                         In a non-error case, the &as; MAY
                         include details about the claims that the &c; is
                         authorized for. This is done by augmenting the
-                        response defined in Section 4.3.3 of
-                        <xref target="RFC6749"/>. In particular, the
+                        response defined in
+                        <xref target="RFC6749" section="4.3.3"/>. In particular, the
                         &as; MAY include the following
                         response member in the JSON object returned from
                         the token endpoint:
@@ -1391,7 +1390,7 @@ Host: server.example.com
                     <t>
                         When a &c; seeks to obtain authorization using
                         the client credentials grant type defined in
-                        Section 4.4 of <xref target="RFC6749"/>, the &c;
+                        <xref target="RFC6749" section="4.4"/>, the &c;
                         MAY include the following additional parameter
                         using the
                         <tt>application/x-www-form-urlencoded</tt>
@@ -1416,8 +1415,8 @@ Host: server.example.com
                         In a non-error case, the &as; MAY
                         include details about the claims that the &c;
                         is authorized for. This is done by augmenting the
-                        response defined in Section 4.4.3 of
-                        <xref target="RFC6749"/>. In particular, the
+                        response defined in
+                        <xref target="RFC6749" section="4.4.3"/>. In particular, the
                         &as; MAY include the following
                         response member in the JSON object returned from
                         the token endpoint:
@@ -1484,7 +1483,7 @@ Host: server.example.com
 
         <section title="Token Refresh" anchor="token-refresh">
             <t>
-                As defined in Section 6 of <xref target="RFC6749"/>, a &c;
+                As defined in <xref target="RFC6749" section="6"/>, a &c;
                 may be provided with a refresh token. When it is, it can
                 present this to the token endpoint of the &as;
                 in a refresh request. This specification extends the
@@ -1527,8 +1526,8 @@ Host: server.example.com
                 <t>
                     In a non-error case, the &as; MAY include
                     details about the claims that the &c; is authorized for.
-                    This is done by augmenting the response defined in Section
-                    5.1 of<xref target="RFC6749"/>. In particular, the
+                    This is done by augmenting the response defined in
+                    <xref target="RFC6749" section="5.1"/>. In particular, the
                     &as; MAY include the following response
                     member in the JSON object returned from the token endpoint:
                 </t>
@@ -1599,7 +1598,7 @@ Host: server.example.com
                 This specification defines an additional top-level member in
                 the JSON <xref target="RFC8259"/> object of the &as;'s
                 introspection endpoint response as stipulated in
-                Section 2.2 of <xref target="RFC7662"/>.
+                <xref target="RFC7662" section="2.2"/>.
             </t>
 
             <dl newline="true" indent="8">
@@ -1920,11 +1919,11 @@ Content-Type: application/json
 
         <section anchor="Acknowledgements" title="Acknowledgements">
             <t>
-                The following individuals contributed ideas, feedback, and wording to this specification:
+                The following individuals contributed ideas, feedback, wording and editorial guidance to this specification:
             </t>
 
             <t>
-                Mark Dobrinic, Jacob Ideskog, Torsten Lodderstedt
+                Mark Dobrinic, Jacob Ideskog, Torsten Lodderstedt, Alice Russo
             </t>
         </section>
 
