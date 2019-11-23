@@ -739,7 +739,7 @@
                     value. For example, the &as; may actually
                     find that the <spanx style="verb">instructedAmount</spanx>
                     value requested exceeds its policy's allowed limit and only
-                    prompt the &ro; to authorize €100.
+                    prompt the &ro; to authorize 100 Euro.
                 </t>
 
                 <t>
