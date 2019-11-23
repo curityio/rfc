@@ -17,9 +17,11 @@
 <?rfc tocindent="yes"?>
 <?rfc tocompact="yes"?>
 
-<rfc ipr="trust200902" category="std" docName="draft-spencer-oauth-claims-00">
+<rfc ipr="trust200902" category="std" docName="draft-spencer-oauth-claims-01" consensus="true" version="3">
     <front>
         <title abbrev="Claims">The OAuth 2.0 Authorization Framework: Claims</title>
+
+        <seriesInfo name="Internet-Draft" value="draft-spencer-oauth-claims-01"/>
 
         <author fullname="Travis Spencer" initials="T." surname="Spencer">
             <organization>Curity AB</organization>
@@ -29,7 +31,7 @@
             </address>
         </author>
 
-        <date day="4" month="November" year="2019"/>
+        <date day="23" month="November" year="2019"/>
 
         <area>Security</area>
         <workgroup>OAuth Working Group</workgroup>
@@ -69,7 +71,7 @@
                 the &ro;'s limitation of the granted scope. The
                 resulting scope is enforced by the &rs;. The way in
                 which the &c; indicates the intended scope of access is by
-                the <spanx style="verb">scope</spanx> request parameter defined
+                the <tt>scope</tt> request parameter defined
                 in Section 3.3 of <xref target="RFC6749"/>. This specification
                 defines a more sophisticated instrument to achieve this same
                 purpose.
@@ -84,7 +86,7 @@
                 essential for its ability to operate. In such cases, the grant
                 is of little use to the &c; if the &ro; does not
                 comply. Another example of when the existing
-                <spanx style="verb">scope</spanx> parameter is insufficient is
+                <tt>scope</tt> parameter is insufficient is
                 when the &c; knows that some claim is required by a
                 particular &rs;. The extent of a &c;'s knowledge
                 is usually limited to knowing that a claim is needed in an
@@ -103,7 +105,7 @@
                 wherein these fix grant types -- authorization code, implicit,
                 resource owner password credentials, client credentials, and
                 token exchange -- are sought, this specification defines a new
-                parameter called <spanx style="verb">claims</spanx>. It can be
+                parameter called <tt>claims</tt>. It can be
                 used by a &c; with any of these to request that certain
                 claims and/or particular claim values be authorized by the
                 &ro;. The value of this parameter is a
@@ -117,14 +119,14 @@
 
             <t>
                 During a refresh request (as described in Section 1.5 of
-                <xref target="RFC6749"/>), the <spanx style="verb">claims</spanx>
+                <xref target="RFC6749"/>), the <tt>claims</tt>
                 parameter defined herein can also be used to alter the resulting
                 scope of access. This can be used, for example, to lessen the
                 scope by including a certain subset of claims that should be in
                 the new access token. After such, a &c; may increase the
                 scope in a subsequent refresh request by including additional
-                claim names in the JSON object value of the <spanx style="verb">
-                claims</spanx> authorization request parameter. When it does so,
+                claim names in the JSON object value of the <tt>
+                claims</tt> authorization request parameter. When it does so,
                 the &c; cannot, however, expand the scope from that which was
                 initially authorized by the &ro;.
             </t>
@@ -150,14 +152,16 @@
                     constructs can be used together or independently. That said,
                     however, there are at least three common ways that claims
                     will be used:
+                </t>
 
-                    <list style="numbers">
-                        <t>Not at all (in which case this specification is
-                            irrelevant).</t>
-                        <t>In lieu of scope tokens.</t>
-                        <t>Together with scope tokens.</t>
-                    </list>
+                <ol>
+                    <li>Not at all (in which case this specification is
+                        irrelevant).</li>
+                    <li>In lieu of scope tokens.</li>
+                    <li>Together with scope tokens.</li>
+                </ol>
 
+                <t>
                     The first and second option are straightforward. The third,
                     however, will require a specification to define the
                     relation between the two in order to achieve
@@ -174,11 +178,14 @@
             <section title="Notational Conventions"
                      anchor="notational-conventions">
                 <t>
-                    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
-                    NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED",
-                    "MAY", and "OPTIONAL" in this document are to be interpreted as
-                    described in BCP 14 <xref target="RFC2119"/> <xref target="RFC8174"/>
-                    when, and only when, they appear in all capitals, as shown here.
+                    The key words "<bcp14>MUST</bcp14>", "<bcp14>MUST NOT</bcp14>",
+                    "<bcp14>REQUIRED</bcp14>", "<bcp14>SHALL</bcp14>", "<bcp14>SHALL NOT</bcp14>",
+                    "<bcp14>SHOULD</bcp14>", "<bcp14>SHOULD NOT</bcp14>",
+                    "<bcp14>RECOMMENDED</bcp14>", "<bcp14>NOT RECOMMENDED</bcp14>",
+                    "<bcp14>MAY</bcp14>", and "<bcp14>OPTIONAL</bcp14>" in this document are to be
+                    interpreted as described in BCP&nbsp;14 <xref target="RFC2119"/> <xref
+                        target="RFC8174"/> when, and only when, they appear in all capitals, as
+                    shown here.
                 </t>
 
                 <t>
@@ -197,69 +204,70 @@
                     and "Token Endpoint" defined by <xref target="RFC6749"/>;
                     "Claim", "Claim Name", and "Claim Value" defined by
                     <xref target="RFC7519"/>; and the following defined herein:
-
-                    <list style="hanging">
-                        <t hangText="Claims Sink">
-                            <vspace/>
-                            The location or destination where the &as;
-                            MAY include all requested claims that are
-                            authorized by the &ro;. An access token
-                            intended for an unspecified &rs; or an
-                            access token the &c; intends to send to a
-                            particular &rs; or an ID token (when the
-                            OpenID Connect profile of this specification is
-                            used) are examples of claims sinks.
-                        </t>
-                        <t hangText="Claims Request Object">
-                            <vspace/>
-                            Has the meaning ascribed to it in <xref
-                                target="claims-request-object"/>.
-                        </t>
-
-                        <t hangText="Claims Sink Query Object">
-                            <vspace/>
-                            Has the meaning ascribed to it in <xref
-                                target="requesting-particular-claim-names-and-claim-values"/>.
-                        </t>
-
-                        <t hangText="Claim Value Query Object">
-                            <vspace/>
-                            Has the meaning ascribed to it in <xref
-                                target="requesting-particular-claim-names-and-claim-values"/>.
-                        </t>
-
-                        <t hangText="Critical Claim">
-                            <vspace/>
-                            Has the meaning ascribed to it in <xref
-                                target="critical-members-of-a-claims-request-object"/>.
-                        </t>
-
-                        <t hangText="Essential Claim">
-                            <vspace/>
-                            A claim specified by the &c; as being necessary
-                            to ensure a smooth authorization experience for a
-                            specific task requested by the &ro;.
-                        </t>
-
-                        <t hangText="Scope Token">
-                            <vspace/>
-                            A case-sensitive string joined by spaces together
-                            with other such strings and included in the the
-                            <spanx style="verb">scope</spanx> request parameter
-                            of an authorization request (i.e., a
-                            <spanx style="verb">scope-token</spanx> as set
-                            forth in the ABNF of Section 3.3 of
-                            <xref target="RFC6749"/>).
-                        </t>
-
-                        <t hangText="Voluntary Claim">
-                            <vspace/>
-                            A claim specified by the &c; as being useful but
-                            not essential for the specific task requested by
-                            the &ro;.
-                        </t>
-                    </list>
                 </t>
+
+                <dl newline="true" indent="8">
+                    <dt>Claims Sink</dt>
+                    <dd>
+                        The location or destination where the &as;
+                        MAY include all requested claims that are
+                        authorized by the &ro;. An access token
+                        intended for an unspecified &rs; or an
+                        access token the &c; intends to send to a
+                        particular &rs; or an ID token (when the
+                        OpenID Connect profile of this specification is
+                        used) are examples of claims sinks.
+                    </dd>
+
+                    <dt>Claims Request Object</dt>
+                    <dd>
+                        Has the meaning ascribed to it in <xref
+                            target="claims-request-object"/>.
+                    </dd>
+
+                    <dt>Claims Sink Query Object</dt>
+                    <dd>
+                        Has the meaning ascribed to it in <xref
+                            target="requesting-particular-claim-names-and-claim-values"/>.
+                    </dd>
+
+                    <dt>Claim Value Query Object</dt>
+                    <dd>
+                        Has the meaning ascribed to it in <xref
+                            target="requesting-particular-claim-names-and-claim-values"/>.
+                    </dd>
+
+                    <dt>Critical Claim</dt>
+                    <dd>
+                        Has the meaning ascribed to it in <xref
+                            target="critical-members-of-a-claims-request-object"/>.
+                    </dd>
+
+                    <dt>Essential Claim</dt>
+                    <dd>
+                        A claim specified by the &c; as being necessary
+                        to ensure a smooth authorization experience for a
+                        specific task requested by the &ro;.
+                    </dd>
+
+                    <dt>Scope Token</dt>
+                    <dd>
+                        A case-sensitive string joined by spaces together
+                        with other such strings and included in the the
+                        <tt>scope</tt> request parameter
+                        of an authorization request (i.e., a
+                        <tt>scope-token</tt> as set
+                        forth in the ABNF of Section 3.3 of
+                        <xref target="RFC6749"/>).
+                    </dd>
+
+                    <dt>Voluntary Claim</dt>
+                    <dd>
+                        A claim specified by the &c; as being useful but
+                        not essential for the specific task requested by
+                        the &ro;.
+                    </dd>
+                </dl>
             </section>
         </section>
 
@@ -300,25 +308,26 @@
                     The steps in the flow illustrated in Figure 1 are generally
                     the same as those described in Section 1.2 of
                     <xref target="RFC6749"/> with a few important distinctions:
-
-                    <list style="symbols">
-                        <t>
-                            During the authorization request (A), the &c;
-                            includes a claims request object as the
-                            corresponding value of the
-                            <spanx style="verb">claims</spanx> request
-                            parameter, as described in Section <xref target="requesting-particular-claim-names-and-claim-values"/> below.
-                        </t>
-                        <t>After obtaining (B) and presenting the authorization
-                            grant (C), the response MAY include an access token
-                            and a possibly-empty list of claim names that were
-                            authorized (D). If the asserted claims embodied by
-                            the access token differ from those requested (A),
-                            then the &as; MUST include a list
-                            of authorized claim names in the authorization
-                            response (D).</t>
-                    </list>
                 </t>
+
+                <ul>
+                    <li>
+                        During the authorization request (A), the &c;
+                        includes a claims request object as the
+                        corresponding value of the
+                        <tt>claims</tt> request
+                        parameter, as described in Section <xref target="requesting-particular-claim-names-and-claim-values"/> below.
+                    </li>
+                    <li>After obtaining (B) and presenting the authorization
+                        grant (C), the response MAY include an access token
+                        and a possibly-empty list of claim names that were
+                        authorized (D). If the asserted claims embodied by
+                        the access token differ from those requested (A),
+                        then the &as; MUST include a list
+                        of authorized claim names in the authorization
+                        response (D).
+                    </li>
+                </ul>
             </section>
 
             <section title="Refresh Request" anchor="refresh-request">
@@ -327,7 +336,7 @@
                     further explained in section 6 thereof, a &c; that was
                     issued a refresh token MAY use this to narrow the scope of
                     access for an access token. It does this by sending the
-                    <spanx style="verb">scope</spanx> request parameter in step
+                    <tt>scope</tt> request parameter in step
                     (G) of Figure 2 of <xref target="RFC6749"/>. At times, the
                     &c; might want to be more explicit about which claims
                     should be included in the refreshed access token or about
@@ -342,10 +351,11 @@
                     refreshes an access token to narrow the scope of access to
                     a particular set of claims is shown in
                     <xref target="refresh-token-flow"/>.
+                </t>
 
-                    <figure title="Narrowing the Scope of Access to a
+                <figure title="Narrowing the Scope of Access to a
                     Particular Set of Claims" anchor="refresh-token-flow">
-                        <artwork type="ascii-art"><![CDATA[
+                    <artwork type="ascii-art"><![CDATA[
 +--------+                               +---------------+
 | Client |--(A)----- Refresh token ----->| Authorization |
 |        |     including claims request  |    Server     |
@@ -355,9 +365,10 @@
 |        | including granted claim names |               |
 +--------+     & optional refresh token  +---------------+
 ]]>
-                        </artwork>
-                    </figure>
+                    </artwork>
+                </figure>
 
+                <t>
                     Downscoping in this flow is achieved when the &c;
                     requests a subset of the claims authorized by the &ro;.
                 </t>
@@ -399,9 +410,10 @@
                     that the &ro; authorized the &c; for. This
                     request/response interaction pattern is shown in
                     <xref target="introspection-flow"/>.
+                </t>
 
-                    <figure title="Introspecting an Access Token and Obtaining Granted Claims" anchor="introspection-flow">
-                        <artwork type="ascii-art"><![CDATA[
+                <figure title="Introspecting an Access Token and Obtaining Granted Claims" anchor="introspection-flow">
+                    <artwork type="ascii-art"><![CDATA[
 +--------+                               +---------------+
 | Client |--(A)----- Access token -----> | Authorization |
 |        | send to introspection endpoint|    Server     |
@@ -411,15 +423,14 @@
 |        |    including granted claim    |               |
 +--------+             names             +---------------+
 ]]>
-                        </artwork>
-                    </figure>
-                </t>
+                    </artwork>
+                </figure>
 
                 <t>
                     Using this flow, a &c; will be informed about the
                     authorized claim names in the same way it is informed about
                     the scope of access by way of the
-                    <spanx style="verb">scope</spanx> response member.
+                    <tt>scope</tt> response member.
                 </t>
             </section>
 
@@ -430,7 +441,7 @@
 
         <section title="Claims Request Object" anchor="claims-request-object">
             <t>
-                The <spanx style="verb">claims</spanx> request parameter value
+                The <tt>claims</tt> request parameter value
                 is a UTF-8 encoded JSON object ("Claims Request Object")
                 specifying requested claims. Prior to transmission to the
                 &as; it is also form-URL-encoded as appropriate.
@@ -448,44 +459,46 @@
                 The top-level members of the claims request object SHOULD
                 include at least one claims sink. The only specific claims sinks
                 defined by this specification are
-                <spanx style="verb">access_token</spanx>,
-                <spanx style="verb">*</spanx>, and
-                <spanx style="verb">?</spanx>. Additionally,
+                <tt>access_token</tt>,
+                <tt>*</tt>, and
+                <tt>?</tt>. Additionally,
                 this specification also sets forth a mechanism by which a &c;
                 may signal to the &as; which claims it prefers
                 to be included in an access token that it intends to be furnished to
                 a particular &rs;; this is done by using an absolute
                 URI of the target service or resource as a claims sink. A claims
                 request object MAY also contain the member
-                <spanx style="verb">crit</spanx> to indicate parts of the
+                <tt>crit</tt> to indicate parts of the
                 claims request object that the &as; MUST
-                understand if the <spanx style="verb">crit</spanx> member
+                understand if the <tt>crit</tt> member
                 itself is understood. Other members of a claims request object
                 MAY be present; any that are not understood by the &as;
                 MUST be ignored.
             </t>
             <t>
                 An example of a claims request object that is sent to the
-                &as; as the value of the <spanx
-                style="verb">claims</spanx> request parameter provided during an
+                &as; as the value of the
+                <tt>claims</tt> request parameter provided during an
                 authorization request, refresh request or token exchange
                 request is shown in
                 <xref target="example-claims-request-object"/>.
+            </t>
 
-                <figure anchor="example-claims-request-object"
-                        title="Example of a Claims Request Object">
-                    <artwork>
+            <figure anchor="example-claims-request-object"
+                    title="Example of a Claims Request Object">
+                <artwork>
                         <![CDATA[
 {
     "access_token" : {
 
     }
 }]]>
-                    </artwork>
-                </figure>
+                </artwork>
+            </figure>
 
+            <t>
                 In this non-normative example, the
-                <spanx style="verb">access_token</spanx> member is the
+                <tt>access_token</tt> member is the
                 claims sink. It is the location where the &as;
                 MAY include any of the requested claims that the &ro;
                 authorizes. If the &as; uses the requested
@@ -503,48 +516,48 @@
                     Object"). This object contains properties that have the name
                     of a claim which the &c; is requesting the &as;
                     to assert. The possible values associated with each
-                    of these is <spanx style="verb">null</spanx> or another
+                    of these is <tt>null</tt> or another
                     JSON object ("Claim Value Query Object").
                 </t>
 
                 <t>
-                    When the value is <spanx style="verb">null</spanx>, it
+                    When the value is <tt>null</tt>, it
                     indicates that the claim with the associated claim name is a
                     voluntary claim, and the &c; has no specific requirements
                     on the claim value. Conversely, when the claim value query
-                    object is not <spanx style="verb">null</spanx> it is a
+                    object is not <tt>null</tt> it is a
                     JSON object with the following properties:
-
-                    <list hangIndent="8" style="hanging">
-                        <t hangText="essential">
-                            <vspace/>
-                            OPTIONAL. Indicates whether the claim being
-                            requested is an essential claim. If the value is
-                            <spanx style="verb">true</spanx>, this indicates
-                            that the claim is an essential claim. If the value
-                            is <spanx style="verb">false</spanx> or if this
-                            property is not include, then the claim is a
-                            voluntary claim.
-                        </t>
-
-                        <t hangText="value">
-                            <vspace/>
-                            OPTIONAL. Requests that the claim be returned with
-                            a particular value.
-                        </t>
-
-                        <t hangText="values">
-                            <vspace/>
-                            OPTIONAL. Requests that the claim be returned with
-                            one of a set of values, with the values appearing
-                            in order of preference.
-                        </t>
-                    </list>
                 </t>
 
+                <dl newline="true" indent="8">
+                    <dt>essential</dt>
+                    <dd>
+                        OPTIONAL. Indicates whether the claim being
+                        requested is an essential claim. If the value is
+                        <tt>true</tt>, this indicates
+                        that the claim is an essential claim. If the value
+                        is <tt>false</tt> or if this
+                        property is not include, then the claim is a
+                        voluntary claim.
+                    </dd>
+
+                    <dt>value</dt>
+                    <dd>
+                        OPTIONAL. Requests that the claim be returned with
+                        a particular value.
+                    </dd>
+
+                    <dt>values</dt>
+                    <dd>
+                        OPTIONAL. Requests that the claim be returned with
+                        one of a set of values, with the values appearing
+                        in order of preference.
+                    </dd>
+                </dl>
+
                 <t>
-                    The properties <spanx style="verb">value</spanx> and
-                    <spanx style="verb">values</spanx> are mutually exclusive.
+                    The properties <tt>value</tt> and
+                    <tt>values</tt> are mutually exclusive.
                     If the &c; sends a claim value query object with both,
                     the &as; MUST return an error as described
                     in Section <xref target="obtaining-authorization"/> below.
@@ -572,10 +585,11 @@
                     A non-normative example of the two possible types of values
                     for a claim value query object is shown in
                     <xref target="example-claim-value-query-object"/>.
+                </t>
 
-                    <figure anchor="example-claim-value-query-object"
-                            title="Example of a Claim Value Query Object">
-                        <artwork>
+                <figure anchor="example-claim-value-query-object"
+                        title="Example of a Claim Value Query Object">
+                    <artwork>
                             <![CDATA[
 {
     "access_token" : {
@@ -585,24 +599,25 @@
         }
     }
 }]]>
-                        </artwork>
-                    </figure>
+                    </artwork>
+                </figure>
 
+                <t>
                     In this example, there are two claim names which the &c;
                     is requesting
-                    <spanx style="verb">https://example.com/claim1</spanx> and
-                    <spanx style="verb">fname</spanx>. The values associated
+                    <tt>https://example.com/claim1</tt> and
+                    <tt>fname</tt>. The values associated
                     with these are claim value query objects. The former is a
                     simple query where the &c; has no preference on a
                     particular value. For this reason, the &c; specifies the
-                    value <spanx style="verb">null</spanx>. In the later case,
+                    value <tt>null</tt>. In the later case,
                     the &c; has more precise needs: it desires the
                     &as; to assert a claim value of
-                    <spanx style="verb">John</spanx> for the claim name
-                    <spanx style="verb">fname</spanx>. In such situations the
+                    <tt>John</tt> for the claim name
+                    <tt>fname</tt>. In such situations the
                     &as; MAY issue a claim with the claim name
-                    <spanx style="verb">fname</spanx> but with some other claim
-                    value than <spanx style="verb">John</spanx>. Both are
+                    <tt>fname</tt> but with some other claim
+                    value than <tt>John</tt>. Both are
                     voluntary claims.
                 </t>
 
@@ -610,10 +625,11 @@
                     An example of an essential claim is shown in the
                     non-normative listing of
                     <xref target="example-essential-claim-value-query"/>.
+                </t>
 
-                    <figure anchor="example-essential-claim-value-query"
-                            title="Example of querying for an Essential Claim">
-                        <artwork>
+                <figure anchor="example-essential-claim-value-query"
+                        title="Example of querying for an Essential Claim">
+                    <artwork>
                             <![CDATA[
 {
     "access_token" : {
@@ -622,16 +638,17 @@
         }
     }
 }]]>
-                        </artwork>
-                    </figure>
+                    </artwork>
+                </figure>
 
+                <t>
                     This query indicates that the &c; would like the
                     &as; to issue an access token with a scope
-                    that includes a claim with the claim name <spanx
-                        style="verb">consentId</spanx>. To ensure a smooth
+                    that includes a claim with the claim name
+                    <tt>consentId</tt>. To ensure a smooth
                     authorization experience at the &rs; where the
                     &c; will present the resulting access token, the &c;
-                    has indicated that the <spanx style="verb">consentId</spanx>
+                    has indicated that the <tt>consentId</tt>
                     claim is required, making it an essential claim.
                 </t>
 
@@ -641,10 +658,11 @@
                     claim value that the &c; has some preference for. A
                     non-normative example of such a query is show in
                     <xref target="example-essential-claim-value-with-certain-value"/>.
+                </t>
 
-                    <figure anchor="example-essential-claim-value-with-certain-value"
-                            title="Example of querying for an Essential Claim with Certain Values">
-                        <artwork>
+                <figure anchor="example-essential-claim-value-with-certain-value"
+                        title="Example of querying for an Essential Claim with Certain Values">
+                    <artwork>
                             <![CDATA[
 {
     "access_token" : {
@@ -658,19 +676,20 @@
         }
     }
 }]]>
-                        </artwork>
-                    </figure>
+                    </artwork>
+                </figure>
 
+                <t>
                     In this example, the &c; is requesting that the
                     &as; assert two essential claims: one named
-                    <spanx style="verb">accountId</spanx> and another named
-                    <spanx style="verb">paymentId</spanx>. In the former case,
+                    <tt>accountId</tt> and another named
+                    <tt>paymentId</tt>. In the former case,
                     the &c; requests that the claim value be
-                    <spanx style="verb">act-123</spanx> or
-                    <spanx style="verb">act-456</spanx>. In the later case, a
-                    claim named <spanx style="verb">paymentId</spanx> is
+                    <tt>act-123</tt> or
+                    <tt>act-456</tt>. In the later case, a
+                    claim named <tt>paymentId</tt> is
                     requested by the &c; to have a claim value of
-                    <spanx style="verb">pid-123456</spanx>. Again, the
+                    <tt>pid-123456</tt>. Again, the
                     &as; MUST NOT return an error if the
                     &ro; does not authorize both of these claims or
                     if they are non-existent. This is merely a request for a
@@ -681,10 +700,11 @@
                     Another example inspired by the Revised Directive on
                     Payment Services (PSD2) is shown in the
                     non-normative listing of <xref target="psd2-example"/>.
+                </t>
 
-                    <figure anchor="psd2-example"
-                            title="PSD2-related Example">
-                        <artwork>
+                <figure anchor="psd2-example"
+                        title="PSD2-related Example">
+                    <artwork>
                             <![CDATA[
 {
     "access_token" : {
@@ -713,21 +733,22 @@
         }
     }
 }]]>
-                        </artwork>
-                    </figure>
+                    </artwork>
+                </figure>
 
+                <t>
                     In this example, the &c; is requesting (but not forcing)
                     the &as; to obtain authorization from the
                     &ro; for five essential claims:
-                    <spanx style="verb">instructedAmount</spanx>,
-                    <spanx style="verb">debtorAccount/iban</spanx>,
-                    <spanx style="verb">creditorName</spanx>,
-                    <spanx style="verb">creditorAccount/iban</spanx>, and
-                    <spanx style="verb">remittanceInformationUnstructured</spanx>.
+                    <tt>instructedAmount</tt>,
+                    <tt>debtorAccount/iban</tt>,
+                    <tt>creditorName</tt>,
+                    <tt>creditorAccount/iban</tt>, and
+                    <tt>remittanceInformationUnstructured</tt>.
                     The claim value query object associated with each of these
                     claim names has a particular value the &c; strongly
                     prefers. One interesting case is the value of the
-                    <spanx style="verb">instructedAmount</spanx> essential
+                    <tt>instructedAmount</tt> essential
                     claim; the query for the value of this claim is a JSON
                     object with two properties. The &as; might
                     use this claims request object to obtain the &ro;'s
@@ -737,7 +758,7 @@
                     data source lookup results, the &as; may
                     not issue the claims at all or may do so with some other
                     value. For example, the &as; may actually
-                    find that the <spanx style="verb">instructedAmount</spanx>
+                    find that the <tt>instructedAmount</tt>
                     value requested exceeds its policy's allowed limit and only
                     prompt the &ro; to authorize 100 Euro.
                 </t>
@@ -747,10 +768,11 @@
                     Another interesting example of how structured scope of
                     access can be requested is shown in the listing of
                     <xref target="esi-example"/>.
+                </t>
 
-                    <figure anchor="esi-example"
-                            title="ESI-related Example">
-                        <artwork>
+                <figure anchor="esi-example"
+                        title="ESI-related Example">
+                    <artwork>
                             <![CDATA[
 {
     "access_token" : {
@@ -770,16 +792,17 @@
         }
     }
 }]]>
-                        </artwork>
-                    </figure>
+                    </artwork>
+                </figure>
 
+                <t>
                     This example shows how a &c; may request claims defined
                     by the Electronic Signatures and Infrastructures (ESI)
                     Protocols for remote digital signature creation. Like the
                     previous example, the claims request object for the
-                    <spanx style="verb">access_token</spanx> claims sink
+                    <tt>access_token</tt> claims sink
                     includes a claim value query object for the
-                    <spanx style="verb">documentDigests</spanx> claim that
+                    <tt>documentDigests</tt> claim that
                     includes a JSON object with multiple properties.
                 </t>
 
@@ -789,7 +812,7 @@
                     &as;'s prerogative to assert any claims with
                     any claim values it chooses in its sole discretion. If the
                     &c;'s needs are stronger than preferential, it MAY use
-                    the <spanx style="verb">crit</spanx> member of the
+                    the <tt>crit</tt> member of the
                     claims request object which the &as; MAY
                     understand.
                 </t>
@@ -810,16 +833,16 @@
                     can be controlled in this manner. To know if this
                     interaction pattern in supported, the &c; must have a
                     priori knowledge gained by some means not defined by this
-                    specification or by the presence of a <spanx style="verb">
-                    true</spanx> value in the &as;'s
-                    <spanx style="verb">critical_claims_supported</spanx>
+                    specification or by the presence of a <tt>
+                    true</tt> value in the &as;'s
+                    <tt>critical_claims_supported</tt>
                     metadata (see section
                     <xref target="authorization-server-metadata"/> below). An
                     &as; is RECOMMENDED to support this
                     capability unless it cannot. When it does, the &as;
                     MUST issue any claim denoted as critical or it MUST
                     return an error. The error must be
-                    <spanx style="verb">invalid_claims</spanx> as described below
+                    <tt>invalid_claims</tt> as described below
                     in <xref target="obtaining-authorization"/>.
                 </t>
 
@@ -828,7 +851,7 @@
                     understand certain claims and be able to assert them by
                     including a list of JSON Pointers
                     <xref target="RFC6901"/>
-                    associated with the <spanx style="verb">crit</spanx> member
+                    associated with the <tt>crit</tt> member
                     of the claims request object. Each such claim that the
                     elements of this list point to is a "Critical Claim". The
                     JSON Pointers in this list MUST refer to members of the
@@ -836,12 +859,12 @@
                     the list itself. If any JSON Pointer refers to an element of
                     the JSON Pointer list, the &as; MUST return
                     an error with a code of
-                    <spanx style="verb">invalid_request</spanx> if it supports
+                    <tt>invalid_request</tt> if it supports
                     critical claims. When the JSON Pointers are valid, if the
                     &as; does not understand any of the claims
                     pointed to by any of the elements of this list, the
                     &as; MUST return an error of
-                    <spanx style="verb">invalid_claims</spanx>. Likewise, if
+                    <tt>invalid_claims</tt>. Likewise, if
                     the &as; is unable to assert a critical
                     claim (and it supports critical claims), it MUST return the
                     same error. If a critical claim is requested with a certain
@@ -850,7 +873,7 @@
                     it's not able to (e.g., because the &ro; does not
                     have an attribute with that particular value), the
                     &as; MUST return an error with a code of
-                    <spanx style="verb">invalid_claims</spanx> unless it does
+                    <tt>invalid_claims</tt> unless it does
                     not support critical claims.
                 </t>
 
@@ -858,10 +881,11 @@
                     A non-normative example of a claims request object with a
                     critical claim is shown in
                     <xref target="crit-claim-example"/>.
+                </t>
 
-                    <figure anchor="crit-claim-example"
-                            title="Example of a Request Containing a Critical Claim">
-                        <artwork>
+                <figure anchor="crit-claim-example"
+                        title="Example of a Request Containing a Critical Claim">
+                    <artwork>
                             <![CDATA[
 {
     "crit" : [
@@ -877,37 +901,39 @@
         }
     }
 }]]>
-                        </artwork>
-                    </figure>
+                    </artwork>
+                </figure>
 
+                <t>
                     In this example, the
-                    <spanx style="verb">value</spanx> member of the
+                    <tt>value</tt> member of the
                     JSON object associated with
-                    <spanx style="verb">trust_framework</spanx> must be
+                    <tt>trust_framework</tt> must be
                     understood by the &as; because it is
                     pointed by the element of the critical claims list. The way
                     in which the &as; understands this
                     particular query is beyond the scope of this specification.
                     The only part of this example that is germane is the
-                    <spanx style="verb">crit</spanx> member of the claims
+                    <tt>crit</tt> member of the claims
                     request object which requires the &as; to
                     understand and assert a particular claim value (provided it
-                    understands the <spanx style="verb">crit</spanx> itself).
+                    understands the <tt>crit</tt> itself).
                     If it cannot and if it supports critical claims, it must
                     return an error.
                 </t>
 
                 <t>
                     It is not uncommon for a claim name to defined as a URI
-                    containing slashes (<spanx style="verb">/</spanx>, %x2F). When such a claim is
+                    containing slashes (<tt>/</tt>, %x2F). When such a claim is
                     critical, the escaping described in Section 3 of
                     <xref target="RFC6901"/> MUST be used, as in the
                     non-normative listing of
                     <xref target="escaped-critical-claim-example"/>.
+                </t>
 
-                    <figure anchor="escaped-critical-claim-example"
-                            title="Example of Escaping the JSON Pointer used to Refer to a Critical Claim with a Name Containing Slashes">
-                        <artwork>
+                <figure anchor="escaped-critical-claim-example"
+                        title="Example of Escaping the JSON Pointer used to Refer to a Critical Claim with a Name Containing Slashes">
+                    <artwork>
                             <![CDATA[
 {
     "crit" : ["/access_token/https:~1~1example.com~1claim1"],
@@ -915,9 +941,8 @@
         "https://example.com/claim1" : null,
     }
 }]]>
-                        </artwork>
-                    </figure>
-                </t>
+                    </artwork>
+                </figure>
             </section>
 
             <section title="Special Claims Sinks">
@@ -926,7 +951,7 @@
                     it may not be aware which claims sink the claim should be
                     included in. The &c; may prefer to leave this determination
                     to the &as;. In such cases, the &c; MAY
-                    use the claims sink <spanx style="verb">?</spanx> (%x3F) as
+                    use the claims sink <tt>?</tt> (%x3F) as
                     mentioned in Section <xref target="claims-request-object"/>
                     above. This special claim sink may result in the claim being
                     issued in the access token or any other claims sink that the
@@ -934,26 +959,26 @@
                     example of a claims request object indicating that a
                     particular claim be asserted in any claims sink is shown in
                     <xref target="example-any-claims-sink"/>.
+                </t>
 
-                    <figure anchor="example-any-claims-sink"
-                            title="Example Requesting a Claim to be Asserted in Any Claims Sink">
-                        <artwork>
+                <figure anchor="example-any-claims-sink"
+                        title="Example Requesting a Claim to be Asserted in Any Claims Sink">
+                    <artwork>
                             <![CDATA[
 {
     "?" : {
         "https://example.com/claim1" : null,
     }
 }]]>
-                        </artwork>
-                    </figure>
-                </t>
+                    </artwork>
+                </figure>
 
                 <t>
                     Similarly, there are situations where the &c; wishes
                     claims to be asserted in all claims sinks the &as;
                     supports. Rather than requiring the the &c; to
                     repeat its requirement for each claims sink, it MAY use the
-                    special claims sink <spanx style="verb">*</spanx> (%x2A).
+                    special claims sink <tt>*</tt> (%x2A).
                     This claims sink indicates to the &as; that
                     the &c; prefers all claims included in the claims request
                     object to be asserted in each claim sink that the
@@ -963,10 +988,11 @@
                     <xref target="example-comparable-to-all-claims-sink"/>
                     are equivalent (if the &as; only supports
                     the two claims sinks shown in the latter).
+                </t>
 
-                    <figure anchor="example-all-claims-sink"
-                            title="Example Requesting a Claim to be Asserted in All Claims Sinks">
-                        <artwork>
+                <figure anchor="example-all-claims-sink"
+                        title="Example Requesting a Claim to be Asserted in All Claims Sinks">
+                    <artwork>
                             <![CDATA[
 {
     "*" : {
@@ -988,14 +1014,13 @@
         "https://exmaple.com/claim1" : null,
     }
 }]]>
-                        </artwork>
-                    </figure>
-                </t>
+                    </artwork>
+                </figure>
 
                 <t>
                     The use of either the claims sink
-                    <spanx style="verb">?</spanx> and
-                    <spanx style="verb">*</spanx> with any other claims sink
+                    <tt>?</tt> and
+                    <tt>*</tt> with any other claims sink
                     in the same claims request object is undefined. The
                     &as; SHOULD return an error or apply some other
                     logic not defined by this specification. The &c; SHOULD
@@ -1013,11 +1038,11 @@
                 for an access token requires the &c; to obtain authorization
                 from the &ro;. As described there, this
                 can be done using various grant types. To make a request for
-                certain claims, the <spanx style="verb">claims</spanx> request
+                certain claims, the <tt>claims</tt> request
                 parameter defined herein is used when requesting an
                 authorization code, implicit, resource owner password
                 credentials, or client credentials grant type. The
-                <spanx style="verb">claims</spanx> request parameter MAY also
+                <tt>claims</tt> request parameter MAY also
                 be used with additional grant type that use the extension
                 mechanism defined in Section 4.5 of <xref target="RFC6749"/>
                 if so profiled by some other specification.
@@ -1034,18 +1059,20 @@
                         MAY include the following additional query
                         component that it sends to the authorization
                         endpoint URI:
+                    </t>
 
-                        <list hangIndent="8" style="hanging">
-                                <t hangText="claims">
-                                    <vspace/>
-                                    OPTIONAL. A claims request object as
-                                    described in
-                                    <xref target="claims-request-object"/>.
-                                </t>
-                        </list>
+                    <dl newline="true" indent="8">
+                        <dt>claims</dt>
+                        <dd>
+                                OPTIONAL. A claims request object as
+                                described in
+                                <xref target="claims-request-object"/>.
+                        </dd>
+                    </dl>
 
+                    <t>
                         The value of this parameter must use the
-                        <spanx style="verb">application/x-www-form-urlencoded</spanx>
+                        <tt>application/x-www-form-urlencoded</tt>
                         format defined in Appendix B of
                         <xref target="RFC6749"/>.
                     </t>
@@ -1056,12 +1083,13 @@
                         is shown in
                         <xref target="example-authorize-request-with-claims"/>
                         (with extra line breaks for display purposes only):
+                    </t>
 
-                        <figure anchor="example-authorize-request-with-claims"
-                                title="Example of Using the Claims Request
-                                Parameter on the Authorize Endpoint">
+                    <figure anchor="example-authorize-request-with-claims"
+                            title="Example of Using the Claims Request
+                            Parameter on the Authorize Endpoint">
 
-                                <artwork>
+                            <artwork>
                             <![CDATA[
 GET /authorize?client_id=s6BhdRkqt3&response_type=code&
     claims=%7B%0A%20%20%22access_token%22%20%3A%20%7B%20%0A
@@ -1071,60 +1099,59 @@ GET /authorize?client_id=s6BhdRkqt3&response_type=code&
         %7D%0A%20%20%7D%0A%7D
 Host: server.example.com
 ]]>
-                            </artwork>
-                        </figure>
-                    </t>
+                        </artwork>
+                    </figure>
                 </section>
 
                 <section title="Error Response"
                          anchor="authorization-code-grant-error-response">
                     <t>
                         If the &as; understands the
-                        <spanx style="verb">claims</spanx> request
+                        <tt>claims</tt> request
                         parameter, it MUST
                         redirect the user-agent of the &ro; to
                         the &c;'s redirection endpoint as described in
                         Section 4.1.2.1 of <xref target="RFC6749"/> with
                         one of the following
-                        <spanx style="verb">error</spanx> values:
-
-                        <list hangIndent="8" style="hanging">
-                            <t hangText="claims_not_supported">
-                                <vspace/>
-                                The &as; understands but does not support
-                                the <spanx style="verb">claims</spanx>
-                                request parameter, and the &c; SHOULD
-                                NOT use it when requesting authorization.
-                            </t>
-
-                            <t hangText="invalid_request">
-                                <vspace/>
-                                The &as; MAY use this
-                                less-descriptive error code to indicate that
-                                the claims request parameter value is not
-                                accepted, e.g., because it is syntactically
-                                incorrect. It is, however, RECOMMENDED that the
-                                &as; return
-                                <spanx style="verb">claims_not_supported</spanx>
-                                or <spanx style="verb">invalid_claims</spanx> as
-                                appropriate.
-                            </t>
-
-                            <t hangText="invalid_claims">
-                                <vspace/>
-                                When a &c; makes a request for a critical
-                                claim, and the &as; cannot
-                                assert such a claim because it is invalid,
-                                unknown, or malformed, this error results. If
-                                the request includes only claim names in the
-                                claims request object which are disallowed
-                                according to the &as;'s policy,
-                                this error (or the less-descriptive alternative,
-                                <spanx style="verb">invalid_request</spanx>)
-                                MUST result.
-                            </t>
-                        </list>
+                        <tt>error</tt> values:
                     </t>
+
+                    <dl newline="true" indent="8">
+                        <dt>claims_not_supported</dt>
+                        <dd>
+                            The &as; understands but does not support
+                            the <tt>claims</tt>
+                            request parameter, and the &c; SHOULD
+                            NOT use it when requesting authorization.
+                        </dd>
+
+                        <dt>invalid_request</dt>
+                        <dd>
+                            The &as; MAY use this
+                            less-descriptive error code to indicate that
+                            the claims request parameter value is not
+                            accepted, e.g., because it is syntactically
+                            incorrect. It is, however, RECOMMENDED that the
+                            &as; return
+                            <tt>claims_not_supported</tt>
+                            or <tt>invalid_claims</tt> as
+                            appropriate.
+                        </dd>
+
+                        <dt>invalid_claims</dt>
+                        <dd>
+                            When a &c; makes a request for a critical
+                            claim, and the &as; cannot
+                            assert such a claim because it is invalid,
+                            unknown, or malformed, this error results. If
+                            the request includes only claim names in the
+                            claims request object which are disallowed
+                            according to the &as;'s policy,
+                            this error (or the less-descriptive alternative,
+                            <tt>invalid_request</tt>)
+                            MUST result.
+                        </dd>
+                    </dl>
                 </section>
 
                 <section title="Access Token Response"
@@ -1138,19 +1165,19 @@ Host: server.example.com
                         &as; MAY include the following
                         response member in the JSON object returned from
                         the token endpoint:
-
-                        <list style="hanging" hangIndent="8">
-                            <t hangText="claims">
-                                <vspace/>
-                                OPTIONAL, if identical to the claims
-                                requested by the &c;; otherwise,
-                                REQUIRED. The space-separated claim names
-                                granted by the &ro; which denote
-                                the scope of the access token that is
-                                returned in the same response.
-                            </t>
-                        </list>
                     </t>
+
+                    <dl newline="true" indent="8">
+                        <dt>claims</dt>
+                        <dd>
+                            OPTIONAL, if identical to the claims
+                            requested by the &c;; otherwise,
+                            REQUIRED. The space-separated claim names
+                            granted by the &ro; which denote
+                            the scope of the access token that is
+                            returned in the same response.
+                        </dd>
+                    </dl>
                 </section>
             </section>
 
@@ -1163,18 +1190,20 @@ Host: server.example.com
                         <xref target="RFC6749"/>, the &c; MAY include
                         the following additional query component that it
                         sends to the authorization endpoint URI:
+                    </t>
 
-                        <list hangIndent="8" style="hanging">
-                            <t hangText="claims">
-                                <vspace/>
-                                OPTIONAL. A claims request object as
-                                described in
-                                <xref target="claims-request-object"/>.
-                            </t>
-                        </list>
+                    <dl newline="true" indent="8">
+                        <dt>claims</dt>
+                        <dd>
+                            OPTIONAL. A claims request object as
+                            described in
+                            <xref target="claims-request-object"/>.
+                        </dd>
+                    </dl>
 
+                    <t>
                         The value of this parameter must use the
-                        <spanx style="verb">application/x-www-form-urlencoded</spanx>
+                        <tt>application/x-www-form-urlencoded</tt>
                         format defined in Appendix B of
                         <xref target="RFC6749"/>.
                     </t>
@@ -1191,70 +1220,70 @@ Host: server.example.com
                         &as; MAY include the following
                         response parameter included on the fragment
                         component of the redirection URI:
-
-                        <list style="hanging" hangIndent="8">
-                            <t hangText="claims">
-                                <vspace/>
-                                OPTIONAL, if identical to the claims
-                                requested by the &c;; otherwise,
-                                REQUIRED. The space-separated claim names
-                                granted by the &ro; which denote
-                                the scope of the access token that is
-                                returned in the same response.
-                            </t>
-                        </list>
                     </t>
+
+                    <dl newline="true" indent="8">
+                        <dt>claims</dt>
+                        <dd>
+                            OPTIONAL, if identical to the claims
+                            requested by the &c;; otherwise,
+                            REQUIRED. The space-separated claim names
+                            granted by the &ro; which denote
+                            the scope of the access token that is
+                            returned in the same response.
+                        </dd>
+                    </dl>
                 </section>
 
                 <section title="Error Response"
                          anchor="implicit-flow-error-response">
                     <t>
                         If the &as; understands the
-                        <spanx style="verb">claims</spanx> request
+                        <tt>claims</tt> request
                         parameter, it MUST
                         redirect the user-agent of the &ro; to
                         the &c;'s redirection URI as described in
                         Section 4.2.2.1 of <xref target="RFC6749"/> with
                         one of the following
-                        <spanx style="verb">error</spanx> values:
-
-                        <list style="hanging" hangIndent="8">
-                            <t hangText="claims_not_supported">
-                                <vspace/>
-                                The &as; understands but does not support
-                                the <spanx style="verb">claims</spanx>
-                                request parameter, and the &c; SHOULD
-                                NOT use it when requesting authorization.
-                            </t>
-
-                            <t hangText="invalid_request">
-                                <vspace/>
-                                The &as; MAY use this
-                                less-descriptive error code to indicate that the
-                                claims request parameter value is not
-                                accepted, e.g., because it is syntactically.
-                                incorrect. It is, however, RECOMMENDED that the
-                                &as; return
-                                <spanx style="verb">claims_not_supported</spanx>
-                                or <spanx style="verb">invalid_claims</spanx> as
-                                appropriate.
-                            </t>
-
-                            <t hangText="invalid_claims">
-                                <vspace/>
-                                When a &c; makes a request for a critical
-                                claim, and the &as; cannot
-                                assert such a claim because it is invalid,
-                                unknown, or malformed, this error results. If
-                                the request includes only claim names in the
-                                claims request object which are disallowed
-                                according to the &as;'s policy,
-                                this error (or the less-descriptive alternative,
-                                <spanx style="verb">invalid_request</spanx>)
-                                MUST result.
-                            </t>
-                        </list>
+                        <tt>error</tt> values:
                     </t>
+
+                    <dl newline="true" indent="8">
+                        <dt>claims_not_supported</dt>
+                        <dd>
+                            The &as; understands but does not support
+                            the <tt>claims</tt>
+                            request parameter, and the &c; SHOULD
+                            NOT use it when requesting authorization.
+                        </dd>
+
+                        <dt>invalid_request</dt>
+                        <dd>
+                            The &as; MAY use this
+                            less-descriptive error code to indicate that the
+                            claims request parameter value is not
+                            accepted, e.g., because it is syntactically.
+                            incorrect. It is, however, RECOMMENDED that the
+                            &as; return
+                            <tt>claims_not_supported</tt>
+                            or <tt>invalid_claims</tt> as
+                            appropriate.
+                        </dd>
+
+                        <dt>invalid_claims</dt>
+                        <dd>
+                            When a &c; makes a request for a critical
+                            claim, and the &as; cannot
+                            assert such a claim because it is invalid,
+                            unknown, or malformed, this error results. If
+                            the request includes only claim names in the
+                            claims request object which are disallowed
+                            according to the &as;'s policy,
+                            this error (or the less-descriptive alternative,
+                            <tt>invalid_request</tt>)
+                            MUST result.
+                        </dd>
+                    </dl>
                 </section>
             </section>
 
@@ -1268,20 +1297,20 @@ Host: server.example.com
                         defined in Section 4.3 of <xref target="RFC6749"/>,
                         the &c; MAY include the following additional
                         parameter using the
-                        <spanx style="verb">application/x-www-form-urlencoded</spanx>
+                        <tt>application/x-www-form-urlencoded</tt>
                         format per Appendix B of <xref target="RFC6749"/>
                         with a character encoding of UTF-8 in the HTTP
                         request entity-body:
-
-                        <list style="hanging" hangIndent="8">
-                            <t hangText="claims">
-                                <vspace/>
-                                OPTIONAL. A claims request object as
-                                described in
-                                <xref target="claims-request-object"/>.
-                            </t>
-                        </list>
                     </t>
+
+                    <dl newline="true" indent="8">
+                    <dt>claims</dt>
+                            <dd>
+                            OPTIONAL. A claims request object as
+                            described in
+                            <xref target="claims-request-object"/>.
+                        </dd>
+                    </dl>
                 </section>
 
                 <section title="Access Token Response"
@@ -1295,61 +1324,63 @@ Host: server.example.com
                         &as; MAY include the following
                         response member in the JSON object returned from
                         the token endpoint:
+                    </t>
 
-                        <list hangIndent="8" style="hanging">
-                            <t hangText="claims">
-                                <vspace/>
-                                OPTIONAL, if identical to the claims
-                                requested by the &c;; otherwise,
-                                REQUIRED. The space-separated claim names
-                                the &c; is authorized for which denote
-                                the scope of the access token that is
-                                returned in the same response.
-                            </t>
-                        </list>
+                    <dl newline="true" indent="8">
+                        <dt>claims</dt>
+                        <dd>
+                            OPTIONAL, if identical to the claims
+                            requested by the &c;; otherwise,
+                            REQUIRED. The space-separated claim names
+                            the &c; is authorized for which denote
+                            the scope of the access token that is
+                            returned in the same response.
+                       </dd>
+                    </dl>
 
+                    <t>
                         If the request is invalid due to the value
-                        of the <spanx style="verb">claims</spanx>
+                        of the <tt>claims</tt>
                         parameter, the &as; returns an
                         error with one of the following error codes:
-
-                        <list style="hanging" hangIndent="8">
-                            <t hangText="claims_not_supported">
-                                <vspace/>
-                                The &as; understands but does not support
-                                the <spanx style="verb">claims</spanx>
-                                request parameter, and the &c; SHOULD
-                                NOT use it when requesting an access token.
-                            </t>
-
-                            <t hangText="invalid_request">
-                                <vspace/>
-                                The &as; MAY use this
-                                less-descriptive error code to indicate that
-                                the claims request parameter value is not
-                                accepted, accepted, e.g., because it is
-                                syntactically incorrect. It is, however,
-                                RECOMMENDED that the &as; return
-                                <spanx style="verb">claims_not_supported</spanx>
-                                or <spanx style="verb">invalid_claims</spanx> as
-                                appropriate.
-                            </t>
-
-                            <t hangText="invalid_claims">
-                                <vspace/>
-                                When a &c; makes a request for a critical
-                                claim, and the &as; cannot
-                                assert such a claim because it is invalid,
-                                unknown, or malformed, this error results. If
-                                the request includes only claim names in the
-                                claims request object which are disallowed
-                                according to the &as;'s policy,
-                                this error (or the less-descriptive alternative,
-                                <spanx style="verb">invalid_request</spanx>)
-                                MUST result.
-                            </t>
-                        </list>
                     </t>
+
+                    <dl newline="true" indent="8">
+                        <dt>claims_not_supported</dt>
+                        <dd>
+                            The &as; understands but does not support
+                            the <tt>claims</tt>
+                            request parameter, and the &c; SHOULD
+                            NOT use it when requesting an access token.
+                        </dd>
+
+                        <dt>invalid_request</dt>
+                           <dd>
+                            The &as; MAY use this
+                            less-descriptive error code to indicate that
+                            the claims request parameter value is not
+                            accepted, accepted, e.g., because it is
+                            syntactically incorrect. It is, however,
+                            RECOMMENDED that the &as; return
+                            <tt>claims_not_supported</tt>
+                            or <tt>invalid_claims</tt> as
+                            appropriate.
+                        </dd>
+
+                        <dt>invalid_claims</dt>
+                           <dd>
+                            When a &c; makes a request for a critical
+                            claim, and the &as; cannot
+                            assert such a claim because it is invalid,
+                            unknown, or malformed, this error results. If
+                            the request includes only claim names in the
+                            claims request object which are disallowed
+                            according to the &as;'s policy,
+                            this error (or the less-descriptive alternative,
+                            <tt>invalid_request</tt>)
+                            MUST result.
+                        </dd>
+                    </dl>
                 </section>
             </section>
 
@@ -1363,20 +1394,20 @@ Host: server.example.com
                         Section 4.4 of <xref target="RFC6749"/>, the &c;
                         MAY include the following additional parameter
                         using the
-                        <spanx style="verb">application/x-www-form-urlencoded</spanx>
+                        <tt>application/x-www-form-urlencoded</tt>
                         format per Appendix B of <xref target="RFC6749"/>
                         with a character encoding of UTF-8 in the HTTP
                         request entity-body:
-
-                        <list hangIndent="8" style="hanging">
-                            <t hangText="claims">
-                                <vspace/>
-                                OPTIONAL. A claims request object as
-                                described in  <xref
-                                    target="claims-request-object"/>.
-                            </t>
-                        </list>
                     </t>
+
+                    <dl newline="true" indent="8">
+                        <dt>claims</dt>
+                        <dd>
+                            OPTIONAL. A claims request object as
+                            described in  <xref
+                                target="claims-request-object"/>.
+                        </dd>
+                    </dl>
                 </section>
 
                 <section title="Access Token Response"
@@ -1390,61 +1421,63 @@ Host: server.example.com
                         &as; MAY include the following
                         response member in the JSON object returned from
                         the token endpoint:
+                    </t>
 
-                        <list hangIndent="8" style="hanging">
-                            <t hangText="claims">
-                                <vspace/>
+                    <dl newline="true" indent="8">
+                        <dt>claims</dt>
+                        <dd>
                                 OPTIONAL, if identical to the claims
                                 requested by the &c;; otherwise,
                                 REQUIRED. The space-separated claim names
                                 the &c; is authorized for which denote
                                 the scope of the access token that is
                                 returned in the same response.
-                            </t>
-                        </list>
+                        </dd>
+                    </dl>
 
+                    <t>
                         If the request is invalid due to the
-                        value of the <spanx style="verb">claims</spanx>
+                        value of the <tt>claims</tt>
                         parameter, the &as; returns an
                         error with one of the following error codes:
-
-                        <list hangIndent="8" style="hanging">
-                            <t hangText="claims_not_supported">
-                                <vspace/>
-                                The &as; understands but does not support
-                                the <spanx style="verb">claims</spanx>
-                                request parameter, and the &c; SHOULD
-                                NOT use it when requesting an access token.
-                            </t>
-
-                            <t hangText="invalid_request">
-                                <vspace/>
-                                The &as; MAY use this
-                                less-descriptive error code to indicate that
-                                the claims request parameter value is not
-                                accepted, e.g., because it is syntactically
-                                incorrect. It is, however, RECOMMENDED that the
-                                &as; return
-                                <spanx style="verb">claims_not_supported</spanx>
-                                or <spanx style="verb">invalid_claims</spanx> as
-                                appropriate.
-                            </t>
-
-                            <t hangText="invalid_claims">
-                                <vspace/>
-                                When a &c; makes a request for a critical
-                                claim, and the &as; cannot
-                                assert such a claim because it is invalid,
-                                unknown, or malformed, this error results. If
-                                the request includes only claim names in the
-                                claims request object which are disallowed
-                                according to the &as;'s policy,
-                                this error (or the less-descriptive alternative,
-                                <spanx style="verb">invalid_request</spanx>)
-                                MUST result.
-                            </t>
-                        </list>
                     </t>
+
+                    <dl newline="true" indent="8">
+                        <dt>claims_not_supported</dt>
+                        <dd>
+                            The &as; understands but does not support
+                            the <tt>claims</tt>
+                            request parameter, and the &c; SHOULD
+                            NOT use it when requesting an access token.
+                        </dd>
+
+                        <dt>invalid_request</dt>
+                        <dd>
+                            The &as; MAY use this
+                            less-descriptive error code to indicate that
+                            the claims request parameter value is not
+                            accepted, e.g., because it is syntactically
+                            incorrect. It is, however, RECOMMENDED that the
+                            &as; return
+                            <tt>claims_not_supported</tt>
+                            or <tt>invalid_claims</tt> as
+                            appropriate.
+                        </dd>
+
+                        <dt>invalid_claims</dt>
+                        <dd>
+                            When a &c; makes a request for a critical
+                            claim, and the &as; cannot
+                            assert such a claim because it is invalid,
+                            unknown, or malformed, this error results. If
+                            the request includes only claim names in the
+                            claims request object which are disallowed
+                            according to the &as;'s policy,
+                            this error (or the less-descriptive alternative,
+                            <tt>invalid_request</tt>)
+                            MUST result.
+                        </dd>
+                    </dl>
                 </section>
             </section>
         </section>
@@ -1463,19 +1496,21 @@ Host: server.example.com
                 <t>
                     When performing a token refresh request, the &c; MAY
                     send the following parameter using the
-                    <spanx style="verb">application/x-www-form-urlencoded</spanx>
+                    <tt>application/x-www-form-urlencoded</tt>
                     format per Appendix B of <xref target="RFC6749"/> with
                     a character encoding of UTF-8 in the HTTP request
                     entity-body:
+                </t>
 
-                    <list hangIndent="8" style="hanging">
-                        <t hangText="claims">
-                            <vspace/>
-                            OPTIONAL. A claims request object as described in
-                            <xref target="claims-request-object"/>.
-                        </t>
-                    </list>
+                <dl newline="true" indent="8">
+                    <dt>claims</dt>
+                    <dd>
+                        OPTIONAL. A claims request object as described in
+                        <xref target="claims-request-object"/>.
+                    </dd>
+                </dl>
 
+                <t>
                     If the &c; includes a claims request object in the
                     request, it SHOULD ensure that the claim names in the
                     claims value query object(s) are ones that were authorized
@@ -1496,60 +1531,62 @@ Host: server.example.com
                     5.1 of<xref target="RFC6749"/>. In particular, the
                     &as; MAY include the following response
                     member in the JSON object returned from the token endpoint:
+                </t>
 
-                    <list hangIndent="8" style="hanging">
-                        <t hangText="claims">
-                            <vspace/>
-                            OPTIONAL, if identical to the claims requested by
-                            the &c;; otherwise, REQUIRED. The
-                            space-separated claim names the &c; is
-                            authorized for which denote the scope of the access
-                            token that is returned in the same response.
-                        </t>
-                    </list>
+                <dl newline="true" indent="8">
+                    <dt>claims</dt>
+                    <dd>
+                        OPTIONAL, if identical to the claims requested by
+                        the &c;; otherwise, REQUIRED. The
+                        space-separated claim names the &c; is
+                        authorized for which denote the scope of the access
+                        token that is returned in the same response.
+                    </dd>
+                </dl>
 
+                <t>
                     If the request is invalid due to the value of the value of
-                    the <spanx style="verb">claims</spanx> parameter, the
+                    the <tt>claims</tt> parameter, the
                     &as; returns an error with one of the
                     following error codes:
-
-                    <list hangIndent="8" style="hanging">
-                        <t hangText="claims_not_supported">
-                            <vspace/>
-                            The &as; understands but does not
-                            support the <spanx style="verb">claims</spanx>
-                            request parameter, and the &c; SHOULD NOT use
-                            it when requesting an access token.
-                        </t>
-
-                        <t hangText="invalid_request">
-                            <vspace/>
-                            The &as; MAY use this
-                            less-descriptive error code to indicate that the
-                            claims request parameter value is not accepted,
-                            e.g., because it is syntactically incorrect. It
-                            is, however, RECOMMENDED that the &as;
-                            return
-                            <spanx style="verb">claims_not_supported</spanx>
-                            or <spanx style="verb">invalid_claims</spanx> as
-                            appropriate.
-                        </t>
-
-                        <t hangText="invalid_claims">
-                            <vspace/>
-                            When a &c; makes a request for a critical claim,
-                            and the &as; cannot assert such a
-                            claim because it is invalid, unknown, or malformed,
-                            this error results. If the request includes only
-                            claim names in the claims request object which are
-                            disallowed according to the &as;'s
-                            policy, this error (or the
-                            less-descriptive alternative,
-                            <spanx style="verb">invalid_request</spanx>)
-                            MUST result.
-                        </t>
-                    </list>
                 </t>
+
+                <dl newline="true" indent="8">
+                    <dt>claims_not_supported</dt>
+                    <dd>
+                        The &as; understands but does not
+                        support the <tt>claims</tt>
+                        request parameter, and the &c; SHOULD NOT use
+                        it when requesting an access token.
+                    </dd>
+
+                    <dt>invalid_request</dt>
+                    <dd>
+                        The &as; MAY use this
+                        less-descriptive error code to indicate that the
+                        claims request parameter value is not accepted,
+                        e.g., because it is syntactically incorrect. It
+                        is, however, RECOMMENDED that the &as;
+                        return
+                        <tt>claims_not_supported</tt>
+                        or <tt>invalid_claims</tt> as
+                        appropriate.
+                    </dd>
+
+                    <dt>invalid_claims</dt>
+                    <dd>
+                        When a &c; makes a request for a critical claim,
+                        and the &as; cannot assert such a
+                        claim because it is invalid, unknown, or malformed,
+                        this error results. If the request includes only
+                        claim names in the claims request object which are
+                        disallowed according to the &as;'s
+                        policy, this error (or the
+                        less-descriptive alternative,
+                        <tt>invalid_request</tt>)
+                        MUST result.
+                    </dd>
+                </dl>
             </section>
         </section>
 
@@ -1563,15 +1600,15 @@ Host: server.example.com
                 the JSON <xref target="RFC8259"/> object of the &as;'s
                 introspection endpoint response as stipulated in
                 Section 2.2 of <xref target="RFC7662"/>.
-
-                <list hangIndent="8" style="hanging">
-                    <t hangText="claims">
-                        <vspace/>
-                        OPTIONAL. The space-separated claim names granted by the &ro;
-                        which denote the scope of the access token.
-                    </t>
-                </list>
             </t>
+
+            <dl newline="true" indent="8">
+                <dt>claims</dt>
+                <dd>
+                    OPTIONAL. The space-separated claim names granted by the &ro;
+                    which denote the scope of the access token.
+                </dd>
+            </dl>
         </section>
 
         <section title="Requesting Claims for a Particular Protected Resource">
@@ -1581,52 +1618,54 @@ Host: server.example.com
         <section title="Authorization Server Metadata" anchor="authorization-server-metadata">
             <t>
                 An &as; that supports the
-                <spanx style="verb">claims</spanx> request parameter SHOULD
+                <tt>claims</tt> request parameter SHOULD
                 declare this fact by including the following property in the
                 &as; metadata response
                 <xref target="RFC8414"/>:
+            </t>
 
-                <list style="hanging">
-                    <t hangText="claims_parameter_supported">
-                        <vspace/>
-                        OPTIONAL. A boolean value indicating that the
-                        &as; supports the
-                        <spanx style="verb">claims</spanx> request parameter or
-                        not. A value of <spanx style="verb">true</spanx>
-                        indicates that it is supported. A value of
-                        <spanx style="verb">false</spanx>, a
-                        <spanx style="verb">null</spanx> value, or the absence
-                        of the property means that the
-                        <spanx style="verb">claims</spanx> request parameter is
-                        not supported by the &as;.
-                    </t>
+            <dl newline="true" indent="8">
+                <dt>claims_parameter_supported</dt>
+                <dd>
+                    OPTIONAL. A boolean value indicating that the
+                    &as; supports the
+                    <tt>claims</tt> request parameter or
+                    not. A value of <tt>true</tt>
+                    indicates that it is supported. A value of
+                    <tt>false</tt>, a
+                    <tt>null</tt> value, or the absence
+                    of the property means that the
+                    <tt>claims</tt> request parameter is
+                    not supported by the &as;.
+                </dd>
 
-                    <t hangText="claims_supported">
-                        <vspace/>
-                        RECOMMENDED. JSON array containing a list of the claim
-                        names of the Claims that the &as; MAY
-                        be able to supply values for. Note that for privacy or
-                        other reasons, this might not be an exhaustive list.
-                    </t>
+                <dt>claims_supported</dt>
+                <dd>
+                    RECOMMENDED. JSON array containing a list of the claim
+                    names of the Claims that the &as; MAY
+                    be able to supply values for. Note that for privacy or
+                    other reasons, this might not be an exhaustive list.
+                </dd>
 
-                    <t hangText="critical_claims_supported">
-                        <vspace/>
-                        OPTIONAL. A boolean value indicating that the
-                        &as; supports the possibility for the
-                        &c; to indicate that certain parts of a claims
-                        request object MUST be understood by the &as;.
-                        A value of <spanx style="verb">false</spanx>,
-                        a <spanx style="verb">null</spanx> value, or the
-                        absence of this member means that the &as;
-                        MAY not support this interaction pattern, and
-                        the &c; MUST NOT assume that it does.
-                    </t>
-                </list>
+                <dt>critical_claims_supported</dt>
+                <dd>
+                    OPTIONAL. A boolean value indicating that the
+                    &as; supports the possibility for the
+                    &c; to indicate that certain parts of a claims
+                    request object MUST be understood by the &as;.
+                    A value of <tt>false</tt>,
+                    a <tt>null</tt> value, or the
+                    absence of this member means that the &as;
+                    MAY not support this interaction pattern, and
+                    the &c; MUST NOT assume that it does.
+                </dd>
+            </dl>
 
+            <t>
                 If the &as; returns a value of
-                <spanx style="verb">false</spanx> for
-                <spanx style="verb">claims_parameter_supported</spanx> and
-                true for <spanx style="verb">critical_claims_supported</spanx>,
+                <tt>false</tt> for
+                <tt>claims_parameter_supported</tt> and
+                true for <tt>critical_claims_supported</tt>,
                 the interpretation by the &c; is undefined. It is
                 RECOMMENDED that the &c; assume that the &as;
                 is misconfigured and that it not attempt to request
@@ -1636,15 +1675,16 @@ Host: server.example.com
             <t>
                 A non-normative example of an &as; metadata
                 response which indicates that the
-                <spanx style="verb">claims</spanx> request parameter and
+                <tt>claims</tt> request parameter and
                 critical claims are supported by the server is shown in
                 <xref target="authorization-server-metadata-example"/>.
+            </t>
 
-                <figure anchor="authorization-server-metadata-example"
-                        title="Example of Metadata of an Authorization Server
-                        that Supports the Claims Request Parameter and
-                        Critical Claims">
-                    <artwork>
+            <figure anchor="authorization-server-metadata-example"
+                    title="Example of Metadata of an Authorization Server
+                    that Supports the Claims Request Parameter and
+                    Critical Claims">
+                <artwork>
                         <![CDATA[
 HTTP/1.1 200 OK
 Content-Type: application/json
@@ -1679,9 +1719,10 @@ Content-Type: application/json
     "critical_claims_supported" : true,
     "claims_supported" : ["sub", "http://example.com/monkey" ]
 }]]>
-                    </artwork>
-                </figure>
+                </artwork>
+            </figure>
 
+            <t>
                 Note the last three members in particular.
             </t>
         </section>
@@ -1888,28 +1929,24 @@ Content-Type: application/json
         </section>
 
         <section title="Document History" anchor="document-history">
-            <?rfc subcompact="yes"?>
             <t>
                 [[ to be removed by the RFC editor before publication as an RFC ]]
             </t>
-            <t>
-                -01
-                <list style='symbols'>
-                    <t>Use of XML entities for common terms in XML version of doc</t>
-                    <t>Added additional acknowledgements</t>
-                    <t>Updated keywords paragraph</t>
-                    <t>Updated links to other RFCs</t>
-                    <t>Small format changes and fixing of typos</t>
-                </list>
-            </t>
-            <t>
-                -00
-                <list style='symbols'>
-                    <t>
-                        Initial draft.
-                    </t>
-                </list>
-            </t>
+            <t>-01</t>
+            <ul spacing="compact">
+                <li>Use of XML entities for common terms in XML version of doc</li>
+                <li>Convert XML to v. 3 format</li>
+                <li>Added additional acknowledgements</li>
+                <li>Updated keywords paragraph</li>
+                <li>Updated links to other RFCs</li>
+                <li>Small format changes and fixing of typos</li>
+            </ul>
+            <t>-00</t>
+            <ul spacing="compact">
+                <li>
+                    Initial draft.
+                </li>
+            </ul>
         </section>
     </back>
 </rfc>
