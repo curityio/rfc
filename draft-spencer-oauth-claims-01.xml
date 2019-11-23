@@ -5,6 +5,16 @@
         <!ENTITY as "authorization server">
         <!ENTITY rs "resource server">
         <!ENTITY ro "resource owner">
+
+        <!ENTITY RFC2119 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml">
+        <!ENTITY RFC6749 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6749.xml">
+        <!ENTITY RFC6901 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6901.xml">
+        <!ENTITY RFC7519 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7519.xml">
+        <!ENTITY RFC7662 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7662.xml">
+        <!ENTITY RFC8174 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.8174.xml">
+        <!ENTITY RFC8259 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.8259.xml">
+        <!ENTITY RFC8414 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.8414.xml">
+        <!ENTITY I-D.ietf-oauth-token-exchange SYSTEM "https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-oauth-token-exchange.xml">
         ]>
 
 <?rfc compact="yes" ?>
@@ -1741,114 +1751,14 @@ Content-Type: application/json
 
     <back>
         <references title="Normative References">
-            <reference anchor='RFC2119' target='https://www.rfc-editor.org/info/rfc2119'>
-                <front>
-                    <title>Key words for use in RFCs to Indicate Requirement Levels</title>
-                    <author initials='S.' surname='Bradner' fullname='S. Bradner'><organization /></author>
-                    <date year='1997' month='March' />
-                    <abstract><t>In many standards track documents several words are used to signify the requirements in the specification.  These words are often capitalized. This document defines these words as they should be interpreted in IETF documents.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t></abstract>
-                </front>
-                <seriesInfo name='BCP' value='14'/>
-                <seriesInfo name='RFC' value='2119'/>
-                <seriesInfo name='DOI' value='10.17487/RFC2119'/>
-            </reference>
-            <reference anchor='RFC6749' target='https://www.rfc-editor.org/info/rfc6749'>
-                <front>
-                    <title>The OAuth 2.0 Authorization Framework</title>
-                    <author initials='D.' surname='Hardt' fullname='D. Hardt' role='editor'>
-                        <organization/>
-                    </author>
-                    <date year='2012' month='October'/>
-                    <abstract>
-                        <t>The OAuth 2.0 authorization framework enables a third-party application to obtain limited
-                            access to an HTTP service, either on behalf of a resource owner by orchestrating an approval
-                            interaction between the resource owner and the HTTP service, or by allowing the third-party
-                            application to obtain access on its own behalf. This specification replaces and obsoletes
-                            the OAuth 1.0 protocol described in RFC 5849. [STANDARDS-TRACK]
-                        </t>
-                    </abstract>
-                </front>
-                <seriesInfo name='RFC' value='6749'/>
-                <seriesInfo name='DOI' value='10.17487/RFC6749'/>
-            </reference>
-            <reference anchor='RFC6901' target='https://www.rfc-editor.org/info/rfc6901'>
-                <front>
-                    <title>JavaScript Object Notation (JSON) Pointer</title>
-                    <author initials='P.' surname='Bryan' fullname='P. Bryan' role='editor'><organization /></author>
-                    <author initials='K.' surname='Zyp' fullname='K. Zyp'><organization /></author>
-                    <author initials='M.' surname='Nottingham' fullname='M. Nottingham' role='editor'><organization /></author>
-                    <date year='2013' month='April' />
-                    <abstract><t>JSON Pointer defines a string syntax for identifying a specific value within a JavaScript Object Notation (JSON) document.</t></abstract>
-                </front>
-                <seriesInfo name='RFC' value='6901'/>
-                <seriesInfo name='DOI' value='10.17487/RFC6901'/>
-            </reference>
-            <reference anchor='RFC7519' target='https://www.rfc-editor.org/info/rfc7519'>
-                <front>
-                    <title>JSON Web Token (JWT)</title>
-                    <author initials='M.' surname='Jones' fullname='M. Jones'><organization /></author>
-                    <author initials='J.' surname='Bradley' fullname='J. Bradley'><organization /></author>
-                    <author initials='N.' surname='Sakimura' fullname='N. Sakimura'><organization /></author>
-                    <date year='2015' month='May' />
-                    <abstract><t>JSON Web Token (JWT) is a compact, URL-safe means of representing claims to be transferred between two parties.  The claims in a JWT are encoded as a JSON object that is used as the payload of a JSON Web Signature (JWS) structure or as the plaintext of a JSON Web Encryption (JWE) structure, enabling the claims to be digitally signed or integrity protected with a Message Authentication Code (MAC) and/or encrypted.</t></abstract>
-                </front>
-                <seriesInfo name='RFC' value='7519'/>
-                <seriesInfo name='DOI' value='10.17487/RFC7519'/>
-            </reference>
-            <reference anchor='RFC7662' target='https://www.rfc-editor.org/info/rfc7662'>
-                <front>
-                    <title>OAuth 2.0 Token Introspection</title>
-                    <author initials='J.' surname='Richer' fullname='J. Richer' role='editor'><organization /></author>
-                    <date year='2015' month='October' />
-                    <abstract><t>This specification defines a method for a protected resource to query an OAuth 2.0 authorization server to determine the active state of an OAuth 2.0 token and to determine meta-information about this token. OAuth 2.0 deployments can use this method to convey information about the authorization context of the token from the authorization server to the protected resource.</t></abstract>
-                </front>
-                <seriesInfo name='RFC' value='7662'/>
-                <seriesInfo name='DOI' value='10.17487/RFC7662'/>
-            </reference>
-            <reference anchor='RFC8174' target='https://www.rfc-editor.org/info/rfc8174'>
-                <front>
-                    <title>Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</title>
-                    <author initials='B.' surname='Leiba' fullname='B. Leiba'><organization /></author>
-                    <date year='2017' month='May' />
-                    <abstract><t>RFC 2119 specifies common key words that may be used in protocol  specifications.  This document aims to reduce the ambiguity by clarifying that only UPPERCASE usage of the key words have the  defined special meanings.</t></abstract>
-                </front>
-                <seriesInfo name='BCP' value='14'/>
-                <seriesInfo name='RFC' value='8174'/>
-                <seriesInfo name='DOI' value='10.17487/RFC8174'/>
-            </reference>
-            <reference anchor='RFC8259' target='https://www.rfc-editor.org/info/rfc8259'>
-                <front>
-                    <title>The JavaScript Object Notation (JSON) Data Interchange Format</title>
-                    <author initials='T.' surname='Bray' fullname='T. Bray' role='editor'><organization /></author>
-                    <date year='2017' month='December' />
-                    <abstract><t>JavaScript Object Notation (JSON) is a lightweight, text-based, language-independent data interchange format.  It was derived from the ECMAScript Programming Language Standard.  JSON defines a small set of formatting rules for the portable representation of structured data.</t><t>This document removes inconsistencies with other specifications of JSON, repairs specification errors, and offers experience-based interoperability guidance.</t></abstract>
-                </front>
-                <seriesInfo name='STD' value='90'/>
-                <seriesInfo name='RFC' value='8259'/>
-                <seriesInfo name='DOI' value='10.17487/RFC8259'/>
-            </reference>
-            <reference anchor='RFC8414' target='https://www.rfc-editor.org/info/rfc8414'>
-                <front>
-                    <title>OAuth 2.0 Authorization Server Metadata</title>
-                    <author initials='M.' surname='Jones' fullname='M. Jones'><organization /></author>
-                    <author initials='N.' surname='Sakimura' fullname='N. Sakimura'><organization /></author>
-                    <author initials='J.' surname='Bradley' fullname='J. Bradley'><organization /></author>
-                    <date year='2018' month='June' />
-                    <abstract><t>This specification defines a metadata format that an OAuth 2.0 client can use to obtain the information needed to interact with an OAuth 2.0 authorization server, including its endpoint locations and authorization server capabilities.</t></abstract>
-                </front>
-                <seriesInfo name='RFC' value='8414'/>
-                <seriesInfo name='DOI' value='10.17487/RFC8414'/>
-            </reference>
-
-<!--            <reference anchor="IANA.OAuth.Parameters" target="http://www.iana.org/assignments/oauth-parameters">-->
-<!--                <front>-->
-<!--                    <title>OAuth Parameters</title>-->
-<!--                    <author>-->
-<!--                        <organization>IANA</organization>-->
-<!--                    </author>-->
-<!--                    <date/>-->
-<!--                </front>-->
-<!--            </reference>-->
+            &RFC2119;
+            &RFC6749;
+            &RFC6901;
+            &RFC7519;
+            &RFC7662;
+            &RFC8174;
+            &RFC8259;
+            &RFC8414;
         </references>
 
         <references title="Informative References">
@@ -1882,39 +1792,7 @@ Content-Type: application/json
                 <seriesInfo name="OpenID Foundation" value="Standards" />
             </reference>
 
-            <reference anchor='I-D.ietf-oauth-token-exchange'>
-                <front>
-                    <title>OAuth 2.0 Token Exchange</title>
-
-                    <author initials='M' surname='Jones' fullname='Michael Jones'>
-                        <organization />
-                    </author>
-
-                    <author initials='A' surname='Nadalin' fullname='Anthony Nadalin'>
-                        <organization />
-                    </author>
-
-                    <author initials='B' surname='Campbell' fullname='Brian Campbell'>
-                        <organization />
-                    </author>
-
-                    <author initials='J' surname='Bradley' fullname='John Bradley'>
-                        <organization />
-                    </author>
-
-                    <author initials='C' surname='Mortimore' fullname='Chuck Mortimore'>
-                        <organization />
-                    </author>
-
-                    <date month='July' day='21' year='2019' />
-                </front>
-
-                <seriesInfo name='Internet-Draft'
-                            value='draft-ietf-oauth-token-exchange-19' />
-
-                <format type='TXT'
-                        target='http://www.ietf.org/internet-drafts/draft-ietf-oauth-token-exchange-19.txt' />
-            </reference>
+            &I-D.ietf-oauth-token-exchange;
         </references>
 
         <section anchor="Acknowledgements" title="Acknowledgements">
