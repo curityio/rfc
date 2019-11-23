@@ -1893,6 +1893,16 @@ Content-Type: application/json
                 [[ to be removed by the RFC editor before publication as an RFC ]]
             </t>
             <t>
+                -01
+                <list style='symbols'>
+                    <t>Use of XML entities for common terms in XML version of doc</t>
+                    <t>Added additional acknowledgements</t>
+                    <t>Updated keywords paragraph</t>
+                    <t>Updated links to other RFCs</t>
+                    <t>Small format changes and fixing of typos</t>
+                </list>
+            </t>
+            <t>
                 -00
                 <list style='symbols'>
                     <t>
