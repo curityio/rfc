@@ -24,11 +24,11 @@
 <?rfc tocindent="yes"?>
 <?rfc tocompact="yes"?>
 
-<rfc ipr="trust200902" category="std" docName="draft-ideskog-assisted-token-01" version="3" consensus="true">
+<rfc ipr="trust200902" docName="draft-ideskog-assisted-token-01" version="3" category="info" submissionType="independent">
     <front>
         <title abbrev="Assisted Token">OAuth 2.0 Assisted Token</title>
 
-        <seriesInfo name="Internet-Draft" value="draft-ideskog-assisted-token-01" stream="IETF"/>
+        <seriesInfo name="Internet-Draft" value="draft-ideskog-assisted-token-01" stream="independent" status="informational"/>
 
         <author fullname="Jacob Ideskog" initials="J." surname="Ideskog">
             <organization>Curity AB</organization>
@@ -49,8 +49,8 @@
 
         <date day="23" month="November" year="2019"/>
 
-        <area>Security</area>
-        <workgroup>OAuth Working Group</workgroup>
+        <area>sec</area>
+        <workgroup>Independent Submission</workgroup>
 
         <keyword>OAuth</keyword>
         <keyword>JavaScript</keyword>
