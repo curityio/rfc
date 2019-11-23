@@ -736,8 +736,6 @@
 
     <back>
         <references title="Normative References">
-            &RFC3986;
-
             <reference anchor="ASCII">
                 <front>
                     <title>Coded Character Set -- 7-bit American Standard Code for Information Interchange</title>
@@ -748,11 +746,6 @@
                 </front>
                 <seriesInfo name="ANSI" value="X3.4"/>
             </reference>
-
-            &RFC8414;
-            &RFC2119;
-            &RFC6749;
-            &RFC7591;
             <reference anchor="IANA.OAuth.Parameters" target="http://www.iana.org/assignments/oauth-parameters">
                 <front>
                     <title>OAuth Parameters</title>
@@ -762,22 +755,24 @@
                     <date/>
                 </front>
             </reference>
+            &RFC2119;
+            &RFC3986;
+            &RFC6749;
+            &RFC7591;
+            &RFC8174;
+            &RFC8414;
         </references>
 
         <references title="Informative References">
-            <reference anchor='W3C.WD-cors-20120403' target='http://www.w3.org/TR/2012/WD-cors-20120403'>
+            <reference target="https://www.w3.org/TR/CSP2" anchor="CSP-2">
                 <front>
-                    <title>Cross-Origin Resource Sharing</title>
-                    <author initials='A.' surname='Kesteren' fullname='Anne van Kesteren'/>
-                    <date month='April' day='3' year='2012' />
+                    <title>Content Security Policy Level 2</title>
+                    <author initials="M." surname="West"/>
+                    <author initials="A." surname="Barth"/>
+                    <author initials="D." surname="Veditz"/>
+                    <date month="July" year="2015"/>
                 </front>
-
-                <seriesInfo name='World Wide Web Consortium LastCall' value='WD-cors-20120403' />
-                <format type='HTML' target='http://www.w3.org/TR/2012/WD-cors-20120403' />
             </reference>
-            &RFC5849;
-            &RFC6755;
-            &RFC6454;
             <reference anchor="FRAME-BUSTING" target="http://seclab.stanford.edu/websec/framebusting/">
                 <front>
                     <title>Busting frame busting: a study of clickjacking vulnerabilities at popular sites</title>
@@ -796,17 +791,21 @@
                     <date year="2010" month="July"/>
                 </front>
             </reference>
+            &RFC5849;
+            &RFC6454;
+            &RFC6755;
             &RFC6819;
-            <reference target="https://www.w3.org/TR/CSP2" anchor="CSP-2">
-                <front>
-                    <title>Content Security Policy Level 2</title>
-                    <author initials="M." surname="West"/>
-                    <author initials="A." surname="Barth"/>
-                    <author initials="D." surname="Veditz"/>
-                    <date month="July" year="2015"/>
-                </front>
-            </reference>
             &RFC7034;
+            <reference anchor='W3C.WD-cors-20120403' target='http://www.w3.org/TR/2012/WD-cors-20120403'>
+                <front>
+                    <title>Cross-Origin Resource Sharing</title>
+                    <author initials='A.' surname='Kesteren' fullname='Anne van Kesteren'/>
+                    <date month='April' day='3' year='2012' />
+                </front>
+
+                <seriesInfo name='World Wide Web Consortium LastCall' value='WD-cors-20120403' />
+                <format type='HTML' target='http://www.w3.org/TR/2012/WD-cors-20120403' />
+            </reference>
         </references>
 
         <section anchor="Acknowledgements" title="Acknowledgements">
