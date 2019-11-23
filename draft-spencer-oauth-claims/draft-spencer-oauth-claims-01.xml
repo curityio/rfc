@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 <!DOCTYPE rfc PUBLIC "-//IETF//DTD RFC 2629//EN" "http://xml2rfc.tools.ietf.org/authoring/rfc2629.dtd" [
         <!ENTITY c "client">
         <!ENTITY as "authorization server">
