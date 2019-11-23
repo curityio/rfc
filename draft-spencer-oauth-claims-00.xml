@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
-<!DOCTYPE rfc PUBLIC "-//IETF//DTD RFC 2629//EN" "http://xml2rfc.tools.ietf.org/authoring/rfc2629.dtd">
+<!DOCTYPE rfc PUBLIC "-//IETF//DTD RFC 2629//EN" "http://xml2rfc.tools.ietf.org/authoring/rfc2629.dtd" [
+        <!ENTITY c "client">
+        <!ENTITY as "authorization server">
+        <!ENTITY rs "resource server">
+        <!ENTITY ro "resource owner">
+        ]>
 
 <?rfc compact="yes" ?>
 <?rfc sortrefs="yes" ?>
@@ -39,15 +44,15 @@
         <abstract>
             <t>
                 This document extends the OAuth 2.0 framework to include a
-                simple query language that can be used by clients to request
-                certain claims from an authorization server. This mechanism can
+                simple query language that can be used by &c;s to request
+                certain claims from an &as;. This mechanism can
                 be used during the authorization request and refresh request. It
                 also defines a response parameter of the token and introspection
                 endpoints that indicates to the caller which claims were
-                authorized by the resource owner. Lastly, it stipulates how this
+                authorized by the &ro;. Lastly, it stipulates how this
                 request parameter can be used during token exchange, and how
-                clients may request that certain claims be placed in an access
-                token intended for a particular resource server.
+                &c;s may request that certain claims be placed in an access
+                token intended for a particular &rs;.
             </t>
         </abstract>
     </front>
@@ -57,13 +62,13 @@
             <t>
                 As stated in Section 1.4 of <xref target="RFC6749"/>, an
                 access token represents the specific scope and duration of
-                access. The requested scope is verified by the authorization
-                server according to its policy, and the perhaps-different scope
-                is granted by the resource owner. The requested and granted
-                scope may vary due to the authorization server's policy and/or
-                the resource owner's limitation of the granted scope. The
-                resulting scope is enforced by the resource server. The way in
-                which the client indicates the intended scope of access is by
+                access. The requested scope is verified by the &as;
+                according to its policy, and the perhaps-different scope
+                is granted by the &ro;. The requested and granted
+                scope may vary due to the &as;'s policy and/or
+                the &ro;'s limitation of the granted scope. The
+                resulting scope is enforced by the &rs;. The way in
+                which the &c; indicates the intended scope of access is by
                 the <spanx style="verb">scope</spanx> request parameter defined
                 in Section 3.3 of <xref target="RFC6749"/>. This specification
                 defines a more sophisticated instrument to achieve this same
@@ -72,42 +77,42 @@
 
             <t>
                 At times, this existing mechanism is too limited. In some uses
-                cases, for example, a client may need to request particular
-                claims from an authorization server. It may also do this to
-                request specific claim values. Furthermore, a client may need
-                to indicate to the authorization server that certain claims are
+                cases, for example, a &c; may need to request particular
+                claims from an &as;. It may also do this to
+                request specific claim values. Furthermore, a &c; may need
+                to indicate to the &as; that certain claims are
                 essential for its ability to operate. In such cases, the grant
-                is of little use to the client if the resource owner does not
+                is of little use to the &c; if the &ro; does not
                 comply. Another example of when the existing
                 <spanx style="verb">scope</spanx> parameter is insufficient is
-                when the client knows that some claim is required by a
-                particular resource server. The extent of a client's knowledge
+                when the &c; knows that some claim is required by a
+                particular &rs;. The extent of a &c;'s knowledge
                 is usually limited to knowing that a claim is needed in an
                 access token; however, in some cases, it may also know that a
                 claim should be restricted to access tokens issued to a
-                particular resource server. In these situations, the existing
+                particular &rs;. In these situations, the existing
                 mechanism for stipulating the scope of access is insufficient.
             </t>
 
             <t>
                 To accommodate these use cases and requirements, this
                 specification defines a new request parameter that can be used
-                when the client obtains an authorization grant, as described in
+                when the &c; obtains an authorization grant, as described in
                 Section 1.3 of <xref target="RFC6749"/> and Section 2.1 of
                 <xref target="I-D.ietf-oauth-token-exchange"/>. For each request
                 wherein these fix grant types -- authorization code, implicit,
                 resource owner password credentials, client credentials, and
                 token exchange -- are sought, this specification defines a new
                 parameter called <spanx style="verb">claims</spanx>. It can be
-                used by a client with any of these to request that certain
+                used by a &c; with any of these to request that certain
                 claims and/or particular claim values be authorized by the
-                resource owner. The value of this parameter is a
+                &ro;. The value of this parameter is a
                 JavaScript Object Notation (JSON) object <xref target="RFC8259"
-                />. This can also be used to indicate to the authorization
-                server that the client considers some or all of the claims to be
-                required. The client can also use this object to indicate that
+                />. This can also be used to indicate to the &as;
+                that the &c; considers some or all of the claims to be
+                required. The &c; can also use this object to indicate that
                 certain claim values are preferred or essential to its ability
-                to operate on behalf of the resource owner.
+                to operate on behalf of the &ro;.
             </t>
 
             <t>
@@ -116,12 +121,12 @@
                 parameter defined herein can also be used to alter the resulting
                 scope of access. This can be used, for example, to lessen the
                 scope by including a certain subset of claims that should be in
-                the new access token. After such, a client may increase the
+                the new access token. After such, a &c; may increase the
                 scope in a subsequent refresh request by including additional
                 claim names in the JSON object value of the <spanx style="verb">
                 claims</spanx> authorization request parameter. When it does so,
-                the client cannot, however, expand the scope from that which was
-                initially authorized by the resource owner.
+                the &c; cannot, however, expand the scope from that which was
+                initially authorized by the &ro;.
             </t>
 
             <t>
@@ -133,7 +138,7 @@
             <t>
                 This specification is designed to be compatible with OpenID
                 Connect <xref target="OpenID.Core"/> but does not require the
-                authorization server to support that protocol.
+                &as; to support that protocol.
             </t>
 
             <section title="Claims vis-a-vis Scope Tokens"
@@ -195,12 +200,12 @@
                     <list style="hanging">
                         <t hangText="Claims Sink">
                             <vspace/>
-                            The location or destination where the authorization
-                            server MAY include all requested claims that are
-                            authorized by the resource owner. An acccess token
-                            intended for an unspecified resource server or an
-                            access token the client intends to send to a
-                            particular resource server or an ID token (when the
+                            The location or destination where the &as;
+                            MAY include all requested claims that are
+                            authorized by the &ro;. An access token
+                            intended for an unspecified &rs; or an
+                            access token the &c; intends to send to a
+                            particular &rs; or an ID token (when the
                             OpenID Connect profile of this specification is
                             used) are examples of claims sinks.
                         </t>
@@ -230,9 +235,9 @@
 
                         <t hangText="Essential Claim">
                             <vspace/>
-                            A claim specified by the client as being necessary
+                            A claim specified by the &c; as being necessary
                             to ensure a smooth authorization experience for a
-                            specific task requested by the resource owner.
+                            specific task requested by the &ro;.
                         </t>
 
                         <t hangText="Scope Token">
@@ -248,9 +253,9 @@
 
                         <t hangText="Voluntary Claim">
                             <vspace/>
-                            A claim specified by the client as being useful but
+                            A claim specified by the &c; as being useful but
                             not essential for the specific task requested by
-                            the resource owner.
+                            the &ro;.
                         </t>
                     </list>
                 </t>
@@ -260,13 +265,13 @@
         <section title="Protocol Flow" anchor="protocol-flow">
             <section title="Authorization Request" anchor="authorization-request">
                <t>
-                   When a client requests authorization from the resource owner
-                   indirectly via the authorization server, the protocol flow
+                   When a &c; requests authorization from the &ro;
+                   indirectly via the &as;, the protocol flow
                    MAY include a query for certain claims. Based on the policy
-                   of the authorization server and the delegated access of the
-                   resource owner, certain claims MAY be granted. Given an
-                   authorization grant, the authorization server informs the
-                   client as to which claims were actually issued (if different
+                   of the &as; and the delegated access of the
+                   &ro;, certain claims MAY be granted. Given an
+                   authorization grant, the &as; informs the
+                   &c; as to which claims were actually issued (if different
                    from those requested). This message exchange pattern is
                    shown in
                    <xref target="authorization-request-protocol-flow"/>:
@@ -297,7 +302,7 @@
 
                     <list style="symbols">
                         <t>
-                            During the authorization request (A), the client
+                            During the authorization request (A), the &c;
                             includes a claims request object as the
                             corresponding value of the
                             <spanx style="verb">claims</spanx> request
@@ -308,7 +313,7 @@
                             and a possibly-empty list of claim names that were
                             authorized (D). If the asserted claims embodied by
                             the access token differ from those requested (A),
-                            then the authorization server MUST include a list
+                            then the &as; MUST include a list
                             of authorized claim names in the authorization
                             response (D).</t>
                     </list>
@@ -318,21 +323,21 @@
             <section title="Refresh Request" anchor="refresh-request">
                 <t>
                     As described in Section 1.5 of <xref target="RFC6749"/> and
-                    further explained in section 6 thereof, a client that was
+                    further explained in section 6 thereof, a &c; that was
                     issued a refresh token MAY use this to narrow the scope of
                     access for an access token. It does this by sending the
                     <spanx style="verb">scope</spanx> request parameter in step
                     (G) of Figure 2 of <xref target="RFC6749"/>. At times, the
-                    client might want to be more explicit about which claims
+                    &c; might want to be more explicit about which claims
                     should be included in the refreshed access token or about
                     where those claims should be asserted.
                 </t>
 
                 <t>
                     To address this need, this document defines an additional
-                    input parameter that the client may send to the
-                    authorization server when it presents a refresh token to
-                    the token endpoint. This update to the flow wherein a client
+                    input parameter that the &c; may send to the
+                    &as; when it presents a refresh token to
+                    the token endpoint. This update to the flow wherein a &c;
                     refreshes an access token to narrow the scope of access to
                     a particular set of claims is shown in
                     <xref target="refresh-token-flow"/>.
@@ -352,31 +357,30 @@
                         </artwork>
                     </figure>
 
-                    Downscoping in this flow is achieved when the client
-                    requests a subset of the claims authorized by the resource
-                    owner.
+                    Downscoping in this flow is achieved when the &c;
+                    requests a subset of the claims authorized by the &ro;.
                 </t>
 
                 <t>
-                    The client MAY request to change the claims sink where the
+                    The &c; MAY request to change the claims sink where the
                     authorized claims should be asserted using this flow. If the
-                    client does so, it is RECOMMENDED that the authorization
-                    server accept this change baring any policy to the contrary.
-                    The client MAY also send a claim value in the claim value
+                    &c; does so, it is RECOMMENDED that the &as;
+                    accept this change baring any policy to the contrary.
+                    The &c; MAY also send a claim value in the claim value
                     query object(s) of the request. When it does, the
-                    authorization server SHOULD consider this request when
+                    &as; SHOULD consider this request when
                     asserting the claim but it MAY return an error if asserting
                     a different claim value is against its policy or exceeds the
-                    authorization granted by the resource owner. If it is a
+                    authorization granted by the &ro;. If it is a
                     critical claim, the requested claim value MUST be asserted
-                    or an error MUST result if the authorization server supports
+                    or an error MUST result if the &as; supports
                     critical claims.
                 </t>
 
                 <t>
                     There are many corner cases that can arise when implementing
                     this flow. Most stem from policy and configuration changes
-                    of the authorization server which may happen between the
+                    of the &as; which may happen between the
                     time an access token is issued and it is refreshed. Other
                     complications arise when claims are used together with scope
                     tokens. Both are beyond the scope of this specification and
@@ -387,11 +391,11 @@
             <section title="Token Introspection" anchor="token-introspection-response">
                 <t>
                     <xref target="RFC7662"/> stipulates that the introspection
-                    endpoint of an authorization server must return a JSON
+                    endpoint of an &as; must return a JSON
                     <xref target="RFC8259"/> document representing the meta
                     information surrounding the token, including its scope. This
                     specification extends that object to include the claim names
-                    that the resource owner authorized the client for. This
+                    that the &ro; authorized the &c; for. This
                     request/response interaction pattern is shown in
                     <xref target="introspection-flow"/>.
 
@@ -411,7 +415,7 @@
                 </t>
 
                 <t>
-                    Using this flow, a client will be informed about the
+                    Using this flow, a &c; will be informed about the
                     authorized claim names in the same way it is informed about
                     the scope of access by way of the
                     <spanx style="verb">scope</spanx> response member.
@@ -428,16 +432,16 @@
                 The <spanx style="verb">claims</spanx> request parameter value
                 is a UTF-8 encoded JSON object ("Claims Request Object")
                 specifying requested claims. Prior to transmission to the
-                authorization server it is also form-URL-encoded as appropriate.
+                &as; it is also form-URL-encoded as appropriate.
                 The claims request object is not intended to be a mechanism that
-                the client may use to instruct the authorization server to
+                the &c; may use to instruct the &as; to
                 assert specific claims. Instead, it is a simple query language
-                that a client can use to request certain claims or to specify
-                that it would like the authorization server to obtain
-                authorization from the resource owner for a claim, perhaps with
+                that a &c; can use to request certain claims or to specify
+                that it would like the &as; to obtain
+                authorization from the &ro; for a claim, perhaps with
                 a particular claim value. The claims request object provides a
-                client with a more structured method of requesting the scope of
-                access that the resource owner authorizes it for.
+                &c; with a more structured method of requesting the scope of
+                access that the &ro; authorizes it for.
             </t>
             <t>
                 The top-level members of the claims request object SHOULD
@@ -446,22 +450,22 @@
                 <spanx style="verb">access_token</spanx>,
                 <spanx style="verb">*</spanx>, and
                 <spanx style="verb">?</spanx>. Additionally,
-                this specification also sets forth a mechanism by which a client
-                may signal to the authorization server which claims it prefers
+                this specification also sets forth a mechanism by which a &c;
+                may signal to the &as; which claims it prefers
                 to be included in an access token that it intends to be furnished to
-                a particular resource server; this is done by using an absolute
+                a particular &rs;; this is done by using an absolute
                 URI of the target service or resource as a claims sink. A claims
                 request object MAY also contain the member
                 <spanx style="verb">crit</spanx> to indicate parts of the
-                claims request object that the authorization server MUST
+                claims request object that the &as; MUST
                 understand if the <spanx style="verb">crit</spanx> member
                 itself is understood. Other members of a claims request object
-                MAY be present; any that are not understood by the authorization
-                server MUST be ignored.
+                MAY be present; any that are not understood by the &as;
+                MUST be ignored.
             </t>
             <t>
                 An example of a claims request object that is sent to the
-                authorization server as the value of the <spanx
+                &as; as the value of the <spanx
                 style="verb">claims</spanx> request parameter provided during an
                 authorization request, refresh request or token exchange
                 request is shown in
@@ -481,12 +485,12 @@
 
                 In this non-normative example, the
                 <spanx style="verb">access_token</spanx> member is the
-                claims sink. It is the location where the authorization server
-                MAY include any of the requested claims that the resource owner
-                authorizes. If the authorization server uses the requested
+                claims sink. It is the location where the &as;
+                MAY include any of the requested claims that the &ro;
+                authorizes. If the &as; uses the requested
                 claims from a particular claims sink to derive or determine
                 alternative claims which it asserts, it is RECOMMENDED to
-                consider the client's request to include those alternative
+                consider the &c;'s request to include those alternative
                 claims in the same requested claims sink.
             </t>
 
@@ -496,8 +500,8 @@
                     Within the claims request object, a claims sink is
                     associated with another JSON object ("Claims Sink Query
                     Object"). This object contains properties that have the name
-                    of a claim which the client is requesting the authorization
-                    server to assert. The possible values associated with each
+                    of a claim which the &c; is requesting the &as;
+                    to assert. The possible values associated with each
                     of these is <spanx style="verb">null</spanx> or another
                     JSON object ("Claim Value Query Object").
                 </t>
@@ -505,7 +509,7 @@
                 <t>
                     When the value is <spanx style="verb">null</spanx>, it
                     indicates that the claim with the associated claim name is a
-                    voluntary claim, and the client has no specific requirements
+                    voluntary claim, and the &c; has no specific requirements
                     on the claim value. Conversely, when the claim value query
                     object is not <spanx style="verb">null</spanx> it is a
                     JSON object with the following properties:
@@ -540,19 +544,19 @@
                 <t>
                     The properties <spanx style="verb">value</spanx> and
                     <spanx style="verb">values</spanx> are mutually exclusive.
-                    If the client sends a claim value query object with both,
-                    the authorization server MUST return an error as described
+                    If the &c; sends a claim value query object with both,
+                    the &as; MUST return an error as described
                     in Section <xref target="obtaining-authorization"/> below.
                 </t>
 
                 <t>
-                    By requesting essential claims, the client indicates to the
-                    authorization server (who indicates to the resource owner)
+                    By requesting essential claims, the &c; indicates to the
+                    &as; (who indicates to the &ro;)
                     that releasing these claims will ensure a smooth
                     authorization for the specific task requested by that
-                    resource owner. If the claims are not available because the
-                    resource owner did not authorize their release or they are
-                    not present, the authorization server MUST NOT generate an
+                    &ro;. If the claims are not available because the
+                    &ro; did not authorize their release or they are
+                    not present, the &as; MUST NOT generate an
                     error when claims are not returned.
                 </t>
 
@@ -560,7 +564,7 @@
                     Other members of the claim value query object MAY be defined
                     to provide additional information about the requested
                     claims. Any members of the claims value query object that are
-                    not understood by the authorization server MUST be ignored.
+                    not understood by the &as; MUST be ignored.
                 </t>
 
                 <t>
@@ -583,19 +587,19 @@
                         </artwork>
                     </figure>
 
-                    In this example, there are two claim names which the client
+                    In this example, there are two claim names which the &c;
                     is requesting
                     <spanx style="verb">https://example.com/claim1</spanx> and
                     <spanx style="verb">fname</spanx>. The values associated
                     with these are claim value query objects. The former is a
-                    simple query where the client has no preference on a
-                    particular value. For this reason, the client specifies the
+                    simple query where the &c; has no preference on a
+                    particular value. For this reason, the &c; specifies the
                     value <spanx style="verb">null</spanx>. In the later case,
-                    the client has more precise needs: it desires the
-                    authorization server to assert a claim value of
+                    the &c; has more precise needs: it desires the
+                    &as; to assert a claim value of
                     <spanx style="verb">John</spanx> for the claim name
                     <spanx style="verb">fname</spanx>. In such situations the
-                    authorization server MAY issue a claim with the claim name
+                    &as; MAY issue a claim with the claim name
                     <spanx style="verb">fname</spanx> but with some other claim
                     value than <spanx style="verb">John</spanx>. Both are
                     voluntary claims.
@@ -620,20 +624,20 @@
                         </artwork>
                     </figure>
 
-                    This query indicates that the client would like the
-                    authorization server to issue an access token with a scope
+                    This query indicates that the &c; would like the
+                    &as; to issue an access token with a scope
                     that includes a claim with the claim name <spanx
                         style="verb">consentId</spanx>. To ensure a smooth
-                    authorization experience at the resource server where the
-                    client will present the resulting access token, the client
+                    authorization experience at the &rs; where the
+                    &c; will present the resulting access token, the &c;
                     has indicated that the <spanx style="verb">consentId</spanx>
                     claim is required, making it an essential claim.
                 </t>
 
                 <t>
-                    As described above, a client may also indicate that it
-                    wishes the authorization server to assert a claim having a
-                    claim value that the client has some preference for. A
+                    As described above, a &c; may also indicate that it
+                    wishes the &as; to assert a claim having a
+                    claim value that the &c; has some preference for. A
                     non-normative example of such a query is show in
                     <xref target="example-essential-claim-value-with-certain-value"/>.
 
@@ -656,18 +660,18 @@
                         </artwork>
                     </figure>
 
-                    In this example, the client is requesting that the
-                    authorization server assert two essential claims: one named
+                    In this example, the &c; is requesting that the
+                    &as; assert two essential claims: one named
                     <spanx style="verb">accountId</spanx> and another named
                     <spanx style="verb">paymentId</spanx>. In the former case,
-                    the client requests that the claim value be
+                    the &c; requests that the claim value be
                     <spanx style="verb">act-123</spanx> or
                     <spanx style="verb">act-456</spanx>. In the later case, a
                     claim named <spanx style="verb">paymentId</spanx> is
-                    requested by the client to have a claim value of
+                    requested by the &c; to have a claim value of
                     <spanx style="verb">pid-123456</spanx>. Again, the
-                    authorization server MUST NOT return an error if the
-                    resource owner does not authorize both of these claims or
+                    &as; MUST NOT return an error if the
+                    &ro; does not authorize both of these claims or
                     if they are non-existent. This is merely a request for a
                     certain scope of access.
                 </t>
@@ -711,30 +715,30 @@
                         </artwork>
                     </figure>
 
-                    In this example, the client is requesting (but not forcing)
-                    the authorization server to obtain authorization from the
-                    resource owner for five essential claims:
+                    In this example, the &c; is requesting (but not forcing)
+                    the &as; to obtain authorization from the
+                    &ro; for five essential claims:
                     <spanx style="verb">instructedAmount</spanx>,
                     <spanx style="verb">debtorAccount/iban</spanx>,
                     <spanx style="verb">creditorName</spanx>,
                     <spanx style="verb">creditorAccount/iban</spanx>, and
                     <spanx style="verb">remittanceInformationUnstructured</spanx>.
                     The claim value query object associated with each of these
-                    claim names has a particular value the client strongly
+                    claim names has a particular value the &c; strongly
                     prefers. One interesting case is the value of the
                     <spanx style="verb">instructedAmount</spanx> essential
                     claim; the query for the value of this claim is a JSON
-                    object with two properties. The authorization server might
-                    use this claims request object to obtain the resource
-                    owner's consent before granting them, for instance. It
+                    object with two properties. The &as; might
+                    use this claims request object to obtain the &ro;'s
+                    consent before granting them, for instance. It
                     might also check these values against a data source before
-                    asserting them. Based on the resource owner's choice or the
-                    data source lookup results, the authorization server may
+                    asserting them. Based on the &ro;'s choice or the
+                    data source lookup results, the &as; may
                     not issue the claims at all or may do so with some other
-                    value. For example, the authorization server may actually
+                    value. For example, the &as; may actually
                     find that the <spanx style="verb">instructedAmount</spanx>
                     value requested exceeds its policy's allowed limit and only
-                    prompt the resource owner to authorize €100.
+                    prompt the &ro; to authorize €100.
                 </t>
 
                 <t>
@@ -768,7 +772,7 @@
                         </artwork>
                     </figure>
 
-                    This example shows how a client may request claims defined
+                    This example shows how a &c; may request claims defined
                     by the Electronic Signatures and Infrastructures (ESI)
                     Protocols for remote digital signature creation. Like the
                     previous example, the claims request object for the
@@ -781,45 +785,45 @@
                 <t>
                     These illustrative examples hopefully impress upon the
                     reader the versatility of this query language and the
-                    authorization server's prerogative to assert any claims with
+                    &as;'s prerogative to assert any claims with
                     any claim values it chooses in its sole discretion. If the
-                    client's needs are stronger than preferential, it MAY use
+                    &c;'s needs are stronger than preferential, it MAY use
                     the <spanx style="verb">crit</spanx> member of the
-                    claims request object which the authorization server MAY
+                    claims request object which the &as; MAY
                     understand.
                 </t>
             </section>
 
-            <section title="Critical Members of a Claims Request Object" 
+            <section title="Critical Members of a Claims Request Object"
                      anchor="critical-members-of-a-claims-request-object">
                 <t>
-                    As described previously, the client can indicate to the
-                    authorization server that certain claims are preferential or
-                    essential to the smooth operation of the client. At times,
-                    however, the client's needs are stronger and require certain
-                    claims to be asserted. In such situations, the client would
-                    rather the authorization server return an error than grant
+                    As described previously, the &c; can indicate to the
+                    &as; that certain claims are preferential or
+                    essential to the smooth operation of the &c;. At times,
+                    however, the &c;'s needs are stronger and require certain
+                    claims to be asserted. In such situations, the &c; would
+                    rather the &as; return an error than grant
                     access with different claims than those requested. This is
-                    not always possible for an authorization server, however,
-                    and a client MUST NOT assume that the authorization server
+                    not always possible for an &as;, however,
+                    and a &c; MUST NOT assume that the &as;
                     can be controlled in this manner. To know if this
-                    interaction pattern in supported, the client must have a
+                    interaction pattern in supported, the &c; must have a
                     priori knowledge gained by some means not defined by this
                     specification or by the presence of a <spanx style="verb">
-                    true</spanx> value in the authorization server's
+                    true</spanx> value in the &as;'s
                     <spanx style="verb">critical_claims_supported</spanx>
                     metadata (see section
                     <xref target="authorization-server-metadata"/> below). An
-                    authorization server is RECOMMENDED to support this
-                    capability unless it cannot. When it does, the authorization
-                    server MUST issue any claim denoted as critical or it MUST
+                    &as; is RECOMMENDED to support this
+                    capability unless it cannot. When it does, the &as;
+                    MUST issue any claim denoted as critical or it MUST
                     return an error. The error must be
                     <spanx style="verb">invalid_claims</spanx> as described below
                     in <xref target="obtaining-authorization"/>.
                 </t>
 
                 <t>
-                    A client indicates to the authorization server that it must
+                    A &c; indicates to the &as; that it must
                     understand certain claims and be able to assert them by
                     including a list of JSON Pointers
                     <xref target="RFC6901"/>
@@ -829,22 +833,22 @@
                     JSON Pointers in this list MUST refer to members of the
                     claims request object and MUST NOT point to elements within
                     the list itself. If any JSON Pointer refers to an element of
-                    the JSON Pointer list, the authorization server MUST return
+                    the JSON Pointer list, the &as; MUST return
                     an error with a code of
                     <spanx style="verb">invalid_request</spanx> if it supports
                     critical claims. When the JSON Pointers are valid, if the
-                    authorization server does not understand any of the claims
+                    &as; does not understand any of the claims
                     pointed to by any of the elements of this list, the
-                    authorization server MUST return an error of
+                    &as; MUST return an error of
                     <spanx style="verb">invalid_claims</spanx>. Likewise, if
-                    the authorization server is unable to assert a critical
+                    the &as; is unable to assert a critical
                     claim (and it supports critical claims), it MUST return the
                     same error. If a critical claim is requested with a certain
-                    value (as in the following example), the authorization
-                    server MUST assert the claim with that exact claim value. If
-                    it's not able to (e.g., because the resource owner does not
+                    value (as in the following example), the &as;
+                    MUST assert the claim with that exact claim value. If
+                    it's not able to (e.g., because the &ro; does not
                     have an attribute with that particular value), the
-                    authorization server MUST return an error with a code of
+                    &as; MUST return an error with a code of
                     <spanx style="verb">invalid_claims</spanx> unless it does
                     not support critical claims.
                 </t>
@@ -879,13 +883,13 @@
                     <spanx style="verb">value</spanx> member of the
                     JSON object associated with
                     <spanx style="verb">trust_framework</spanx> must be
-                    understood by the authorization server because it is
+                    understood by the &as; because it is
                     pointed by the element of the critical claims list. The way
-                    in which the authorization server understands this
+                    in which the &as; understands this
                     particular query is beyond the scope of this specification.
                     The only part of this example that is germane is the
                     <spanx style="verb">crit</spanx> member of the claims
-                    request object which requires the authorization server to
+                    request object which requires the &as; to
                     understand and assert a particular claim value (provided it
                     understands the <spanx style="verb">crit</spanx> itself).
                     If it cannot and if it supports critical claims, it must
@@ -917,15 +921,15 @@
 
             <section title="Special Claims Sinks">
                 <t>
-                    A client may know that it needs a particular claim; however,
+                    A &c; may know that it needs a particular claim; however,
                     it may not be aware which claims sink the claim should be
-                    included in. The client may prefer to leave this determination
-                    to the authorization server. In such cases, the client MAY
+                    included in. The &c; may prefer to leave this determination
+                    to the &as;. In such cases, the &c; MAY
                     use the claims sink <spanx style="verb">?</spanx> (%x3F) as
                     mentioned in Section <xref target="claims-request-object"/>
                     above. This special claim sink may result in the claim being
                     issued in the access token or any other claims sink that the
-                    authorization server deems appropriate. A non-normative
+                    &as; deems appropriate. A non-normative
                     example of a claims request object indicating that a
                     particular claim be asserted in any claims sink is shown in
                     <xref target="example-any-claims-sink"/>.
@@ -944,19 +948,19 @@
                 </t>
 
                 <t>
-                    Similarly, there are situations where the client wishes
-                    claims to be asserted in all claims sinks the authorization
-                    server supports. Rather than requiring the the client to
+                    Similarly, there are situations where the &c; wishes
+                    claims to be asserted in all claims sinks the &as;
+                    supports. Rather than requiring the the &c; to
                     repeat its requirement for each claims sink, it MAY use the
                     special claims sink <spanx style="verb">*</spanx> (%x2A).
-                    This claims sink indicates to the authorization server that
-                    the client prefers all claims included in the claims request
+                    This claims sink indicates to the &as; that
+                    the &c; prefers all claims included in the claims request
                     object to be asserted in each claim sink that the
-                    authorization server supports. The two claims request
+                    &as; supports. The two claims request
                     objects shown in Figure
                     <xref target="example-all-claims-sink"/> and
                     <xref target="example-comparable-to-all-claims-sink"/>
-                    are equivalent (if the authorization server only supports
+                    are equivalent (if the &as; only supports
                     the two claims sinks shown in the latter).
 
                     <figure anchor="example-all-claims-sink"
@@ -992,10 +996,10 @@
                     <spanx style="verb">?</spanx> and
                     <spanx style="verb">*</spanx> with any other claims sink
                     in the same claims request object is undefined. The
-                    authorization server SHOULD return an error or apply some other
-                    logic not defined by this specification. The client SHOULD
+                    &as; SHOULD return an error or apply some other
+                    logic not defined by this specification. The &c; SHOULD
                     NOT make such queries unless it has some knowledge gained a
-                    priori about the authorization server's support of such a
+                    priori about the &as;'s support of such a
                     query.
                 </t>
             </section>
@@ -1005,8 +1009,8 @@
                  anchor="obtaining-authorization">
             <t>
                 As stated in Section 4 of <xref target="RFC6749"/>, a request
-                for an access token requires the client to obtain authorization
-                from the resource owner. As described there, this
+                for an access token requires the &c; to obtain authorization
+                from the &ro;. As described there, this
                 can be done using various grant types. To make a request for
                 certain claims, the <spanx style="verb">claims</spanx> request
                 parameter defined herein is used when requesting an
@@ -1023,9 +1027,9 @@
                 <section title="Authorization Request"
                          anchor="authorization-code-grant-authorization-request">
                     <t>
-                        When a client seeks to obtain authorization using
+                        When a &c; seeks to obtain authorization using
                         the authorization code grant type defined in
-                        Section 4.1 of <xref target="RFC6749"/>, the client
+                        Section 4.1 of <xref target="RFC6749"/>, the &c;
                         MAY include the following additional query
                         component that it sends to the authorization
                         endpoint URI:
@@ -1074,11 +1078,11 @@ Host: server.example.com
                 <section title="Error Response"
                          anchor="authorization-code-grant-error-response">
                     <t>
-                        If the authorization server understands the
+                        If the &as; understands the
                         <spanx style="verb">claims</spanx> request
                         parameter, it MUST
-                        redirect the user-agent of the resource owner to
-                        the client's redirection endpoint as described in
+                        redirect the user-agent of the &ro; to
+                        the &c;'s redirection endpoint as described in
                         Section 4.1.2.1 of <xref target="RFC6749"/> with
                         one of the following
                         <spanx style="verb">error</spanx> values:
@@ -1086,20 +1090,20 @@ Host: server.example.com
                         <list hangIndent="8" style="hanging">
                             <t hangText="claims_not_supported">
                                 <vspace/>
-                                The authorization server understands but does not support
+                                The &as; understands but does not support
                                 the <spanx style="verb">claims</spanx>
-                                request parameter, and the client SHOULD
+                                request parameter, and the &c; SHOULD
                                 NOT use it when requesting authorization.
                             </t>
 
                             <t hangText="invalid_request">
                                 <vspace/>
-                                The authorization server MAY use this
+                                The &as; MAY use this
                                 less-descriptive error code to indicate that
                                 the claims request parameter value is not
                                 accepted, e.g., because it is syntactically
                                 incorrect. It is, however, RECOMMENDED that the
-                                authorization server return
+                                &as; return
                                 <spanx style="verb">claims_not_supported</spanx>
                                 or <spanx style="verb">invalid_claims</spanx> as
                                 appropriate.
@@ -1107,13 +1111,13 @@ Host: server.example.com
 
                             <t hangText="invalid_claims">
                                 <vspace/>
-                                When a client makes a request for a critical
-                                claim, and the authorization server cannot
+                                When a &c; makes a request for a critical
+                                claim, and the &as; cannot
                                 assert such a claim because it is invalid,
                                 unknown, or malformed, this error results. If
                                 the request includes only claim names in the
                                 claims request object which are disallowed
-                                according to the authorization server's policy,
+                                according to the &as;'s policy,
                                 this error (or the less-descriptive alternative,
                                 <spanx style="verb">invalid_request</spanx>)
                                 MUST result.
@@ -1125,12 +1129,12 @@ Host: server.example.com
                 <section title="Access Token Response"
                          anchor="authorization-code-grant-access-token-response">
                     <t>
-                        In a non-error case, the authorization server MAY
-                        include details about the claims that the client
+                        In a non-error case, the &as; MAY
+                        include details about the claims that the &c;
                         is authorized for. This is done by augmenting the
                         response defined in Section 4.1.4 of
                         <xref target="RFC6749"/>. In particular, the
-                        authorization server MAY include the following
+                        &as; MAY include the following
                         response member in the JSON object returned from
                         the token endpoint:
 
@@ -1138,9 +1142,9 @@ Host: server.example.com
                             <t hangText="claims">
                                 <vspace/>
                                 OPTIONAL, if identical to the claims
-                                requested by the client; otherwise,
+                                requested by the &c;; otherwise,
                                 REQUIRED. The space-separated claim names
-                                granted by the resource owner which denote
+                                granted by the &ro; which denote
                                 the scope of the access token that is
                                 returned in the same response.
                             </t>
@@ -1153,9 +1157,9 @@ Host: server.example.com
                 <section title="Authorization Request"
                          anchor="implicit-flow-authorization-request">
                     <t>
-                        When a client seeks to obtain authorization using
+                        When a &c; seeks to obtain authorization using
                         the implicit grant type defined in Section 4.2 of
-                        <xref target="RFC6749"/>, the client MAY include
+                        <xref target="RFC6749"/>, the &c; MAY include
                         the following additional query component that it
                         sends to the authorization endpoint URI:
 
@@ -1178,12 +1182,12 @@ Host: server.example.com
                 <section title="Access Token Response"
                          anchor="implicit-flow-authorization-response">
                     <t>
-                        In a non-error case, the authorization server MAY
-                        include details about the claims that the client is
+                        In a non-error case, the &as; MAY
+                        include details about the claims that the &c; is
                         authorized for. This is done by augmenting the
                         response defined in Section 4.2.2 of
                         <xref target="RFC6749"/>. In particular, the
-                        authorization server MAY include the following
+                        &as; MAY include the following
                         response parameter included on the fragment
                         component of the redirection URI:
 
@@ -1191,9 +1195,9 @@ Host: server.example.com
                             <t hangText="claims">
                                 <vspace/>
                                 OPTIONAL, if identical to the claims
-                                requested by the client; otherwise,
+                                requested by the &c;; otherwise,
                                 REQUIRED. The space-separated claim names
-                                granted by the resource owner which denote
+                                granted by the &ro; which denote
                                 the scope of the access token that is
                                 returned in the same response.
                             </t>
@@ -1204,11 +1208,11 @@ Host: server.example.com
                 <section title="Error Response"
                          anchor="implicit-flow-error-response">
                     <t>
-                        If the authorization server understands the
+                        If the &as; understands the
                         <spanx style="verb">claims</spanx> request
                         parameter, it MUST
-                        redirect the user-agent of the resource owner to
-                        the client's redirection URI as described in
+                        redirect the user-agent of the &ro; to
+                        the &c;'s redirection URI as described in
                         Section 4.2.2.1 of <xref target="RFC6749"/> with
                         one of the following
                         <spanx style="verb">error</spanx> values:
@@ -1216,20 +1220,20 @@ Host: server.example.com
                         <list style="hanging" hangIndent="8">
                             <t hangText="claims_not_supported">
                                 <vspace/>
-                                The authorization server understands but does not support
+                                The &as; understands but does not support
                                 the <spanx style="verb">claims</spanx>
-                                request parameter, and the client SHOULD
+                                request parameter, and the &c; SHOULD
                                 NOT use it when requesting authorization.
                             </t>
 
                             <t hangText="invalid_request">
                                 <vspace/>
-                                The authorization server MAY use this
+                                The &as; MAY use this
                                 less-descriptive error code to indicate that the
                                 claims request parameter value is not
                                 accepted, e.g., because it is syntactically.
                                 incorrect. It is, however, RECOMMENDED that the
-                                authorization server return
+                                &as; return
                                 <spanx style="verb">claims_not_supported</spanx>
                                 or <spanx style="verb">invalid_claims</spanx> as
                                 appropriate.
@@ -1237,13 +1241,13 @@ Host: server.example.com
 
                             <t hangText="invalid_claims">
                                 <vspace/>
-                                When a client makes a request for a critical
-                                claim, and the authorization server cannot
+                                When a &c; makes a request for a critical
+                                claim, and the &as; cannot
                                 assert such a claim because it is invalid,
                                 unknown, or malformed, this error results. If
                                 the request includes only claim names in the
                                 claims request object which are disallowed
-                                according to the authorization server's policy,
+                                according to the &as;'s policy,
                                 this error (or the less-descriptive alternative,
                                 <spanx style="verb">invalid_request</spanx>)
                                 MUST result.
@@ -1258,10 +1262,10 @@ Host: server.example.com
                 <section title="Access Token Request"
                          anchor="ropc-access-token-request">
                     <t>
-                        When a client seeks to obtain authorization using
+                        When a &c; seeks to obtain authorization using
                         the resource owner password credentials grant type
                         defined in Section 4.3 of <xref target="RFC6749"/>,
-                        the client MAY include the following additional
+                        the &c; MAY include the following additional
                         parameter using the
                         <spanx style="verb">application/x-www-form-urlencoded</spanx>
                         format per Appendix B of <xref target="RFC6749"/>
@@ -1282,12 +1286,12 @@ Host: server.example.com
                 <section title="Access Token Response"
                          anchor="ropc-access-token-response">
                     <t>
-                        In a non-error case, the authorization server MAY
-                        include details about the claims that the client is
+                        In a non-error case, the &as; MAY
+                        include details about the claims that the &c; is
                         authorized for. This is done by augmenting the
                         response defined in Section 4.3.3 of
                         <xref target="RFC6749"/>. In particular, the
-                        authorization server MAY include the following
+                        &as; MAY include the following
                         response member in the JSON object returned from
                         the token endpoint:
 
@@ -1295,9 +1299,9 @@ Host: server.example.com
                             <t hangText="claims">
                                 <vspace/>
                                 OPTIONAL, if identical to the claims
-                                requested by the client; otherwise,
+                                requested by the &c;; otherwise,
                                 REQUIRED. The space-separated claim names
-                                the client is authorized for which denote
+                                the &c; is authorized for which denote
                                 the scope of the access token that is
                                 returned in the same response.
                             </t>
@@ -1305,26 +1309,26 @@ Host: server.example.com
 
                         If the request is invalid due to the value
                         of the <spanx style="verb">claims</spanx>
-                        parameter, the authorization server returns an
+                        parameter, the &as; returns an
                         error with one of the following error codes:
 
                         <list style="hanging" hangIndent="8">
                             <t hangText="claims_not_supported">
                                 <vspace/>
-                                The authorization server understands but does not support
+                                The &as; understands but does not support
                                 the <spanx style="verb">claims</spanx>
-                                request parameter, and the client SHOULD
+                                request parameter, and the &c; SHOULD
                                 NOT use it when requesting an access token.
                             </t>
 
                             <t hangText="invalid_request">
                                 <vspace/>
-                                The authorization server MAY use this
+                                The &as; MAY use this
                                 less-descriptive error code to indicate that
                                 the claims request parameter value is not
                                 accepted, accepted, e.g., because it is
                                 syntactically incorrect. It is, however,
-                                RECOMMENDED that the authorization server return
+                                RECOMMENDED that the &as; return
                                 <spanx style="verb">claims_not_supported</spanx>
                                 or <spanx style="verb">invalid_claims</spanx> as
                                 appropriate.
@@ -1332,13 +1336,13 @@ Host: server.example.com
 
                             <t hangText="invalid_claims">
                                 <vspace/>
-                                When a client makes a request for a critical
-                                claim, and the authorization server cannot
+                                When a &c; makes a request for a critical
+                                claim, and the &as; cannot
                                 assert such a claim because it is invalid,
                                 unknown, or malformed, this error results. If
                                 the request includes only claim names in the
                                 claims request object which are disallowed
-                                according to the authorization server's policy,
+                                according to the &as;'s policy,
                                 this error (or the less-descriptive alternative,
                                 <spanx style="verb">invalid_request</spanx>)
                                 MUST result.
@@ -1353,9 +1357,9 @@ Host: server.example.com
                 <section title="Access Token Request"
                          anchor="cc-access-token-request">
                     <t>
-                        When a client seeks to obtain authorization using
+                        When a &c; seeks to obtain authorization using
                         the client credentials grant type defined in
-                        Section 4.4 of <xref target="RFC6749"/>, the client
+                        Section 4.4 of <xref target="RFC6749"/>, the &c;
                         MAY include the following additional parameter
                         using the
                         <spanx style="verb">application/x-www-form-urlencoded</spanx>
@@ -1377,12 +1381,12 @@ Host: server.example.com
                 <section title="Access Token Response"
                          anchor="cc-access-token-response">
                     <t>
-                        In a non-error case, the authorization server MAY
-                        include details about the claims that the client
+                        In a non-error case, the &as; MAY
+                        include details about the claims that the &c;
                         is authorized for. This is done by augmenting the
                         response defined in Section 4.4.3 of
                         <xref target="RFC6749"/>. In particular, the
-                        authorization server MAY include the following
+                        &as; MAY include the following
                         response member in the JSON object returned from
                         the token endpoint:
 
@@ -1390,9 +1394,9 @@ Host: server.example.com
                             <t hangText="claims">
                                 <vspace/>
                                 OPTIONAL, if identical to the claims
-                                requested by the client; otherwise,
+                                requested by the &c;; otherwise,
                                 REQUIRED. The space-separated claim names
-                                the client is authorized for which denote
+                                the &c; is authorized for which denote
                                 the scope of the access token that is
                                 returned in the same response.
                             </t>
@@ -1400,26 +1404,26 @@ Host: server.example.com
 
                         If the request is invalid due to the
                         value of the <spanx style="verb">claims</spanx>
-                        parameter, the authorization server returns an
+                        parameter, the &as; returns an
                         error with one of the following error codes:
 
                         <list hangIndent="8" style="hanging">
                             <t hangText="claims_not_supported">
                                 <vspace/>
-                                The authorization server understands but does not support
+                                The &as; understands but does not support
                                 the <spanx style="verb">claims</spanx>
-                                request parameter, and the client SHOULD
+                                request parameter, and the &c; SHOULD
                                 NOT use it when requesting an access token.
                             </t>
 
                             <t hangText="invalid_request">
                                 <vspace/>
-                                The authorization server MAY use this
+                                The &as; MAY use this
                                 less-descriptive error code to indicate that
                                 the claims request parameter value is not
                                 accepted, e.g., because it is syntactically
                                 incorrect. It is, however, RECOMMENDED that the
-                                authorization server return
+                                &as; return
                                 <spanx style="verb">claims_not_supported</spanx>
                                 or <spanx style="verb">invalid_claims</spanx> as
                                 appropriate.
@@ -1427,13 +1431,13 @@ Host: server.example.com
 
                             <t hangText="invalid_claims">
                                 <vspace/>
-                                When a client makes a request for a critical
-                                claim, and the authorization server cannot
+                                When a &c; makes a request for a critical
+                                claim, and the &as; cannot
                                 assert such a claim because it is invalid,
                                 unknown, or malformed, this error results. If
                                 the request includes only claim names in the
                                 claims request object which are disallowed
-                                according to the authorization server's policy,
+                                according to the &as;'s policy,
                                 this error (or the less-descriptive alternative,
                                 <spanx style="verb">invalid_request</spanx>)
                                 MUST result.
@@ -1446,9 +1450,9 @@ Host: server.example.com
 
         <section title="Token Refresh" anchor="token-refresh">
             <t>
-                As defined in Section 6 of <xref target="RFC6749"/>, a client
+                As defined in Section 6 of <xref target="RFC6749"/>, a &c;
                 may be provided with a refresh token. When it is, it can
-                present this to the token endpoint of the authorization server
+                present this to the token endpoint of the &as;
                 in a refresh request. This specification extends the
                 request and response of this flow as described in the following
                 subsections.
@@ -1456,7 +1460,7 @@ Host: server.example.com
 
             <section title="Token Refresh Request">
                 <t>
-                    When performing a token refresh request, the client MAY
+                    When performing a token refresh request, the &c; MAY
                     send the following parameter using the
                     <spanx style="verb">application/x-www-form-urlencoded</spanx>
                     format per Appendix B of <xref target="RFC6749"/> with
@@ -1471,12 +1475,12 @@ Host: server.example.com
                         </t>
                     </list>
 
-                    If the client includes a claims request object in the
+                    If the &c; includes a claims request object in the
                     request, it SHOULD ensure that the claim names in the
                     claims value query object(s) are ones that were authorized
-                    by the resource owner. It can do this by remembering what
-                    was originally requested and/or from the authorization
-                    server's response to its authorization request which
+                    by the &ro;. It can do this by remembering what
+                    was originally requested and/or from the &as;'s
+                    response to its authorization request which
                     will include the list of claim names if they differ from
                     those originally requested.
                 </t>
@@ -1485,19 +1489,19 @@ Host: server.example.com
             <section title="Access Refresh Response"
                      anchor="refresh-access-token-response">
                 <t>
-                    In a non-error case, the authorization server MAY include
-                    details about the claims that the client is authorized for.
+                    In a non-error case, the &as; MAY include
+                    details about the claims that the &c; is authorized for.
                     This is done by augmenting the response defined in Section
                     5.1 of<xref target="RFC6749"/>. In particular, the
-                    authorization server MAY include the following response
+                    &as; MAY include the following response
                     member in the JSON object returned from the token endpoint:
 
                     <list hangIndent="8" style="hanging">
                         <t hangText="claims">
                             <vspace/>
                             OPTIONAL, if identical to the claims requested by
-                            the client; otherwise, REQUIRED. The
-                            space-separated claim names the client is
+                            the &c;; otherwise, REQUIRED. The
+                            space-separated claim names the &c; is
                             authorized for which denote the scope of the access
                             token that is returned in the same response.
                         </t>
@@ -1505,26 +1509,26 @@ Host: server.example.com
 
                     If the request is invalid due to the value of the value of
                     the <spanx style="verb">claims</spanx> parameter, the
-                    authorization server returns an error with one of the
+                    &as; returns an error with one of the
                     following error codes:
 
                     <list hangIndent="8" style="hanging">
                         <t hangText="claims_not_supported">
                             <vspace/>
-                            The authorization server understands but does not
+                            The &as; understands but does not
                             support the <spanx style="verb">claims</spanx>
-                            request parameter, and the client SHOULD NOT use
+                            request parameter, and the &c; SHOULD NOT use
                             it when requesting an access token.
                         </t>
 
                         <t hangText="invalid_request">
                             <vspace/>
-                            The authorization server MAY use this
+                            The &as; MAY use this
                             less-descriptive error code to indicate that the
                             claims request parameter value is not accepted,
                             e.g., because it is syntactically incorrect. It
-                            is, however, RECOMMENDED that the authorization
-                            server return
+                            is, however, RECOMMENDED that the &as;
+                            return
                             <spanx style="verb">claims_not_supported</spanx>
                             or <spanx style="verb">invalid_claims</spanx> as
                             appropriate.
@@ -1532,13 +1536,13 @@ Host: server.example.com
 
                         <t hangText="invalid_claims">
                             <vspace/>
-                            When a client makes a request for a critical claim,
-                            and the authorization server cannot assert such a
+                            When a &c; makes a request for a critical claim,
+                            and the &as; cannot assert such a
                             claim because it is invalid, unknown, or malformed,
                             this error results. If the request includes only
                             claim names in the claims request object which are
-                            disallowed according to the authorization
-                            server's policy, this error (or the
+                            disallowed according to the &as;'s
+                            policy, this error (or the
                             less-descriptive alternative,
                             <spanx style="verb">invalid_request</spanx>)
                             MUST result.
@@ -1555,15 +1559,15 @@ Host: server.example.com
         <section title="Token Introspection" anchor="token-introspection">
             <t>
                 This specification defines an additional top-level member in
-                the JSON <xref target="RFC8259"/> object of the authorization
-                server's introspection endpoint response as stipulated in
+                the JSON <xref target="RFC8259"/> object of the &as;'s
+                introspection endpoint response as stipulated in
                 Section 2.2 of <xref target="RFC7662"/>.
 
                 <list hangIndent="8" style="hanging">
                     <t hangText="claims">
                         <vspace/>
-                        OPTIONAL. The space-separated claim names granted by the resource
-                        owner which denote the scope of the access token.
+                        OPTIONAL. The space-separated claim names granted by the &ro;
+                        which denote the scope of the access token.
                     </t>
                 </list>
             </t>
@@ -1575,17 +1579,17 @@ Host: server.example.com
 
         <section title="Authorization Server Metadata" anchor="authorization-server-metadata">
             <t>
-                An authorization server that supports the
+                An &as; that supports the
                 <spanx style="verb">claims</spanx> request parameter SHOULD
                 declare this fact by including the following property in the
-                authorization server metadata response
+                &as; metadata response
                 <xref target="RFC8414"/>:
 
                 <list style="hanging">
                     <t hangText="claims_parameter_supported">
                         <vspace/>
                         OPTIONAL. A boolean value indicating that the
-                        authorization server supports the
+                        &as; supports the
                         <spanx style="verb">claims</spanx> request parameter or
                         not. A value of <spanx style="verb">true</spanx>
                         indicates that it is supported. A value of
@@ -1593,13 +1597,13 @@ Host: server.example.com
                         <spanx style="verb">null</spanx> value, or the absence
                         of the property means that the
                         <spanx style="verb">claims</spanx> request parameter is
-                        not supported by the authorization server.
+                        not supported by the &as;.
                     </t>
 
                     <t hangText="claims_supported">
                         <vspace/>
                         RECOMMENDED. JSON array containing a list of the claim
-                        names of the Claims that the authorization server MAY
+                        names of the Claims that the &as; MAY
                         be able to supply values for. Note that for privacy or
                         other reasons, this might not be an exhaustive list.
                     </t>
@@ -1607,29 +1611,29 @@ Host: server.example.com
                     <t hangText="critical_claims_supported">
                         <vspace/>
                         OPTIONAL. A boolean value indicating that the
-                        authorization server supports the possibility for the
-                        client to indicate that certain parts of a claims
-                        request object MUST be understood by the authorization
-                        server. A value of <spanx style="verb">false</spanx>,
+                        &as; supports the possibility for the
+                        &c; to indicate that certain parts of a claims
+                        request object MUST be understood by the &as;.
+                        A value of <spanx style="verb">false</spanx>,
                         a <spanx style="verb">null</spanx> value, or the
-                        absence of this member means that the authorization
-                        server MAY not support this interaction pattern, and
-                        the client MUST NOT assume that it does.
+                        absence of this member means that the &as;
+                        MAY not support this interaction pattern, and
+                        the &c; MUST NOT assume that it does.
                     </t>
                 </list>
 
-                If the authorization server returns a value of
+                If the &as; returns a value of
                 <spanx style="verb">false</spanx> for
                 <spanx style="verb">claims_parameter_supported</spanx> and
                 true for <spanx style="verb">critical_claims_supported</spanx>,
-                the interpretation by the client is undefined. It is
-                RECOMMENDED that the client assume that the authorization
-                server is misconfigured and that it not attempt to request
+                the interpretation by the &c; is undefined. It is
+                RECOMMENDED that the &c; assume that the &as;
+                is misconfigured and that it not attempt to request
                 claims in a manner defined by this specification.
             </t>
 
             <t>
-                A non-normative example of an authorization server metadata
+                A non-normative example of an &as; metadata
                 response which indicates that the
                 <spanx style="verb">claims</spanx> request parameter and
                 critical claims are supported by the server is shown in
