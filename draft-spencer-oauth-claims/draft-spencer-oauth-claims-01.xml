@@ -637,8 +637,7 @@
 
                 <figure anchor="example-essential-claim-value-query"
                         title="Example of querying for an Essential Claim">
-                    <artwork>
-                            <![CDATA[
+                    <sourcecode type="json"><![CDATA[
 {
     "access_token" : {
         "consentId" : {
@@ -646,7 +645,7 @@
         }
     }
 }]]>
-                    </artwork>
+                    </sourcecode>
                 </figure>
 
                 <t>
@@ -670,8 +669,7 @@
 
                 <figure anchor="example-essential-claim-value-with-certain-value"
                         title="Example of querying for an Essential Claim with Certain Values">
-                    <artwork>
-                            <![CDATA[
+                    <sourcecode type="json"><![CDATA[
 {
     "access_token" : {
         "accountId" : {
@@ -684,7 +682,7 @@
         }
     }
 }]]>
-                    </artwork>
+                    </sourcecode>
                 </figure>
 
                 <t>
@@ -712,8 +710,7 @@
 
                 <figure anchor="psd2-example"
                         title="PSD2-related Example">
-                    <artwork>
-                            <![CDATA[
+                    <sourcecode type="json"><![CDATA[
 {
     "access_token" : {
         "instructedAmount" : {
@@ -741,7 +738,7 @@
         }
     }
 }]]>
-                    </artwork>
+                    </sourcecode>
                 </figure>
 
                 <t>
@@ -780,8 +777,7 @@
 
                 <figure anchor="esi-example"
                         title="ESI-related Example">
-                    <artwork>
-                            <![CDATA[
+                    <sourcecode type="json"><![CDATA[
 {
     "access_token" : {
         "credentialID" : {
@@ -800,7 +796,7 @@
         }
     }
 }]]>
-                    </artwork>
+                    </sourcecode>
                 </figure>
 
                 <t>
@@ -893,11 +889,10 @@
 
                 <figure anchor="crit-claim-example"
                         title="Example of a Request Containing a Critical Claim">
-                    <artwork>
-                            <![CDATA[
+                    <sourcecode type="json"><![CDATA[
 {
     "crit" : [
- "/access_token/verified_claims/verification/trust_framework/value"
+        "/access_token/verified_claims/verification/trust_framework/value"
     ],
     "access_token" : {
         "verified_claims" : {
@@ -909,7 +904,7 @@
         }
     }
 }]]>
-                    </artwork>
+                    </sourcecode>
                 </figure>
 
                 <t>
@@ -941,15 +936,14 @@
 
                 <figure anchor="escaped-critical-claim-example"
                         title="Example of Escaping the JSON Pointer used to Refer to a Critical Claim with a Name Containing Slashes">
-                    <artwork>
-                            <![CDATA[
+                    <sourcecode type="json"><![CDATA[
 {
     "crit" : ["/access_token/https:~1~1example.com~1claim1"],
     "access_token" : {
         "https://example.com/claim1" : null,
     }
 }]]>
-                    </artwork>
+                    </sourcecode>
                 </figure>
             </section>
 
@@ -971,14 +965,13 @@
 
                 <figure anchor="example-any-claims-sink"
                         title="Example Requesting a Claim to be Asserted in Any Claims Sink">
-                    <artwork>
-                            <![CDATA[
+                    <sourcecode type="json"><![CDATA[
 {
     "?" : {
         "https://example.com/claim1" : null,
     }
 }]]>
-                    </artwork>
+                    </sourcecode>
                 </figure>
 
                 <t>
@@ -1000,20 +993,19 @@
 
                 <figure anchor="example-all-claims-sink"
                         title="Example Requesting a Claim to be Asserted in All Claims Sinks">
-                    <artwork>
-                            <![CDATA[
+                    <sourcecode type="json"><![CDATA[
 {
     "*" : {
         "https://exmaple.com/claim1" : null,
     }
 }]]>
-                        </artwork>
-                    </figure>
+                    </sourcecode>
+                </figure>
 
-                    <figure anchor="example-comparable-to-all-claims-sink"
+                <figure anchor="example-comparable-to-all-claims-sink"
                             title="Equivalent Example of Requesting a Claim to be Asserted in All Claims Sinks">
-                        <artwork>
-                            <![CDATA[
+                    <sourcecode type="json"><![CDATA[
+
 {
     "access_token" : {
         "https://exmaple.com/claim1" : null,
@@ -1022,7 +1014,7 @@
         "https://exmaple.com/claim1" : null,
     }
 }]]>
-                    </artwork>
+                    </sourcecode>
                 </figure>
 
                 <t>
@@ -1097,8 +1089,7 @@
                             title="Example of Using the Claims Request
                             Parameter on the Authorize Endpoint">
 
-                            <artwork>
-                            <![CDATA[
+                        <sourcecode type="http"><![CDATA[
 GET /authorize?client_id=s6BhdRkqt3&response_type=code&
     claims=%7B%0A%20%20%22access_token%22%20%3A%20%7B%20%0A
         %20%20%20%20%22https%3A%2F%2Fexample.com%2Fclaim1%22%20%3A
@@ -1107,7 +1098,7 @@ GET /authorize?client_id=s6BhdRkqt3&response_type=code&
         %7D%0A%20%20%7D%0A%7D
 Host: server.example.com
 ]]>
-                        </artwork>
+                        </sourcecode>
                     </figure>
                 </section>
 
@@ -1681,7 +1672,7 @@ Host: server.example.com
             </t>
 
             <t>
-                A non-normative example of an &as; metadata
+                A non-normative example of the content of an &as; metadata
                 response which indicates that the
                 <tt>claims</tt> request parameter and
                 critical claims are supported by the server is shown in
@@ -1692,11 +1683,7 @@ Host: server.example.com
                     title="Example of Metadata of an Authorization Server
                     that Supports the Claims Request Parameter and
                     Critical Claims">
-                <artwork>
-                        <![CDATA[
-HTTP/1.1 200 OK
-Content-Type: application/json
-
+                <sourcecode type="json"><![CDATA[
 {
     "issuer" :
         "https://server.example.com",
@@ -1727,7 +1714,7 @@ Content-Type: application/json
     "critical_claims_supported" : true,
     "claims_supported" : ["sub", "http://example.com/monkey" ]
 }]]>
-                </artwork>
+                </sourcecode>
             </figure>
 
             <t>
