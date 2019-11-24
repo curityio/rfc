@@ -29,11 +29,10 @@
 
             <address>
                 <email>travis@curity.io</email>
-                <uri>http://travisspencer.com/</uri>
             </address>
         </author>
 
-        <date day="23" month="November" year="2019"/>
+        <date day="24" month="November" year="2019"/>
 
         <area>sec</area>
         <workgroup>Independent Submission</workgroup>
@@ -45,9 +44,9 @@
 
         <abstract>
             <t>
-                The OAuth 2.0 authorization flow for Single Page Applications (SPAs), often referred to as the assisted
-                token flow, enables OAuth clients to request user authorization written in scripting languages, like
-                JavaScript, with a simplified integration compared to the implicit grant type flow. Communication does
+                This document extends the OAuth 2.0 framework to include an additional authorization flow for Single Page Applications (SPAs), often referred to as the assisted
+                token flow. It enables OAuth clients to request user authorization written in scripting languages, like
+                JavaScript, with a simplified integration compared to the implicit or authorization code flow. Communication does
                 not rely on redirection of the user agent, but instead leverages HTML's iframe element, child windows, 
                 and the postMessage interface. This communication is done using an additional endpoint, the assisted 
                 token endpoint, which this document defines.
@@ -58,9 +57,9 @@
     <middle>
         <section title="Introduction" anchor="introduction">
             <t>
-                This OAuth 2.0 protocol flow for Single-page Applications (SPA), often referred to as the assisted token
+                The OAuth 2.0 protocol flow for Single-page Applications (SPA) defined in this memo, often referred to as the assisted token
                 flow, provides clients written in scripting languages, like JavaScript, with a simplified integration
-                (compared to the implicit grant type flow) and ensures that end users are not redirected away from the
+                (compared to the implicit or authorization code flow) and ensures that end users are not redirected away from the
                 current page in order to obtain authorization from the resource owner. The communication between the
                 client and the authorization server takes place within an HTML iframe element or child window that is
                 only displayed when interactive user interaction is required; this is the case when authentication
@@ -77,7 +76,7 @@
                 compared to its predecessor, <xref target="RFC5849"/>, developers still struggle with the many inputs
                 required to perform the various OAuth flows. For this reason, the assisted token flow introduces a new
                 endpoint called the assisted token endpoint rather than extending and reusing the token endpoint
-                defined in Section 3.2 of <xref target="RFC6749"/>. As a result, client developers do not need to specify
+                defined in <xref target="RFC6749" section="3.2"/>. As a result, client developers do not need to specify
                 a response_type parameter in the authorization request. This coupled with the use of HTML's postMessage
                 interface for communication between the client and the authorization server means that the redirect_uri
                 and state parameters are also unnecessary. Consequently, client developers only need to provide a
@@ -111,26 +110,26 @@
                 The assisted token flow illustrated in <xref target="assisted-token-flow"/> includes the following steps:
             </t>
 
-            <ul empty="true">
-                <li>(A) The client creates a hidden iframe element using a scripting language like JavaScript. The
+            <ol type="(%C)">
+                <li>The client creates a hidden iframe element using a scripting language like JavaScript. The
                     src attribute of this iframe is the URL of the assisted token endpoint of the authorization server.</li>
 
-                <li>(B) The query string of the src attribute on the iframe includes, at a minimum, the client
+                <li>The query string of the src attribute on the iframe includes, at a minimum, the client
                     identifier.</li>
 
-                <li>(C) If the user is already logged in and has granted consent to the client, the authorization
+                <li anchor="assisted_token_flow_3">If the user is already logged in and has granted consent to the client, the authorization
                     server immediately returns an HTML document that includes a script that is executing; this
                     fires an event which is communicated to the client using an HTML window.postMessage.</li>
 
-                <li>(D) The client handles this event -- the payload of which is either an access token or an error;
+                <li anchor="assisted_token_flow_4">The client handles this event -- the payload of which is either an access token or an error;
                     the client then closes the dynamic iframe without revealing it to the user.</li>
-            </ul>
+            </ol>
 
             <t>
                 If the resource owner has not authenticated or has not authorized the client, then interaction between
                 the resource owner and the authorization server is required to obtain these. In such a case, the HTML in
-                step (C) of <xref target="assisted-token-flow"/> will include an error indicating that user
-                involvement is required. This will be handled by the client in step (D) and login and/or consent will
+                step <xref target="assisted_token_flow_3" format="counter"/> of <xref target="assisted-token-flow"/> will include an error indicating that user
+                involvement is required. This will be handled by the client in step <xref target="assisted_token_flow_4" format="counter"/> and login and/or consent will
                 commence. This process is illustrated in <xref target="assisted-token-login-consent-flow"/>.
             </t>
 
@@ -158,24 +157,24 @@
                 The flow shown in <xref target="assisted-token-login-consent-flow"/> includes the following steps:
             </t>
 
-            <ul empty="true">
-                <li>(E) The client creates a <tt>visible</tt> iframe or pops open a child window after
+            <ol type="(%C)" start="5">
+                <li>The client creates a <tt>visible</tt> iframe or pops open a child window after
                     receiving an indication from the authorization server that user interaction is required. As in
                     the previous flow, the src attribute value of this iframe or the input to the open method of
                     the user agents's window object is the URL of the authorization server's assisted token
                     endpoint.</li>
 
-                <li>(F) The query string of this URL includes, at a minimum, the client identifier.</li>
+                <li>The query string of this URL includes, at a minimum, the client identifier.</li>
 
-                <li>(G) The authorization server prompts the resource owner to authenticate and/or authorize the
+                <li>The authorization server prompts the resource owner to authenticate and/or authorize the
                     client.</li>
 
-                <li>(H) The authorization server returns an HTML document that includes a script that is executed;
+                <li>The authorization server returns an HTML document that includes a script that is executed;
                     this fires an event which is communicated to the client using an HTML window.postMessage.</li>
 
-                <li>(I) The client handles this event -- the payload of which is an access token; the client then
+                <li>The client handles this event -- the payload of which is an access token; the client then
                     closes the iframe or child window that it previously opened to facilitate user interaction.</li>
-            </ul>
+            </ol>
         </section>
 
         <section title="Terminology" anchor="terminology">
@@ -194,7 +193,7 @@
                 <dt>Handle Token</dt>
                 <dd>
                     An opaque token that refers to internal data of the authorization server (e.g., the user
-                    ID, scope of the token, etc.) as described in Section 3.1 of <xref target="RFC6819"/>.
+                    ID, scope of the token, etc.) as described in <xref target="RFC6819" section="3.1"/>.
                 </dd>
             </dl>
 
@@ -212,8 +211,8 @@
             </t>
 
             <t>
-                The endpoint URI MAY include an "application/x-www-form-urlencoded" formatted (per Appendix B of
-                <xref target="RFC6749"/>) query component (Section 3.4 of <xref target="RFC3986"/>), which MUST be
+                The endpoint URI MAY include an <tt>application/x-www-form-urlencoded</tt> formatted (per
+                <xref target="RFC6749" section="B"/>) query component (see <xref target="RFC3986" section="3.4"/>), which MUST be
                 retained when adding additional query parameters. The endpoint URI MUST NOT include a fragment
                 component.
             </t>
@@ -221,10 +220,10 @@
             <t>
                 Since requests to the assisted token endpoint result in the transmission of clear-text credentials (in
                 the HTTP request and response), the authorization server MUST require the use of TLS as described in
-                Section 1.6 of <xref target="RFC6749"/> when sending requests to the assisted token endpoint.
+                <xref target="RFC6749" section="1.6"/> when sending requests to the assisted token endpoint.
             </t>
 
-            <t>The client MUST use the HTTP "GET" method when making access token requests to this endpoint.</t>
+            <t>The client MUST use the HTTP <tt>GET</tt> method when making access token requests to this endpoint.</t>
 
             <t>
                 Parameters sent without a value MAY be treated as if they were omitted from the request. The
@@ -234,16 +233,16 @@
 
             <t>
                 After completing its interaction with the resource owner, the authorization server will fire an event
-                using the HTML postMessage interface. This message MUST NOT be posted to all origins, denoted by "*".
-                Instead, the authorization server MUST post this message only  to the client's allowed origin(s)
+                using the HTML postMessage interface. This message MUST NOT be posted to all origins, denoted by
+                <tt>*</tt>. Instead, the authorization server MUST post this message only  to the client's allowed origin(s)
                 previously established with the authorization server during the client registration process.
             </t>
 
             <section title="Access Token Scope" anchor="access-token-scope">
                 <t>
                     Like the authorization and token endpoints, the assisted token endpoint allows the client to
-                    specify the scope of the access request using the "scope" request parameter. In turn, the
-                    authorization server uses the "scope" response parameter to inform the client of the scope of
+                    specify the scope of the access request using the <tt>scope</tt> request parameter. In turn, the
+                    authorization server uses the <tt>scope</tt> response parameter to inform the client of the scope of
                     the access token issued. Unlike the typical behavior of those endpoints, however, access tokens
                     issued by the authorization server using the assisted token endpoint MUST use the client's
                     pre-configured scope or the authorization server's pre-defined default if none have been configured
@@ -251,16 +250,16 @@
                 </t>
 
                 <t>
-                    If the client did not include a "scope" request parameter or if the issued access token scope is
-                    different from the one requested by the client, the authorization server MUST include the "scope"
-                    response parameter to inform the client of the actual scope granted. Even when the scope of the
+                    If the client did not include a <tt>scope</tt> request parameter or if the issued access token scope is
+                    different from the one requested by the client, the authorization server MUST include the
+                    <tt>scope</tt>response parameter to inform the client of the actual scope granted. Even when the scope of the
                     issued access token is the same as the one requested by the client, the authorization server SHOULD
-                    include the "scope" response parameter.
+                    include the <tt>scope</tt> response parameter.
                 </t>
 
                 <t>
-                    The format, constraints, and grammar of the scope parameter value is as defined in Section 3.3 of
-                    <xref target="RFC6749"/>.
+                    The format, constraints, and grammar of the scope parameter value is as defined in
+                    <xref target="RFC6749" section="3.3"/>.
                 </t>
 
                 <t>
@@ -271,7 +270,7 @@
 
             <section anchor="cross-orgin-suport" title="Cross-Origin Support">
                 <t>
-                    The assisted token endpoint MAY support CORS <xref target="W3C.WD-cors-20120403"/>.
+                    The assisted token endpoint MAY support CORS as defined in <xref target="W3C.WD-cors-20120403"/>.
                 </t>
             </section>
         </section>
@@ -285,21 +284,21 @@
                 <dl newline="true" indent="8">
                     <dt>client_id</dt>
                     <dd>
-                        REQUIRED. The client identifier as described in Section 2.2 of <xref target="RFC6749"/>.
+                        REQUIRED. The client identifier as described in <xref target="RFC6749" section="2.2"/>.
                     </dd>
 
                     <dt>for_origin</dt>
                     <dd>
                         OPTIONAL. The origin of the client in case multiple allowed origins are
                         configured with the authorization server and support for user agents that do not support
-                        <xref target="CSP-2"/> but only X-Frame-Options <xref target="RFC7034"/>. See Section
+                        <xref target="CSP-2"/> but only <tt>X-Frame-Options</tt> (as defined in <xref target="RFC7034"/>). See
                         <xref target="framing"/> for details.
                     </dd>
 
                     <dt>prompt</dt>
                     <dd>
                         <t>
-                            OPTIONAL. Space delimited, case sensitive list of ASCII <xref target="ASCII"/> string
+                            OPTIONAL. Space delimited, case sensitive list of <xref target="ASCII"/> string
                             values that can be used to determine the login state of the resource owner at the
                             authorization server. The defined values are:
                         </t>
@@ -368,8 +367,8 @@
 
                     <dt>token_type</dt>
                     <dd>
-                        REQUIRED. The type of the token issued as described in Section 7.1 of
-                        <xref target="RFC6749"/>. Value is case insensitive.
+                        REQUIRED. The type of the token issued as described in
+                        <xref target="RFC6749" section="7.1"/>. Value is case insensitive.
                     </dd>
                 </dl>
             </section>
@@ -386,7 +385,7 @@
                     <dt>error</dt>
                     <dd>
                         <t>
-                            REQUIRED. A single ASCII <xref target="ASCII"/> error code from the following:
+                            REQUIRED. A single <xref target="ASCII"/> error code from the following:
                         </t>
 
                         <dl newline="true" indent="8">
@@ -450,16 +449,16 @@
                         </dl>
 
                         <t>
-                            Values for the "error" parameter MUST NOT include characters outside the set %x20-21 /
+                            Values for the <tt>error</tt> parameter MUST NOT include characters outside the set %x20-21 /
                             %x23-5B / %x5D-7E.
                         </t>
                     </dd>
 
                     <dt>error_description</dt>
                     <dd>
-                        OPTIONAL. Human-readable ASCII <xref target="ASCII"/> text providing additional
+                        OPTIONAL. Human-readable <xref target="ASCII"/> text providing additional
                         information, used to assist the client developer in understanding the error that occurred.
-                        Values for the "error_description" parameter MUST NOT include characters outside the set
+                        Values for the <tt>error_description</tt> parameter MUST NOT include characters outside the set
                         %x20-21 / %x23-5B / %x5D-7E.
                     </dd>
 
@@ -467,7 +466,7 @@
                     <dd>
                         OPTIONAL. A URI identifying a human-readable web page with information about the error,
                         used to provide the client developer with additional information about the error. Values
-                        for the "error_uri" parameter MUST conform to the URI-reference syntax and thus MUST NOT
+                        for the <tt>error_uri</tt> parameter MUST conform to the URI-reference syntax and thus MUST NOT
                         include characters outside the set %x21 / %x23-5B / %x5D-7E.
                     </dd>
                 </dl>
@@ -479,18 +478,18 @@
                 The authorization server MAY allow dynamic clients to request the use of the assisted token flow when
                 registering. Such a client may indicate that it will interact with the authorization server using the
                 assisted token flow by including the string element
-                "urn:ietf:params:oauth:grant-type:assisted_token" in the array associated with the "grant_types"
-                metadata field sent to the client registration endpoint (as defined in Section 3. of
-                <xref target="RFC7591"/>). If the authorization server allows the client to register with this grant
-                type, the "grant_types" included in the response MUST include the value
-                "urn:ietf:params:oauth:grant-type:assisted_token". The inclusion of this value in the "grant_types"
-                field is done despite the fact that the client will not use this grant type at the token endpoint but
-                rather the <xref target="assisted-token-endpoint"> assisted token endpoint</xref>.
+                <tt>urn:ietf:params:oauth:grant-type:assisted_token</tt> in the array associated with the
+                <tt>grant_types</tt> metadata field sent to the client registration endpoint (as defined in
+                <xref target="RFC7591" section="3"/>). If the authorization server allows the client to register with this grant
+                type, the <tt>grant_types</tt> included in the response MUST include the value
+                <tt>urn:ietf:params:oauth:grant-type:assisted_token</tt>. The inclusion of this value in the
+                <tt>grant_types</tt> field is done despite the fact that the client will not use this grant type at the token endpoint but
+                rather the assisted token endpoint (see <xref target="assisted-token-endpoint"/>).
             </t>
 
             <t>
                 The following client metadata field is defined by this specification. It MAY be included in a
-                registration request, as set forth in Section 2. of <xref target="RFC7591"/>.
+                registration request, as set forth in <xref target="RFC7591" section="2"/>.
             </t>
 
             <dl newline="true" indent="8">
@@ -504,8 +503,8 @@
 
         <section title="Authorization Server Metadata" anchor="authorization-server-metadata">
             <t>
-                Support for the assisted token flow MUST be declared in the OAuth 2.0 Authorization Server Metadata
-                <xref target="RFC8414"/> with the following metadata:
+                Support for the assisted token flow MUST be declared in the authorization server's metadata
+                (as defined in <xref target="RFC8414"/>) with the following metadata:
             </t>
 
             <dl newline="true" indent="8">
@@ -519,9 +518,9 @@
                 <dt>grant_types_supported</dt>
                 <dd>
                     REQUIRED.
-                    A JSON array specified in Section 2. of
-                    <xref target="RFC8414"/>
-                    which should contain the value "urn:ietf:params:oauth:grant-type:assisted_token" as defined in
+                    A JSON array specified in
+                    <xref target="RFC8414" section="2"/>
+                    which should contain the value <tt>urn:ietf:params:oauth:grant-type:assisted_token</tt> as defined in
                     <xref target="client-metadata"/>.
                 </dd>
             </dl>
@@ -530,7 +529,8 @@
         <section title="IANA Considerations" anchor="iana-considerations">
             <section anchor="URIReg" title="OAuth URI Registration">
                 <t>
-                    This specification registers the following values in the IANA "OAuth URI" registry
+                    This specification registers the following values in the
+                    <eref target="https://www.iana.org/assignments/oauth-parameters/oauth-parameters.xhtml#uri">IANA "OAuth URI" registry</eref>
                     <xref target="IANA.OAuth.Parameters"/> established by <xref target="RFC6755"/>.
                 </t>
 
@@ -539,7 +539,7 @@
                         <li>URN: urn:ietf:params:oauth:grant-type:assisted_token</li>
                         <li>Common Name: Assisted token flow grant type for OAuth 2.0</li>
                         <li>Change controller: IESG</li>
-                        <li>Specification Document:<xref target="client-metadata"/>of [[ this specification ]]</li>
+                        <li>Specification Document: <xref target="client-metadata"/> of [[ this specification ]]</li>
                     </ul>
                 </section>
             </section>
@@ -553,8 +553,9 @@
             <section title="OAuth 2.0 Authorization Server Metadata" anchor="MetadataReg">
 
                 <t>
-                    This specification registers the following values in the IANA "OAuth 2.0 Authorization Server
-                    Metadata" registry <xref target="IANA.OAuth.Parameters"/> established by
+                    This specification registers the following values in the
+                    <eref target="https://www.iana.org/assignments/oauth-parameters/oauth-parameters.xhtml#authorization-server-metadata">IANA "OAuth 2.0 Authorization Server
+                    Metadata" registry</eref> <xref target="IANA.OAuth.Parameters"/> established by
                     <xref target="RFC8414"/>.
                 </t>
 
@@ -572,8 +573,8 @@
 
         <section title="Security Considerations" anchor="security-considerations">
             <t>
-                In addition to all <xref target="RFC6819"> the security considerations discussed in OAuth 2.0
-                </xref>, the following security considerations SHOULD be taken into account.
+                In addition to all the security considerations discussed in <xref target="RFC6819"/>,
+                the following security considerations SHOULD be taken into account.
             </t>
 
             <section title="Framing" anchor="framing">
@@ -591,27 +592,27 @@
                     CSP allows the authorization server to specify multiple origins in a single response header field
                     and to constrain these using flexible patterns (see <xref target="CSP-2"/> for details). This
                     standard provides a robust mechanism for protecting against click-jacking when combining policies
-                    that restrict "child-src" with the sources of scripts that are allowed to execute by using
-                    "script-src" policies.
+                    that restrict <tt>child-src</tt> with the sources of scripts that are allowed to execute by using
+                    <tt>script-src</tt> policies.
                 </t>
                 <t>
                     Because some user agents do not support <xref target="CSP-2"/>, this technique SHOULD be combined with
-                    others. In particular, the authorization server SHOULD return an "X-Frame-Options" response header
+                    others. In particular, the authorization server SHOULD return an <tt>X-Frame-Options</tt> response header
                     on the assisted token endpoint (and, if applicable, other endpoints used to authenticate the user
                     in a specific deployment). As defined in <xref target="RFC7034"/>, this header will cause user
                     agents that support it (but not CSP) to block framing from any origin that is not
                     specified in this header's value. Because this header's value can only include one origin, the
-                    framer should use the "for_origin" parameter (as specified in
+                    framer should use the <tt>for_origin</tt> parameter (as specified in
                     <xref target="assisted-token-request"/>) to include its own origin.
                 </t>
 
                 <t>
-                    Some user agents do not support <xref target="RFC7034">X-Frame-Options</xref> nor
+                    Some user agents do not support <xref target="RFC7034"/> nor
                     <xref target="CSP-2"/>. Therefore, the authorization server SHOULD include a frame-busting script
                     like that shown in Figure 7 of <xref target="FRAME-BUSTING"/>. Such a script would use JavaScript
                     to break out of any unauthorized origin that is framing the assisted token endpoint. The
-                    authorization server MAY simply break out of all frames in case <xref target="RFC7034">
-                    X-Frame-Options</xref> and <xref target="CSP-2"/> are unsupported by the user agent, though this
+                    authorization server MAY simply break out of all frames in case <xref target="RFC7034"/>
+                    and <xref target="CSP-2"/> are unsupported by the user agent, though this
                     would render the assisted token flow non-functional. The choice of whether or not this drastic
                     countermeasure should be employed depends on the user agents being targetted in a certain
                     deployment.
@@ -632,13 +633,13 @@
 
             <section title="Warning Against Untrusted Scripts" anchor="warning-against-untrusted-script">
                 <t>
-                    As admitted in Section 8 of <xref target="RFC6454"/>, preventing exfiltration of cookies, tokens,
+                    As admitted in <xref target="RFC6454" section="8"/>, preventing exfiltration of cookies, tokens,
                     and other such credentials in web browsers has historically proven difficult to implement. Instead,
                     the same-origin policy has emerged as the cornerstone of security for such user agents. Using this
                     security model, it is not possible to prevent access to a token issued to a client if that client
                     includes nefarious scripts from untrustworthy sources that have access to the Document Object
                     Model (DOM) where the token is stored. For this reason, the authorization server MUST warn client
-                    application developers who interact with the assisted token endpoint <tt>not</tt> to use
+                    application developers who interact with the assisted token endpoint <em>not</em> to use
                     untrusted scripts in their applications. This warning SHOULD at least be conveyed through the
                     documentation but MAY also be provided through other mechanisms.
                 </t>
@@ -654,7 +655,7 @@
                     is shown in the following non-normative, JavaScript listing:
                 </t>
                 <figure anchor="f_arwmwmrm" title="Comparing the origin of the postMessage event with that of the authorization server">
-                    <artwork>
+                    <sourcecode type="html">
                         <![CDATA[
 <script type="text/javascript">
     window.addEventListener("message", function(evt) {
@@ -664,7 +665,7 @@
         ...
     });
 </script>]]>
-                    </artwork>
+                    </sourcecode>
                 </figure>
             </section>
 
@@ -759,7 +760,7 @@
                     <date month="July" year="2015"/>
                 </front>
             </reference>
-            <reference anchor="FRAME-BUSTING" target="http://seclab.stanford.edu/websec/framebusting/">
+            <reference anchor="FRAME-BUSTING" target="http://seclab.stanford.edu/websec/framebusting/framebust.pdf">
                 <front>
                     <title>Busting frame busting: a study of clickjacking vulnerabilities at popular sites</title>
                     <author initials="G." surname="Rydstedt">
@@ -800,11 +801,11 @@
             </t>
 
             <t>
-                Mark Dobrinic, Karl McGuinness
+                Mark Dobrinic, Karl McGuinness, Renato Athaydes, Daniel Lindau
             </t>
         </section>
 
-        <section title="Document History" anchor="document-history">
+        <section title="Document History" anchor="document-history" removeInRFC="true">
             <t>
                 [[ to be removed by the RFC editor before publication as an RFC ]]
             </t>
