@@ -16,6 +16,7 @@
 <?rfc tocompact="yes"?>
 
 <rfc ipr="*trust200902" category="std" docName="draft-spencer-oauth-claims-01" consensus="true" version="3" sortRefs="true">
+    <link rel="working-copy" href="https://bitbucket.org/curity/rfc/src/master/draft-spencer-oauth-claims/draft-spencer-oauth-claims-01.xml"/>
     <front>
         <title abbrev="Claims">The OAuth 2.0 Authorization Framework: Claims</title>
 
@@ -55,6 +56,14 @@
                 token intended for a particular &rs;.
             </t>
         </abstract>
+
+        <note removeInRFC="true">
+            <t>
+                To contribute to this draft, please feel free to create a pull request from the original source
+                available at <eref target="https://bitbucket.org/curity/rfc/">https://bitbucket.org/curity/rfc/</eref>
+                or email the authors.
+            </t>
+        </note>
     </front>
 
     <middle>

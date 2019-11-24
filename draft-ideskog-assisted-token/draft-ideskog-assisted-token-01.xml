@@ -11,6 +11,7 @@
 <?rfc tocompact="yes"?>
 
 <rfc ipr="*trust200902" docName="draft-ideskog-assisted-token-01" version="3" category="info" submissionType="independent" sortRefs="true">
+    <link rel="working-copy" href="https://bitbucket.org/curity/rfc/src/master/draft-ideskog-assisted-token/draft-ideskog-assisted-token-01.xml"/>
     <front>
         <title abbrev="Assisted Token">OAuth 2.0 Assisted Token</title>
 
@@ -52,6 +53,14 @@
                 token endpoint.
             </t>
         </abstract>
+
+        <note removeInRFC="true">
+            <t>
+                To contribute to this draft, please feel free to create a pull request from the original source
+                available at <eref target="https://bitbucket.org/curity/rfc/">https://bitbucket.org/curity/rfc/</eref>
+                or email the authors.
+            </t>
+        </note>
     </front>
 
     <middle>
