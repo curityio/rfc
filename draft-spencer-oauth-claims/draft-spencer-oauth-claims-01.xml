@@ -443,7 +443,7 @@
             </section>
 
             <section title="Token Exchange" anchor="token-exchange">
-                <t>TBD</t>
+                <t><cref anchor="Token_Exchange_TBD_1">TBD</cref></t>
             </section>
         </section>
 
@@ -1590,7 +1590,7 @@ Host: server.example.com
         </section>
 
         <section title="Token Exchange" anchor="token-exhange">
-            <t>TBD</t>
+            <t><cref anchor="Token_Exchange_TBD_2">TBD</cref></t>
         </section>
 
         <section title="Token Introspection" anchor="token-introspection">
@@ -1611,7 +1611,7 @@ Host: server.example.com
         </section>
 
         <section title="Requesting Claims for a Particular Protected Resource">
-            <t>TBD</t>
+            <t><cref anchor="Resource_Indicator_TBD_1">TBD</cref></t>
         </section>
 
         <section title="Authorization Server Metadata" anchor="authorization-server-metadata">
@@ -1723,15 +1723,15 @@ Host: server.example.com
         </section>
 
         <section title="Security Considerations" anchor="security-considerations">
-            <t>TBD</t>
+            <t><cref anchor="Security_Considerations_TBD_1">TBD</cref></t>
         </section>
 
         <section title="Privacy Considerations" anchor="privacy-considerations">
-            <t>TBD</t>
+            <t><cref anchor="Privacy_Considerations_TBD_1">TBD</cref></t>
         </section>
 
         <section title="IANA Considerations" anchor="iana-considerations">
-            <t>TBD</t>
+            <t><cref anchor="IANA_Considerations_TBD_1">TBD</cref></t>
         </section>
     </middle>
 
