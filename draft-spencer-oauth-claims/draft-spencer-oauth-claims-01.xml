@@ -1779,7 +1779,7 @@ Host: server.example.com
             </t>
         </section>
 
-        <section title="Document History" anchor="document-history">
+        <section title="Document History" anchor="document-history" removeInRFC="true">
             <t>
                 [[ to be removed by the RFC editor before publication as an RFC ]]
             </t>
