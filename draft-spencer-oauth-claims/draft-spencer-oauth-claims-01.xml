@@ -4,20 +4,9 @@
         <!ENTITY as "authorization server">
         <!ENTITY rs "resource server">
         <!ENTITY ro "resource owner">
-
-        <!ENTITY RFC2119 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml">
-        <!ENTITY RFC6749 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6749.xml">
-        <!ENTITY RFC6901 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6901.xml">
-        <!ENTITY RFC7519 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7519.xml">
-        <!ENTITY RFC7662 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7662.xml">
-        <!ENTITY RFC8174 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.8174.xml">
-        <!ENTITY RFC8259 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.8259.xml">
-        <!ENTITY RFC8414 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.8414.xml">
-        <!ENTITY I-D.ietf-oauth-token-exchange SYSTEM "https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-oauth-token-exchange.xml">
         ]>
 
 <?rfc compact="yes" ?>
-<?rfc sortrefs="yes" ?>
 <?rfc strict="yes" ?>
 <?rfc subcompact="no" ?>
 <?rfc symrefs="yes"?>
@@ -1735,19 +1724,20 @@ Host: server.example.com
         </section>
     </middle>
 
-    <back>
+    <back xmlns:xi="http://www.w3.org/2001/XInclude">
         <references title="Normative References">
-            &RFC2119;
-            &RFC6749;
-            &RFC6901;
-            &RFC7519;
-            &RFC7662;
-            &RFC8174;
-            &RFC8259;
-            &RFC8414;
+            <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml"/>
+            <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6749.xml"/>
+            <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6901.xml"/>
+            <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7519.xml"/>
+            <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7662.xml"/>
+            <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml"/>
+            <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8259.xml"/>
+            <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8414.xml"/>
         </references>
 
         <references title="Informative References">
+            <xi:include href="https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-oauth-token-exchange.xml"/>
             <reference anchor="OpenID.Core" target="http://openid.net/specs/openid-connect-core-1_0.html">
                 <front>
                     <title>OpenID Connect Core 1.0</title>
@@ -1777,8 +1767,6 @@ Host: server.example.com
 
                 <seriesInfo name="OpenID Foundation" value="Standards" />
             </reference>
-
-            &I-D.ietf-oauth-token-exchange;
         </references>
 
         <section anchor="Acknowledgements" title="Acknowledgements">
