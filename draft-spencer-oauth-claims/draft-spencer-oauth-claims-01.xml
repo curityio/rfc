@@ -15,7 +15,7 @@
 <?rfc tocindent="yes"?>
 <?rfc tocompact="yes"?>
 
-<rfc ipr="trust200902" category="std" docName="draft-spencer-oauth-claims-01" consensus="true" version="3" sortRefs="true">
+<rfc ipr="*trust200902" category="std" docName="draft-spencer-oauth-claims-01" consensus="true" version="3" sortRefs="true">
     <front>
         <title abbrev="Claims">The OAuth 2.0 Authorization Framework: Claims</title>
 

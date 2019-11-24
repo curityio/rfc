@@ -10,7 +10,7 @@
 <?rfc tocindent="yes"?>
 <?rfc tocompact="yes"?>
 
-<rfc ipr="trust200902" docName="draft-ideskog-assisted-token-01" version="3" category="info" submissionType="independent" sortRefs="true">
+<rfc ipr="*trust200902" docName="draft-ideskog-assisted-token-01" version="3" category="info" submissionType="independent" sortRefs="true">
     <front>
         <title abbrev="Assisted Token">OAuth 2.0 Assisted Token</title>
 
