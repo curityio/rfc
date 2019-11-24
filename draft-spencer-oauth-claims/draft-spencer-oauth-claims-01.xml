@@ -166,7 +166,7 @@
                     interoperability. For instance, <xref target="OpenID.Core"/>
                     relates claims to scope tokens by grouping
                     certain claims into various scope tokens. This grouping of
-                    claims into various scope tokens is RECOMMENDED when
+                    claims into various scope tokens is <bcp14>RECOMMENDED</bcp14> when
                     simultaneously using claims and scope tokens to request
                     authorization.
                 </t>
@@ -207,7 +207,7 @@
                     <dt>Claims Sink</dt>
                     <dd>
                         The location or destination where the &as;
-                        MAY include all requested claims that are
+                        <bcp14>MAY</bcp14> include all requested claims that are
                         authorized by the &ro;. An access token
                         intended for an unspecified &rs; or an
                         access token the &c; intends to send to a
@@ -273,9 +273,9 @@
                <t>
                    When a &c; requests authorization from the &ro;
                    indirectly via the &as;, the protocol flow
-                   MAY include a query for certain claims. Based on the policy
+                   <bcp14>MAY</bcp14> include a query for certain claims. Based on the policy
                    of the &as; and the delegated access of the
-                   &ro;, certain claims MAY be granted. Given an
+                   &ro;, certain claims <bcp14>MAY</bcp14> be granted. Given an
                    authorization grant, the &as; informs the
                    &c; as to which claims were actually issued (if different
                    from those requested). This message exchange pattern is
@@ -316,11 +316,12 @@
                         parameter, as described in <xref target="requesting-particular-claim-names-and-claim-values"/> below.
                     </li>
                     <li>After obtaining (B) and presenting the authorization
-                        grant (C), the response MAY include an access token
+                        grant (C), the response <bcp14>MAY</bcp14> include an access token
                         and a possibly-empty list of claim names that were
                         authorized (D). If the asserted claims embodied by
                         the access token differ from those requested (A),
-                        then the &as; MUST include a list
+                        then the &as;
+                        <bcp14>MUST</bcp14> include a list
                         of authorized claim names in the authorization
                         response (D).
                     </li>
@@ -331,7 +332,7 @@
                 <t>
                     As described in <xref target="RFC6749" section="1.5"/> and
                     further explained in section 6 thereof, a &c; that was
-                    issued a refresh token MAY use this to narrow the scope of
+                    issued a refresh token <bcp14>MAY</bcp14> use this to narrow the scope of
                     access for an access token. It does this by sending the
                     <tt>scope</tt> request parameter in step
                     (G) of Figure 2 of <xref target="RFC6749"/>. At times, the
@@ -371,18 +372,21 @@
                 </t>
 
                 <t>
-                    The &c; MAY request to change the claims sink where the
+                    The &c;
+                    <bcp14>MAY</bcp14> request to change the claims sink where the
                     authorized claims should be asserted using this flow. If the
-                    &c; does so, it is RECOMMENDED that the &as;
+                    &c; does so, it is <bcp14>RECOMMENDED</bcp14> that the &as;
                     accept this change baring any policy to the contrary.
-                    The &c; MAY also send a claim value in the claim value
+                    The &c;
+                    <bcp14>MAY</bcp14> also send a claim value in the claim value
                     query object(s) of the request. When it does, the
-                    &as; SHOULD consider this request when
-                    asserting the claim but it MAY return an error if asserting
+                    &as;
+                    <bcp14>SHOULD</bcp14> consider this request when
+                    asserting the claim but it <bcp14>MAY</bcp14> return an error if asserting
                     a different claim value is against its policy or exceeds the
                     authorization granted by the &ro;. If it is a
-                    critical claim, the requested claim value MUST be asserted
-                    or an error MUST result if the &as; supports
+                    critical claim, the requested claim value <bcp14>MUST</bcp14> be asserted
+                    or an error <bcp14>MUST</bcp14> result if the &as; supports
                     critical claims.
                 </t>
 
@@ -453,7 +457,8 @@
                 access that the &ro; authorizes it for.
             </t>
             <t>
-                The top-level members of the claims request object SHOULD
+                The top-level members of the claims request object
+                <bcp14>SHOULD</bcp14>
                 include at least one claims sink. The only specific claims sinks
                 defined by this specification are
                 <tt>access_token</tt>,
@@ -464,13 +469,14 @@
                 to be included in an access token that it intends to be furnished to
                 a particular &rs;; this is done by using an absolute
                 URI of the target service or resource as a claims sink. A claims
-                request object MAY also contain the member
+                request object <bcp14>MAY</bcp14> also contain the member
                 <tt>crit</tt> to indicate parts of the
-                claims request object that the &as; MUST
+                claims request object that the &as;
+                <bcp14>MUST</bcp14>
                 understand if the <tt>crit</tt> member
                 itself is understood. Other members of a claims request object
-                MAY be present; any that are not understood by the &as;
-                MUST be ignored.
+                <bcp14>MAY</bcp14> be present; any that are not understood by the &as;
+                <bcp14>MUST</bcp14> be ignored.
             </t>
             <t>
                 An example of a claims request object that is sent to the
@@ -497,10 +503,10 @@
                 In this non-normative example, the
                 <tt>access_token</tt> member is the
                 claims sink. It is the location where the &as;
-                MAY include any of the requested claims that the &ro;
+                <bcp14>MAY</bcp14> include any of the requested claims that the &ro;
                 authorizes. If the &as; uses the requested
                 claims from a particular claims sink to derive or determine
-                alternative claims which it asserts, it is RECOMMENDED to
+                alternative claims which it asserts, it is <bcp14>RECOMMENDED</bcp14> to
                 consider the &c;'s request to include those alternative
                 claims in the same requested claims sink.
             </t>
@@ -529,7 +535,7 @@
                 <dl newline="true" indent="8">
                     <dt>essential</dt>
                     <dd>
-                        OPTIONAL. Indicates whether the claim being
+                        <bcp14>OPTIONAL</bcp14>. Indicates whether the claim being
                         requested is an essential claim. If the value is
                         <tt>true</tt>, this indicates
                         that the claim is an essential claim. If the value
@@ -540,13 +546,13 @@
 
                     <dt>value</dt>
                     <dd>
-                        OPTIONAL. Requests that the claim be returned with
+                        <bcp14>OPTIONAL</bcp14>. Requests that the claim be returned with
                         a particular value.
                     </dd>
 
                     <dt>values</dt>
                     <dd>
-                        OPTIONAL. Requests that the claim be returned with
+                        <bcp14>OPTIONAL</bcp14>. Requests that the claim be returned with
                         one of a set of values, with the values appearing
                         in order of preference.
                     </dd>
@@ -556,7 +562,8 @@
                     The properties <tt>value</tt> and
                     <tt>values</tt> are mutually exclusive.
                     If the &c; sends a claim value query object with both,
-                    the &as; MUST return an error as described
+                    the &as;
+                    <bcp14>MUST</bcp14> return an error as described
                     in <xref target="obtaining-authorization"/> below.
                 </t>
 
@@ -567,15 +574,17 @@
                     authorization for the specific task requested by that
                     &ro;. If the claims are not available because the
                     &ro; did not authorize their release or they are
-                    not present, the &as; MUST NOT generate an
+                    not present, the &as;
+                    <bcp14>MUST NOT</bcp14> generate an
                     error when claims are not returned.
                 </t>
 
                 <t>
-                    Other members of the claim value query object MAY be defined
+                    Other members of the claim value query object <bcp14>MAY</bcp14> be defined
                     to provide additional information about the requested
                     claims. Any members of the claims value query object that are
-                    not understood by the &as; MUST be ignored.
+                    not understood by the &as;
+                    <bcp14>MUST</bcp14> be ignored.
                 </t>
 
                 <t>
@@ -612,7 +621,8 @@
                     &as; to assert a claim value of
                     <tt>John</tt> for the claim name
                     <tt>fname</tt>. In such situations the
-                    &as; MAY issue a claim with the claim name
+                    &as;
+                    <bcp14>MAY</bcp14> issue a claim with the claim name
                     <tt>fname</tt> but with some other claim
                     value than <tt>John</tt>. Both are
                     voluntary claims.
@@ -685,7 +695,8 @@
                     claim named <tt>paymentId</tt> is
                     requested by the &c; to have a claim value of
                     <tt>pid-123456</tt>. Again, the
-                    &as; MUST NOT return an error if the
+                    &as;
+                    <bcp14>MUST NOT</bcp14> return an error if the
                     &ro; does not authorize both of these claims or
                     if they are non-existent. This is merely a request for a
                     certain scope of access.
@@ -804,9 +815,10 @@
                     reader the versatility of this query language and the
                     &as;'s prerogative to assert any claims with
                     any claim values it chooses in its sole discretion. If the
-                    &c;'s needs are stronger than preferential, it MAY use
+                    &c;'s needs are stronger than preferential, it <bcp14>MAY</bcp14> use
                     the <tt>crit</tt> member of the
-                    claims request object which the &as; MAY
+                    claims request object which the &as;
+                    <bcp14>MAY</bcp14>
                     understand.
                 </t>
             </section>
@@ -822,7 +834,8 @@
                     rather the &as; return an error than grant
                     access with different claims than those requested. This is
                     not always possible for an &as;, however,
-                    and a &c; MUST NOT assume that the &as;
+                    and a &c;
+                    <bcp14>MUST NOT</bcp14> assume that the &as;
                     can be controlled in this manner. To know if this
                     interaction pattern in supported, the &c; must have a
                     priori knowledge gained by some means not defined by this
@@ -831,9 +844,10 @@
                     <tt>critical_claims_supported</tt>
                     metadata (see section
                     <xref target="authorization-server-metadata"/> below). An
-                    &as; is RECOMMENDED to support this
+                    &as; is <bcp14>RECOMMENDED</bcp14> to support this
                     capability unless it cannot. When it does, the &as;
-                    MUST issue any claim denoted as critical or it MUST
+                    <bcp14>MUST</bcp14> issue any claim denoted as critical or it
+                    <bcp14>MUST</bcp14>
                     return an error. The error must be
                     <tt>invalid_claims</tt> as described below
                     in <xref target="obtaining-authorization"/>.
@@ -847,25 +861,28 @@
                     associated with the <tt>crit</tt> member
                     of the claims request object. Each such claim that the
                     elements of this list point to is a "Critical Claim". The
-                    JSON Pointers in this list MUST refer to members of the
-                    claims request object and MUST NOT point to elements within
+                    JSON Pointers in this list <bcp14>MUST</bcp14> refer to members of the
+                    claims request object and <bcp14>MUST NOT</bcp14> point to elements within
                     the list itself. If any JSON Pointer refers to an element of
-                    the JSON Pointer list, the &as; MUST return
+                    the JSON Pointer list, the &as;
+                    <bcp14>MUST</bcp14> return
                     an error with a code of
                     <tt>invalid_request</tt> if it supports
                     critical claims. When the JSON Pointers are valid, if the
                     &as; does not understand any of the claims
                     pointed to by any of the elements of this list, the
-                    &as; MUST return an error of
+                    &as;
+                    <bcp14>MUST</bcp14> return an error of
                     <tt>invalid_claims</tt>. Likewise, if
                     the &as; is unable to assert a critical
-                    claim (and it supports critical claims), it MUST return the
+                    claim (and it supports critical claims), it <bcp14>MUST</bcp14> return the
                     same error. If a critical claim is requested with a certain
                     value (as in the following example), the &as;
-                    MUST assert the claim with that exact claim value. If
+                    <bcp14>MUST</bcp14> assert the claim with that exact claim value. If
                     it's not able to (e.g., because the &ro; does not
                     have an attribute with that particular value), the
-                    &as; MUST return an error with a code of
+                    &as;
+                    <bcp14>MUST</bcp14> return an error with a code of
                     <tt>invalid_claims</tt> unless it does
                     not support critical claims.
                 </t>
@@ -918,7 +935,8 @@
                     It is not uncommon for a claim name to defined as a URI
                     containing slashes (<tt>/</tt>, %x2F). When such a claim is
                     critical, the escaping described in
-                    <xref target="RFC6901" section="3"/> MUST be used, as in the
+                    <xref target="RFC6901" section="3"/>
+                    <bcp14>MUST</bcp14> be used, as in the
                     non-normative listing of
                     <xref target="escaped-critical-claim-example"/>.
                 </t>
@@ -941,7 +959,8 @@
                     A &c; may know that it needs a particular claim; however,
                     it may not be aware which claims sink the claim should be
                     included in. The &c; may prefer to leave this determination
-                    to the &as;. In such cases, the &c; MAY
+                    to the &as;. In such cases, the &c;
+                    <bcp14>MAY</bcp14>
                     use the claims sink <tt>?</tt> (%x3F) as
                     mentioned in <xref target="claims-request-object"/>
                     above. This special claim sink may result in the claim being
@@ -967,7 +986,7 @@
                     Similarly, there are situations where the &c; wishes
                     claims to be asserted in all claims sinks the &as;
                     supports. Rather than requiring the the &c; to
-                    repeat its requirement for each claims sink, it MAY use the
+                    repeat its requirement for each claims sink, it <bcp14>MAY</bcp14> use the
                     special claims sink <tt>*</tt> (%x2A).
                     This claims sink indicates to the &as; that
                     the &c; prefers all claims included in the claims request
@@ -1011,9 +1030,10 @@
                     <tt>?</tt> and
                     <tt>*</tt> with any other claims sink
                     in the same claims request object is undefined. The
-                    &as; SHOULD return an error or apply some other
-                    logic not defined by this specification. The &c; SHOULD
-                    NOT make such queries unless it has some knowledge gained a
+                    &as;
+                    <bcp14>SHOULD</bcp14> return an error or apply some other
+                    logic not defined by this specification. The &c;
+                    <bcp14>SHOULD NOT</bcp14> make such queries unless it has some knowledge gained a
                     priori about the &as;'s support of such a
                     query.
                 </t>
@@ -1031,7 +1051,7 @@
                 parameter defined herein is used when requesting an
                 authorization code, implicit, resource owner password
                 credentials, or client credentials grant type. The
-                <tt>claims</tt> request parameter MAY also
+                <tt>claims</tt> request parameter <bcp14>MAY</bcp14> also
                 be used with additional grant type that use the extension
                 mechanism defined in <xref target="RFC6749" section="4.5"/>
                 if so profiled by some other specification.
@@ -1045,7 +1065,7 @@
                         When a &c; seeks to obtain authorization using
                         the authorization code grant type defined in
                         <xref section="4.1" target="RFC6749"/>, the &c;
-                        MAY include the following additional query
+                        <bcp14>MAY</bcp14> include the following additional query
                         component that it sends to the authorization
                         endpoint URI:
                     </t>
@@ -1053,7 +1073,7 @@
                     <dl newline="true" indent="8">
                         <dt>claims</dt>
                         <dd>
-                                OPTIONAL. A claims request object as
+                            <bcp14>OPTIONAL</bcp14>. A claims request object as
                                 described in
                                 <xref target="claims-request-object"/>.
                         </dd>
@@ -1096,7 +1116,8 @@ Host: server.example.com
                     <t>
                         If the &as; understands the
                         <tt>claims</tt> request
-                        parameter, it MUST
+                        parameter, it
+                        <bcp14>MUST</bcp14>
                         redirect the user-agent of the &ro; to
                         the &c;'s redirection endpoint as described in
                         <xref section="4.1.2.1" target="RFC6749"/> with
@@ -1109,17 +1130,18 @@ Host: server.example.com
                         <dd>
                             The &as; understands but does not support
                             the <tt>claims</tt>
-                            request parameter, and the &c; SHOULD
-                            NOT use it when requesting authorization.
+                            request parameter, and the &c;
+                            <bcp14>SHOULD NOT</bcp14> use it when requesting authorization.
                         </dd>
 
                         <dt>invalid_request</dt>
                         <dd>
-                            The &as; MAY use this
+                            The &as;
+                            <bcp14>MAY</bcp14> use this
                             less-descriptive error code to indicate that
                             the claims request parameter value is not
                             accepted, e.g., because it is syntactically
-                            incorrect. It is, however, RECOMMENDED that the
+                            incorrect. It is, however, <bcp14>RECOMMENDED</bcp14> that the
                             &as; return
                             <tt>claims_not_supported</tt>
                             or <tt>invalid_claims</tt> as
@@ -1137,7 +1159,7 @@ Host: server.example.com
                             according to the &as;'s policy,
                             this error (or the less-descriptive alternative,
                             <tt>invalid_request</tt>)
-                            MUST result.
+                            <bcp14>MUST</bcp14> result.
                         </dd>
                     </dl>
                 </section>
@@ -1145,12 +1167,14 @@ Host: server.example.com
                 <section title="Access Token Response"
                          anchor="authorization-code-grant-access-token-response">
                     <t>
-                        In a non-error case, the &as; MAY
+                        In a non-error case, the &as;
+                        <bcp14>MAY</bcp14>
                         include details about the claims that the &c;
                         is authorized for. This is done by augmenting the
                         response defined in
                         <xref target="RFC6749" section="4.1.4"/>. In particular, the
-                        &as; MAY include the following
+                        &as;
+                        <bcp14>MAY</bcp14> include the following
                         response member in the JSON object returned from
                         the token endpoint:
                     </t>
@@ -1158,9 +1182,9 @@ Host: server.example.com
                     <dl newline="true" indent="8">
                         <dt>claims</dt>
                         <dd>
-                            OPTIONAL, if identical to the claims
+                            <bcp14>OPTIONAL</bcp14>, if identical to the claims
                             requested by the &c;; otherwise,
-                            REQUIRED. The space-separated claim names
+                            <bcp14>REQUIRED</bcp14>. The space-separated claim names
                             granted by the &ro; which denote
                             the scope of the access token that is
                             returned in the same response.
@@ -1175,7 +1199,8 @@ Host: server.example.com
                     <t>
                         When a &c; seeks to obtain authorization using
                         the implicit grant type defined in
-                        <xref target="RFC6749" section="4.2"/>, the &c; MAY include
+                        <xref target="RFC6749" section="4.2"/>, the &c;
+                        <bcp14>MAY</bcp14> include
                         the following additional query component that it
                         sends to the authorization endpoint URI:
                     </t>
@@ -1183,7 +1208,7 @@ Host: server.example.com
                     <dl newline="true" indent="8">
                         <dt>claims</dt>
                         <dd>
-                            OPTIONAL. A claims request object as
+                            <bcp14>OPTIONAL</bcp14>. A claims request object as
                             described in
                             <xref target="claims-request-object"/>.
                         </dd>
@@ -1200,12 +1225,14 @@ Host: server.example.com
                 <section title="Access Token Response"
                          anchor="implicit-flow-authorization-response">
                     <t>
-                        In a non-error case, the &as; MAY
+                        In a non-error case, the &as;
+                        <bcp14>MAY</bcp14>
                         include details about the claims that the &c; is
                         authorized for. This is done by augmenting the
                         response defined in
                         <xref target="RFC6749" section="4.2.2"/>. In particular, the
-                        &as; MAY include the following
+                        &as;
+                        <bcp14>MAY</bcp14> include the following
                         response parameter included on the fragment
                         component of the redirection URI:
                     </t>
@@ -1213,9 +1240,9 @@ Host: server.example.com
                     <dl newline="true" indent="8">
                         <dt>claims</dt>
                         <dd>
-                            OPTIONAL, if identical to the claims
+                            <bcp14>OPTIONAL</bcp14>, if identical to the claims
                             requested by the &c;; otherwise,
-                            REQUIRED. The space-separated claim names
+                            <bcp14>REQUIRED</bcp14>. The space-separated claim names
                             granted by the &ro; which denote
                             the scope of the access token that is
                             returned in the same response.
@@ -1228,7 +1255,8 @@ Host: server.example.com
                     <t>
                         If the &as; understands the
                         <tt>claims</tt> request
-                        parameter, it MUST
+                        parameter, it
+                        <bcp14>MUST</bcp14>
                         redirect the user-agent of the &ro; to
                         the &c;'s redirection URI as described in
                         <xref target="RFC6749" section="4.2.2.1"/> with
@@ -1241,17 +1269,18 @@ Host: server.example.com
                         <dd>
                             The &as; understands but does not support
                             the <tt>claims</tt>
-                            request parameter, and the &c; SHOULD
-                            NOT use it when requesting authorization.
+                            request parameter, and the &c;
+                            <bcp14>SHOULD NOT</bcp14> use it when requesting authorization.
                         </dd>
 
                         <dt>invalid_request</dt>
                         <dd>
-                            The &as; MAY use this
+                            The &as;
+                            <bcp14>MAY</bcp14> use this
                             less-descriptive error code to indicate that the
                             claims request parameter value is not
                             accepted, e.g., because it is syntactically.
-                            incorrect. It is, however, RECOMMENDED that the
+                            incorrect. It is, however, <bcp14>RECOMMENDED</bcp14> that the
                             &as; return
                             <tt>claims_not_supported</tt>
                             or <tt>invalid_claims</tt> as
@@ -1269,7 +1298,7 @@ Host: server.example.com
                             according to the &as;'s policy,
                             this error (or the less-descriptive alternative,
                             <tt>invalid_request</tt>)
-                            MUST result.
+                            <bcp14>MUST</bcp14> result.
                         </dd>
                     </dl>
                 </section>
@@ -1283,7 +1312,8 @@ Host: server.example.com
                         When a &c; seeks to obtain authorization using
                         the resource owner password credentials grant type
                         defined in <xref section="4.3" target="RFC6749"/>,
-                        the &c; MAY include the following additional
+                        the &c;
+                        <bcp14>MAY</bcp14> include the following additional
                         parameter using the
                         <tt>application/x-www-form-urlencoded</tt>
                         format per Appendix B of <xref target="RFC6749"/>
@@ -1294,7 +1324,7 @@ Host: server.example.com
                     <dl newline="true" indent="8">
                     <dt>claims</dt>
                             <dd>
-                            OPTIONAL. A claims request object as
+                                <bcp14>OPTIONAL</bcp14>. A claims request object as
                             described in
                             <xref target="claims-request-object"/>.
                         </dd>
@@ -1304,12 +1334,14 @@ Host: server.example.com
                 <section title="Access Token Response"
                          anchor="ropc-access-token-response">
                     <t>
-                        In a non-error case, the &as; MAY
+                        In a non-error case, the &as;
+                        <bcp14>MAY</bcp14>
                         include details about the claims that the &c; is
                         authorized for. This is done by augmenting the
                         response defined in
                         <xref target="RFC6749" section="4.3.3"/>. In particular, the
-                        &as; MAY include the following
+                        &as;
+                        <bcp14>MAY</bcp14> include the following
                         response member in the JSON object returned from
                         the token endpoint:
                     </t>
@@ -1317,9 +1349,9 @@ Host: server.example.com
                     <dl newline="true" indent="8">
                         <dt>claims</dt>
                         <dd>
-                            OPTIONAL, if identical to the claims
+                            <bcp14>OPTIONAL</bcp14>, if identical to the claims
                             requested by the &c;; otherwise,
-                            REQUIRED. The space-separated claim names
+                            <bcp14>REQUIRED</bcp14>. The space-separated claim names
                             the &c; is authorized for which denote
                             the scope of the access token that is
                             returned in the same response.
@@ -1338,18 +1370,19 @@ Host: server.example.com
                         <dd>
                             The &as; understands but does not support
                             the <tt>claims</tt>
-                            request parameter, and the &c; SHOULD
-                            NOT use it when requesting an access token.
+                            request parameter, and the &c;<bcp14>SHOULD NOT</bcp14>
+                            use it when requesting an access token.
                         </dd>
 
                         <dt>invalid_request</dt>
                            <dd>
-                            The &as; MAY use this
+                            The &as;
+                               <bcp14>MAY</bcp14> use this
                             less-descriptive error code to indicate that
                             the claims request parameter value is not
                             accepted, accepted, e.g., because it is
                             syntactically incorrect. It is, however,
-                            RECOMMENDED that the &as; return
+                               <bcp14>RECOMMENDED</bcp14> that the &as; return
                             <tt>claims_not_supported</tt>
                             or <tt>invalid_claims</tt> as
                             appropriate.
@@ -1366,7 +1399,7 @@ Host: server.example.com
                             according to the &as;'s policy,
                             this error (or the less-descriptive alternative,
                             <tt>invalid_request</tt>)
-                            MUST result.
+                               <bcp14>MUST</bcp14> result.
                         </dd>
                     </dl>
                 </section>
@@ -1380,7 +1413,7 @@ Host: server.example.com
                         When a &c; seeks to obtain authorization using
                         the client credentials grant type defined in
                         <xref target="RFC6749" section="4.4"/>, the &c;
-                        MAY include the following additional parameter
+                        <bcp14>MAY</bcp14> include the following additional parameter
                         using the
                         <tt>application/x-www-form-urlencoded</tt>
                         format per Appendix B of <xref target="RFC6749"/>
@@ -1391,7 +1424,7 @@ Host: server.example.com
                     <dl newline="true" indent="8">
                         <dt>claims</dt>
                         <dd>
-                            OPTIONAL. A claims request object as
+                            <bcp14>OPTIONAL</bcp14>. A claims request object as
                             described in  <xref
                                 target="claims-request-object"/>.
                         </dd>
@@ -1401,12 +1434,14 @@ Host: server.example.com
                 <section title="Access Token Response"
                          anchor="cc-access-token-response">
                     <t>
-                        In a non-error case, the &as; MAY
+                        In a non-error case, the &as;
+                        <bcp14>MAY</bcp14>
                         include details about the claims that the &c;
                         is authorized for. This is done by augmenting the
                         response defined in
                         <xref target="RFC6749" section="4.4.3"/>. In particular, the
-                        &as; MAY include the following
+                        &as;
+                        <bcp14>MAY</bcp14> include the following
                         response member in the JSON object returned from
                         the token endpoint:
                     </t>
@@ -1414,9 +1449,9 @@ Host: server.example.com
                     <dl newline="true" indent="8">
                         <dt>claims</dt>
                         <dd>
-                                OPTIONAL, if identical to the claims
+                            <bcp14>OPTIONAL</bcp14>, if identical to the claims
                                 requested by the &c;; otherwise,
-                                REQUIRED. The space-separated claim names
+                            <bcp14>REQUIRED</bcp14>. The space-separated claim names
                                 the &c; is authorized for which denote
                                 the scope of the access token that is
                                 returned in the same response.
@@ -1435,17 +1470,18 @@ Host: server.example.com
                         <dd>
                             The &as; understands but does not support
                             the <tt>claims</tt>
-                            request parameter, and the &c; SHOULD
-                            NOT use it when requesting an access token.
+                            request parameter, and the &c;
+                            <bcp14>SHOULD NOT</bcp14> use it when requesting an access token.
                         </dd>
 
                         <dt>invalid_request</dt>
                         <dd>
-                            The &as; MAY use this
+                            The &as;
+                            <bcp14>MAY</bcp14> use this
                             less-descriptive error code to indicate that
                             the claims request parameter value is not
                             accepted, e.g., because it is syntactically
-                            incorrect. It is, however, RECOMMENDED that the
+                            incorrect. It is, however, <bcp14>RECOMMENDED</bcp14> that the
                             &as; return
                             <tt>claims_not_supported</tt>
                             or <tt>invalid_claims</tt> as
@@ -1463,7 +1499,7 @@ Host: server.example.com
                             according to the &as;'s policy,
                             this error (or the less-descriptive alternative,
                             <tt>invalid_request</tt>)
-                            MUST result.
+                            <bcp14>MUST</bcp14> result.
                         </dd>
                     </dl>
                 </section>
@@ -1482,7 +1518,8 @@ Host: server.example.com
 
             <section title="Token Refresh Request">
                 <t>
-                    When performing a token refresh request, the &c; MAY
+                    When performing a token refresh request, the &c;
+                    <bcp14>MAY</bcp14>
                     send the following parameter using the
                     <tt>application/x-www-form-urlencoded</tt>
                     format per Appendix B of <xref target="RFC6749"/> with
@@ -1493,14 +1530,14 @@ Host: server.example.com
                 <dl newline="true" indent="8">
                     <dt>claims</dt>
                     <dd>
-                        OPTIONAL. A claims request object as described in
+                        <bcp14>OPTIONAL</bcp14>. A claims request object as described in
                         <xref target="claims-request-object"/>.
                     </dd>
                 </dl>
 
                 <t>
                     If the &c; includes a claims request object in the
-                    request, it SHOULD ensure that the claim names in the
+                    request, it <bcp14>SHOULD</bcp14> ensure that the claim names in the
                     claims value query object(s) are ones that were authorized
                     by the &ro;. It can do this by remembering what
                     was originally requested and/or from the &as;'s
@@ -1513,19 +1550,21 @@ Host: server.example.com
             <section title="Access Refresh Response"
                      anchor="refresh-access-token-response">
                 <t>
-                    In a non-error case, the &as; MAY include
+                    In a non-error case, the &as;
+                    <bcp14>MAY</bcp14> include
                     details about the claims that the &c; is authorized for.
                     This is done by augmenting the response defined in
                     <xref target="RFC6749" section="5.1"/>. In particular, the
-                    &as; MAY include the following response
+                    &as;
+                    <bcp14>MAY</bcp14> include the following response
                     member in the JSON object returned from the token endpoint:
                 </t>
 
                 <dl newline="true" indent="8">
                     <dt>claims</dt>
                     <dd>
-                        OPTIONAL, if identical to the claims requested by
-                        the &c;; otherwise, REQUIRED. The
+                        <bcp14>OPTIONAL</bcp14>, if identical to the claims requested by
+                        the &c;; otherwise, <bcp14>REQUIRED</bcp14>. The
                         space-separated claim names the &c; is
                         authorized for which denote the scope of the access
                         token that is returned in the same response.
@@ -1544,17 +1583,19 @@ Host: server.example.com
                     <dd>
                         The &as; understands but does not
                         support the <tt>claims</tt>
-                        request parameter, and the &c; SHOULD NOT use
+                        request parameter, and the &c;
+                        <bcp14>SHOULD NOT</bcp14> use
                         it when requesting an access token.
                     </dd>
 
                     <dt>invalid_request</dt>
                     <dd>
-                        The &as; MAY use this
+                        The &as;
+                        <bcp14>MAY</bcp14> use this
                         less-descriptive error code to indicate that the
                         claims request parameter value is not accepted,
                         e.g., because it is syntactically incorrect. It
-                        is, however, RECOMMENDED that the &as;
+                        is, however, <bcp14>RECOMMENDED</bcp14> that the &as;
                         return
                         <tt>claims_not_supported</tt>
                         or <tt>invalid_claims</tt> as
@@ -1572,7 +1613,7 @@ Host: server.example.com
                         policy, this error (or the
                         less-descriptive alternative,
                         <tt>invalid_request</tt>)
-                        MUST result.
+                        <bcp14>MUST</bcp14> result.
                     </dd>
                 </dl>
             </section>
@@ -1593,7 +1634,7 @@ Host: server.example.com
             <dl newline="true" indent="8">
                 <dt>claims</dt>
                 <dd>
-                    OPTIONAL. The space-separated claim names granted by the &ro;
+                    <bcp14>OPTIONAL</bcp14>. The space-separated claim names granted by the &ro;
                     which denote the scope of the access token.
                 </dd>
             </dl>
@@ -1606,7 +1647,8 @@ Host: server.example.com
         <section title="Authorization Server Metadata" anchor="authorization-server-metadata">
             <t>
                 An &as; that supports the
-                <tt>claims</tt> request parameter SHOULD
+                <tt>claims</tt> request parameter
+                <bcp14>SHOULD</bcp14>
                 declare this fact by including the following property in the
                 &as; metadata response
                 <xref target="RFC8414"/>:
@@ -1615,7 +1657,7 @@ Host: server.example.com
             <dl newline="true" indent="8">
                 <dt>claims_parameter_supported</dt>
                 <dd>
-                    OPTIONAL. A boolean value indicating that the
+                    <bcp14>OPTIONAL</bcp14>. A boolean value indicating that the
                     &as; supports the
                     <tt>claims</tt> request parameter or
                     not. A value of <tt>true</tt>
@@ -1629,23 +1671,25 @@ Host: server.example.com
 
                 <dt>claims_supported</dt>
                 <dd>
-                    RECOMMENDED. JSON array containing a list of the claim
-                    names of the Claims that the &as; MAY
+                    <bcp14>RECOMMENDED</bcp14>. JSON array containing a list of the claim
+                    names of the Claims that the &as;
+                    <bcp14>MAY</bcp14>
                     be able to supply values for. Note that for privacy or
                     other reasons, this might not be an exhaustive list.
                 </dd>
 
                 <dt>critical_claims_supported</dt>
                 <dd>
-                    OPTIONAL. A boolean value indicating that the
+                    <bcp14>OPTIONAL</bcp14>. A boolean value indicating that the
                     &as; supports the possibility for the
                     &c; to indicate that certain parts of a claims
-                    request object MUST be understood by the &as;.
+                    request object <bcp14>MUST</bcp14> be understood by the &as;.
                     A value of <tt>false</tt>,
                     a <tt>null</tt> value, or the
                     absence of this member means that the &as;
-                    MAY not support this interaction pattern, and
-                    the &c; MUST NOT assume that it does.
+                    <bcp14>MAY</bcp14> not support this interaction pattern, and
+                    the &c;
+                    <bcp14>MUST NOT</bcp14> assume that it does.
                 </dd>
             </dl>
 
@@ -1655,7 +1699,7 @@ Host: server.example.com
                 <tt>claims_parameter_supported</tt> and
                 true for <tt>critical_claims_supported</tt>,
                 the interpretation by the &c; is undefined. It is
-                RECOMMENDED that the &c; assume that the &as;
+                <bcp14>RECOMMENDED</bcp14> that the &c; assume that the &as;
                 is misconfigured and that it not attempt to request
                 claims in a manner defined by this specification.
             </t>

@@ -211,30 +211,31 @@
             </t>
 
             <t>
-                The endpoint URI MAY include an <tt>application/x-www-form-urlencoded</tt> formatted (per
-                <xref target="RFC6749" section="B"/>) query component (see <xref target="RFC3986" section="3.4"/>), which MUST be
-                retained when adding additional query parameters. The endpoint URI MUST NOT include a fragment
+                The endpoint URI <bcp14>MAY</bcp14> include an <tt>application/x-www-form-urlencoded</tt> formatted (per
+                <xref target="RFC6749" section="B"/>) query component (see <xref target="RFC3986" section="3.4"/>), which 
+                <bcp14>MUST</bcp14> be
+                retained when adding additional query parameters. The endpoint URI <bcp14>MUST NOT</bcp14> include a fragment
                 component.
             </t>
 
             <t>
                 Since requests to the assisted token endpoint result in the transmission of clear-text credentials (in
-                the HTTP request and response), the authorization server MUST require the use of TLS as described in
+                the HTTP request and response), the authorization server <bcp14>MUST</bcp14> require the use of TLS as described in
                 <xref target="RFC6749" section="1.6"/> when sending requests to the assisted token endpoint.
             </t>
 
-            <t>The client MUST use the HTTP <tt>GET</tt> method when making access token requests to this endpoint.</t>
+            <t>The client <bcp14>MUST</bcp14> use the HTTP <tt>GET</tt> method when making access token requests to this endpoint.</t>
 
             <t>
-                Parameters sent without a value MAY be treated as if they were omitted from the request. The
-                authorization server MUST ignore unrecognized request parameters. Request and response parameters
-                MUST NOT be included more than once.
+                Parameters sent without a value <bcp14>MAY</bcp14> be treated as if they were omitted from the request. The
+                authorization server <bcp14>MUST</bcp14> ignore unrecognized request parameters. Request and response parameters
+                <bcp14>MUST NOT</bcp14> be included more than once.
             </t>
 
             <t>
                 After completing its interaction with the resource owner, the authorization server will fire an event
-                using the HTML postMessage interface. This message MUST NOT be posted to all origins, denoted by
-                <tt>*</tt>. Instead, the authorization server MUST post this message only  to the client's allowed origin(s)
+                using the HTML postMessage interface. This message <bcp14>MUST NOT</bcp14> be posted to all origins, denoted by
+                <tt>*</tt>. Instead, the authorization server <bcp14>MUST</bcp14> post this message only  to the client's allowed origin(s)
                 previously established with the authorization server during the client registration process.
             </t>
 
@@ -244,16 +245,17 @@
                     specify the scope of the access request using the <tt>scope</tt> request parameter. In turn, the
                     authorization server uses the <tt>scope</tt> response parameter to inform the client of the scope of
                     the access token issued. Unlike the typical behavior of those endpoints, however, access tokens
-                    issued by the authorization server using the assisted token endpoint MUST use the client's
+                    issued by the authorization server using the assisted token endpoint <bcp14>MUST</bcp14> use the client's
                     pre-configured scope or the authorization server's pre-defined default if none have been configured
                     for the client.
                 </t>
 
                 <t>
                     If the client did not include a <tt>scope</tt> request parameter or if the issued access token scope is
-                    different from the one requested by the client, the authorization server MUST include the
+                    different from the one requested by the client, the authorization server <bcp14>MUST</bcp14> include the
                     <tt>scope</tt>response parameter to inform the client of the actual scope granted. Even when the scope of the
-                    issued access token is the same as the one requested by the client, the authorization server SHOULD
+                    issued access token is the same as the one requested by the client, the authorization server
+                    <bcp14>SHOULD</bcp14>
                     include the <tt>scope</tt> response parameter.
                 </t>
 
@@ -263,14 +265,14 @@
                 </t>
 
                 <t>
-                    The authorization server SHOULD NOT return an error if a scope has not been pre-configured for the
+                    The authorization server <bcp14>SHOULD NOT</bcp14> return an error if a scope has not been pre-configured for the
                     client; only if the authorization server does not have a pre-defined default scope.
                 </t>
             </section>
 
             <section anchor="cross-orgin-suport" title="Cross-Origin Support">
                 <t>
-                    The assisted token endpoint MAY support CORS as defined in <xref target="W3C.WD-cors-20120403"/>.
+                    The assisted token endpoint <bcp14>MAY</bcp14> support CORS as defined in <xref target="W3C.WD-cors-20120403"/>.
                 </t>
             </section>
         </section>
@@ -284,12 +286,12 @@
                 <dl newline="true" indent="8">
                     <dt>client_id</dt>
                     <dd>
-                        REQUIRED. The client identifier as described in <xref target="RFC6749" section="2.2"/>.
+                        <bcp14>REQUIRED</bcp14>. The client identifier as described in <xref target="RFC6749" section="2.2"/>.
                     </dd>
 
                     <dt>for_origin</dt>
                     <dd>
-                        OPTIONAL. The origin of the client in case multiple allowed origins are
+                        <bcp14>OPTIONAL</bcp14>. The origin of the client in case multiple allowed origins are
                         configured with the authorization server and support for user agents that do not support
                         <xref target="CSP-2"/> but only <tt>X-Frame-Options</tt> (as defined in <xref target="RFC7034"/>). See
                         <xref target="framing"/> for details.
@@ -298,7 +300,7 @@
                     <dt>prompt</dt>
                     <dd>
                         <t>
-                            OPTIONAL. Space delimited, case sensitive list of <xref target="ASCII"/> string
+                            <bcp14>OPTIONAL</bcp14>. Space delimited, case sensitive list of <xref target="ASCII"/> string
                             values that can be used to determine the login state of the resource owner at the
                             authorization server. The defined values are:
                         </t>
@@ -306,7 +308,7 @@
                         <dl newline="true" indent="8">
                             <dt>none</dt>
                             <dd>
-                                The authorization server MUST NOT display any authentication or consent user
+                                The authorization server <bcp14>MUST NOT</bcp14> display any authentication or consent user
                                 interface pages. An error is returned if the user is not already authenticated or if
                                 the client has not received consent (either explicitly by the resource owner or by
                                 the authorization server's configuration of the client) or if the authorization
@@ -316,20 +318,20 @@
 
                             <dt>consent</dt>
                             <dd>
-                                The authorization server SHOULD prompt the user for consent before returning
-                                information to the client. If it cannot obtain consent, it MUST return an error.
+                                The authorization server <bcp14>SHOULD</bcp14> prompt the user for consent before returning
+                                information to the client. If it cannot obtain consent, it <bcp14>MUST</bcp14> return an error.
                             </dd>
                         </dl>
 
                         <t>
-                            Other values may be provided in this list; the authorization server MUST ignore them
+                            Other values may be provided in this list; the authorization server <bcp14>MUST</bcp14> ignore them
                             without producing an error if it cannot understand them.
                         </t>
                     </dd>
 
                     <dt>scope</dt>
                     <dd>
-                        OPTIONAL. The scope of the access request as described in <xref target="access-token-scope"/>.
+                        <bcp14>OPTIONAL</bcp14>. The scope of the access request as described in <xref target="access-token-scope"/>.
                     </dd>
                 </dl>
             </section>
@@ -345,29 +347,29 @@
                 <dl newline="true" indent="8">
                     <dt>access_token</dt>
                     <dd>
-                        REQUIRED. The access token issued by the authorization server.
+                        <bcp14>REQUIRED</bcp14>. The access token issued by the authorization server.
                     </dd>
 
                     <dt>expires_in</dt>
                     <dd>
-                        RECOMMENDED. The lifetime in seconds of the access token.
+                        <bcp14>RECOMMENDED</bcp14>. The lifetime in seconds of the access token.
                     </dd>
 
                     <dt>scope</dt>
                     <dd>
-                        REQUIRED. The scope of the access token as described in <xref target="access-token-scope"/>.
+                        <bcp14>REQUIRED</bcp14>. The scope of the access token as described in <xref target="access-token-scope"/>.
                     </dd>
 
                     <dt>sub</dt>
                     <dd>
-                        RECOMMENDED. A locally unique and never reassigned identifier within the authorization
+                        <bcp14>RECOMMENDED</bcp14>. A locally unique and never reassigned identifier within the authorization
                         server for the user, which is intended to be consumed by the client. The sub value is
                         a case sensitive string.
                     </dd>
 
                     <dt>token_type</dt>
                     <dd>
-                        REQUIRED. The type of the token issued as described in
+                        <bcp14>REQUIRED</bcp14>. The type of the token issued as described in
                         <xref target="RFC6749" section="7.1"/>. Value is case insensitive.
                     </dd>
                 </dl>
@@ -385,7 +387,7 @@
                     <dt>error</dt>
                     <dd>
                         <t>
-                            REQUIRED. A single <xref target="ASCII"/> error code from the following:
+                            <bcp14>REQUIRED</bcp14>. A single <xref target="ASCII"/> error code from the following:
                         </t>
 
                         <dl newline="true" indent="8">
@@ -449,24 +451,25 @@
                         </dl>
 
                         <t>
-                            Values for the <tt>error</tt> parameter MUST NOT include characters outside the set %x20-21 /
+                            Values for the <tt>error</tt> parameter <bcp14>MUST NOT</bcp14> include characters outside the set %x20-21 /
                             %x23-5B / %x5D-7E.
                         </t>
                     </dd>
 
                     <dt>error_description</dt>
                     <dd>
-                        OPTIONAL. Human-readable <xref target="ASCII"/> text providing additional
+                        <bcp14>OPTIONAL</bcp14>. Human-readable <xref target="ASCII"/> text providing additional
                         information, used to assist the client developer in understanding the error that occurred.
-                        Values for the <tt>error_description</tt> parameter MUST NOT include characters outside the set
+                        Values for the <tt>error_description</tt> parameter <bcp14>MUST NOT</bcp14> include characters outside the set
                         %x20-21 / %x23-5B / %x5D-7E.
                     </dd>
 
                     <dt>error_uri</dt>
                     <dd>
-                        OPTIONAL. A URI identifying a human-readable web page with information about the error,
+                        <bcp14>OPTIONAL</bcp14>. A URI identifying a human-readable web page with information about the error,
                         used to provide the client developer with additional information about the error. Values
-                        for the <tt>error_uri</tt> parameter MUST conform to the URI-reference syntax and thus MUST NOT
+                        for the <tt>error_uri</tt> parameter <bcp14>MUST</bcp14> conform to the URI-reference syntax and thus
+                        <bcp14>MUST NOT</bcp14>
                         include characters outside the set %x21 / %x23-5B / %x5D-7E.
                     </dd>
                 </dl>
@@ -475,20 +478,20 @@
 
         <section title="Client Metadata" anchor="client-metadata">
             <t>
-                The authorization server MAY allow dynamic clients to request the use of the assisted token flow when
+                The authorization server <bcp14>MAY</bcp14> allow dynamic clients to request the use of the assisted token flow when
                 registering. Such a client may indicate that it will interact with the authorization server using the
                 assisted token flow by including the string element
                 <tt>urn:ietf:params:oauth:grant-type:assisted_token</tt> in the array associated with the
                 <tt>grant_types</tt> metadata field sent to the client registration endpoint (as defined in
                 <xref target="RFC7591" section="3"/>). If the authorization server allows the client to register with this grant
-                type, the <tt>grant_types</tt> included in the response MUST include the value
+                type, the <tt>grant_types</tt> included in the response <bcp14>MUST</bcp14> include the value
                 <tt>urn:ietf:params:oauth:grant-type:assisted_token</tt>. The inclusion of this value in the
                 <tt>grant_types</tt> field is done despite the fact that the client will not use this grant type at the token endpoint but
                 rather the assisted token endpoint (see <xref target="assisted-token-endpoint"/>).
             </t>
 
             <t>
-                The following client metadata field is defined by this specification. It MAY be included in a
+                The following client metadata field is defined by this specification. It <bcp14>MAY</bcp14> be included in a
                 registration request, as set forth in <xref target="RFC7591" section="2"/>.
             </t>
 
@@ -503,21 +506,21 @@
 
         <section title="Authorization Server Metadata" anchor="authorization-server-metadata">
             <t>
-                Support for the assisted token flow MUST be declared in the authorization server's metadata
+                Support for the assisted token flow <bcp14>MUST</bcp14> be declared in the authorization server's metadata
                 (as defined in <xref target="RFC8414"/>) with the following metadata:
             </t>
 
             <dl newline="true" indent="8">
                 <dt>assisted_token_endpoint</dt>
                 <dd>
-                    REQUIRED.
+                    <bcp14>REQUIRED</bcp14>.
                     URL of the authorization server's assisted token endpoint defined in
                     <xref target="assisted-token-endpoint"/>.
                 </dd>
 
                 <dt>grant_types_supported</dt>
                 <dd>
-                    REQUIRED.
+                    <bcp14>REQUIRED</bcp14>.
                     A JSON array specified in
                     <xref target="RFC8414" section="2"/>
                     which should contain the value <tt>urn:ietf:params:oauth:grant-type:assisted_token</tt> as defined in
@@ -574,20 +577,21 @@
         <section title="Security Considerations" anchor="security-considerations">
             <t>
                 In addition to all the security considerations discussed in <xref target="RFC6819"/>,
-                the following security considerations SHOULD be taken into account.
+                the following security considerations <bcp14>SHOULD</bcp14> be taken into account.
             </t>
 
             <section title="Framing" anchor="framing">
                 <t>
-                    Due to the use of an iframe to host the assisted token endpoint, the authorization server MUST take
+                    Due to the use of an iframe to host the assisted token endpoint, the authorization server 
+                    <bcp14>MUST</bcp14> take
                     precautions to ensure that only trusted origins are allowed to frame it. The authorization server
-                    MUST prevent any origin from framing the assisted token endpoint except ones that an administrator
+                    <bcp14>MUST</bcp14> prevent any origin from framing the assisted token endpoint except ones that an administrator
                     has explicitly allowed. It may do this in any manner that is available to the application.
                 </t>
 
                 <t>
-                    One such mechanism that MAY be deployed is <xref target="CSP-2">Content Security Policy</xref>. This
-                    protocol SHOULD be used on the assisted token endpoint (and, if applicable, other endpoints used to
+                    One such mechanism that <bcp14>MAY</bcp14> be deployed is <xref target="CSP-2">Content Security Policy</xref>. This
+                    protocol <bcp14>SHOULD</bcp14> be used on the assisted token endpoint (and, if applicable, other endpoints used to
                     authenticated the user in a specific deployment) to prevent framing from unauthorized origins. Using
                     CSP allows the authorization server to specify multiple origins in a single response header field
                     and to constrain these using flexible patterns (see <xref target="CSP-2"/> for details). This
@@ -596,8 +600,8 @@
                     <tt>script-src</tt> policies.
                 </t>
                 <t>
-                    Because some user agents do not support <xref target="CSP-2"/>, this technique SHOULD be combined with
-                    others. In particular, the authorization server SHOULD return an <tt>X-Frame-Options</tt> response header
+                    Because some user agents do not support <xref target="CSP-2"/>, this technique <bcp14>SHOULD</bcp14> be combined with
+                    others. In particular, the authorization server <bcp14>SHOULD</bcp14> return an <tt>X-Frame-Options</tt> response header
                     on the assisted token endpoint (and, if applicable, other endpoints used to authenticate the user
                     in a specific deployment). As defined in <xref target="RFC7034"/>, this header will cause user
                     agents that support it (but not CSP) to block framing from any origin that is not
@@ -608,10 +612,10 @@
 
                 <t>
                     Some user agents do not support <xref target="RFC7034"/> nor
-                    <xref target="CSP-2"/>. Therefore, the authorization server SHOULD include a frame-busting script
+                    <xref target="CSP-2"/>. Therefore, the authorization server <bcp14>SHOULD</bcp14> include a frame-busting script
                     like that shown in Figure 7 of <xref target="FRAME-BUSTING"/>. Such a script would use JavaScript
                     to break out of any unauthorized origin that is framing the assisted token endpoint. The
-                    authorization server MAY simply break out of all frames in case <xref target="RFC7034"/>
+                    authorization server <bcp14>MAY</bcp14> simply break out of all frames in case <xref target="RFC7034"/>
                     and <xref target="CSP-2"/> are unsupported by the user agent, though this
                     would render the assisted token flow non-functional. The choice of whether or not this drastic
                     countermeasure should be employed depends on the user agents being targetted in a certain
@@ -625,7 +629,7 @@
                     like JavaScript and are hosted in Web pages, users may keep such applications open in their user
                     agents for a prolonged period of time. During such period, the token issued to the client may
                     expire or be revoked. To ensure that such expired tokens left remnant in the user agent are benign,
-                    a Handle Token SHOULD always be issued by the assisted token endpoint. This ensures that no identity
+                    a Handle Token <bcp14>SHOULD</bcp14> always be issued by the assisted token endpoint. This ensures that no identity
                     data is exposed (even when the token is not yet expired) and that a revoked token does not increase
                     risks.
                 </t>
@@ -638,10 +642,10 @@
                     the same-origin policy has emerged as the cornerstone of security for such user agents. Using this
                     security model, it is not possible to prevent access to a token issued to a client if that client
                     includes nefarious scripts from untrustworthy sources that have access to the Document Object
-                    Model (DOM) where the token is stored. For this reason, the authorization server MUST warn client
+                    Model (DOM) where the token is stored. For this reason, the authorization server <bcp14>MUST</bcp14> warn client
                     application developers who interact with the assisted token endpoint <em>not</em> to use
-                    untrusted scripts in their applications. This warning SHOULD at least be conveyed through the
-                    documentation but MAY also be provided through other mechanisms.
+                    untrusted scripts in their applications. This warning <bcp14>SHOULD</bcp14> at least be conveyed through the
+                    documentation but <bcp14>MAY</bcp14> also be provided through other mechanisms.
                 </t>
             </section>
 
@@ -649,7 +653,7 @@
                 <t>
                     As described in <xref target="assisted-token-request"/>, the authorization server will return an
                     access token to the client using HTML's postMessage interface. The receiver of this message is
-                    provided with an event object that contains an origin property. A client application MUST compare
+                    provided with an event object that contains an origin property. A client application <bcp14>MUST</bcp14> compare
                     this with that of the authorization server before consuming the message. Otherwise, it runs the
                     risk of processing messages posted from untrusted origins. An example of a proper message handler
                     is shown in the following non-normative, JavaScript listing:
@@ -675,10 +679,10 @@
                     the authorization server in a persisted state; this will commonly be an HTTP cookie or local
                     storage. This is necessary, for instance, to create a pleasing user experience when a user navigates
                     away from the application in their web browser and then returns. To ensure that the token is stored
-                    safely, the authorization server MAY provide application developers with guidance in the
-                    accompanying documentation on how to safely persist tokens. The authorization server MAY also
+                    safely, the authorization server <bcp14>MAY</bcp14> provide application developers with guidance in the
+                    accompanying documentation on how to safely persist tokens. The authorization server <bcp14>MAY</bcp14> also
                     provide script libraries that perform this action according to best common practices. The
-                    authorization server MAY also store the token in an HTTP cookie in its own DNS domain (rather than
+                    authorization server <bcp14>MAY</bcp14> also store the token in an HTTP cookie in its own DNS domain (rather than
                     that of the client) using the assisted token endpoint's path. In some cases, this would elevate any
                     storage requirements from the client application developer. Besides simplifying the programming
                     model for developers, this technique allows the authorization server to check the validity of the
@@ -697,11 +701,11 @@
                     When the authorization server and client are provided by separate parties, it is important that the
                     resource owner is able to distinguish the two. The only safe way of doing so is by examination of
                     the user agent's address bar where the validity of the certificate and location can be made. In
-                    such situations, whenever user interaction is required, the client SHOULD open the assisted token
-                    endpoint in a new browser window rather than a hidden iframe. The authorization serer MAY take any
+                    such situations, whenever user interaction is required, the client <bcp14>SHOULD</bcp14> open the assisted token
+                    endpoint in a new browser window rather than a hidden iframe. The authorization serer <bcp14>MAY</bcp14> take any
                     measures deemed appropriate in a deployment to ensure that the client has not framed the user's
                     manual interaction; however, the necessity for interactive user authentication and/or consent
-                    SHOULD be possible for the client to determine in a hidden iframe.
+                    <bcp14>SHOULD</bcp14> be possible for the client to determine in a hidden iframe.
                 </t>
             </section>
         </section>
@@ -711,11 +715,13 @@
                 In some deployments, the assisted token endpoint may be served from a distinct domain from that of the
                 client. In such cases, the client will be a third-party domain, and the resource owner's user agent may
                 prevent the authorization server from storing any third-party cookies. If the authorization server
-                requires state to be persisted when performing the assisted token flow, it SHOULD
+                requires state to be persisted when performing the assisted token flow, it
+                <bcp14>SHOULD</bcp14>
                 provide a privacy-preserving mechanism to store and retrieve its state even when the assisted token
                 endpoint is hosted on a distinct domain from that of the client. The technical details of how to
                 accomplish this are implementation specific, and are beyond the scope of this specification. If the
-                authorization server does not support clients that are hosted from a third-party domain, it MUST
+                authorization server does not support clients that are hosted from a third-party domain, it
+                <bcp14>MUST</bcp14>
                 indicate this to the client through some mechanism (e.g., its associated documentation).
             </t>
         </section>
