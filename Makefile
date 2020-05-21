@@ -1,11 +1,20 @@
+PIPEFILE=$(PWD)/Pipfile
+
 all:
-	cd draft-ideskog-assisted-token && $(MAKE)
-	cd draft-spencer-oauth-claims && $(MAKE)
+	export PIPENV_PIPFILE=$(PIPEFILE)
+	cd draft-ideskog-assisted-token && $(MAKE) -e
+	cd draft-spencer-oauth-claims && $(MAKE) -e
 
 html:
-	cd draft-ideskog-assisted-token && $(MAKE) html
-	cd draft-spencer-oauth-claims && $(MAKE) html
+	export PIPENV_PIPFILE=$(PIPEFILE)
+	cd draft-ideskog-assisted-token && $(MAKE) -e html
+	cd draft-spencer-oauth-claims && $(MAKE) -e html
 
 txt:
-	cd draft-ideskog-assisted-token && $(MAKE) txt
-	cd draft-spencer-oauth-claims && $(MAKE) txt
+	export PIPENV_PIPFILE=$(PIPEFILE)
+	cd draft-ideskog-assisted-token && $(MAKE) -e txt
+	cd draft-spencer-oauth-claims && $(MAKE) -e txt
+
+clean:
+	cd draft-ideskog-assisted-token && $(MAKE) clean
+	cd draft-spencer-oauth-claims && $(MAKE) clean	
