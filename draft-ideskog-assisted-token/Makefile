@@ -1,11 +1,11 @@
 TITLE=draft-ideskog-assisted-token
-VERSION=01
+VERSION=02
 DOC=$(TITLE)-$(VERSION)
 XML_DOC=$(DOC).xml
 HTML_DOC=$(DOC).html
 TXT_DOC=$(DOC).txt
 METADATA_JS_URL=https://www.rfc-editor.org/js/metadata.min.js
-XML2RFC := pipenv run xml2rfc
+XML2RFC=pipenv run xml2rfc
 
 all: html txt
 
