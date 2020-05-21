@@ -10,12 +10,12 @@
 <?rfc tocindent="yes"?>
 <?rfc tocompact="yes"?>
 
-<rfc ipr="*trust200902" docName="draft-ideskog-assisted-token-01" version="3" category="info" submissionType="independent" sortRefs="true">
-    <link rel="working-copy" href="https://bitbucket.org/curity/rfc/src/master/draft-ideskog-assisted-token/draft-ideskog-assisted-token-01.xml"/>
+<rfc ipr="*trust200902" docName="draft-ideskog-assisted-token-02" version="3" category="info" submissionType="independent" sortRefs="true">
+    <link rel="working-copy" href="https://bitbucket.org/curity/rfc/src/master/draft-ideskog-assisted-token/draft-ideskog-assisted-token-02.xml"/>
     <front>
         <title abbrev="Assisted Token">OAuth 2.0 Assisted Token</title>
 
-        <seriesInfo name="Internet-Draft" value="draft-ideskog-assisted-token-01" stream="independent" status="informational"/>
+        <seriesInfo name="Internet-Draft" value="draft-ideskog-assisted-token-02" stream="independent" status="informational"/>
 
         <author fullname="Jacob Ideskog" initials="J." surname="Ideskog">
             <organization>Curity AB</organization>
