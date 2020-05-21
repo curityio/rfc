@@ -33,7 +33,7 @@
             </address>
         </author>
 
-        <date day="24" month="November" year="2019"/>
+        <date day="21" month="May" year="2020"/>
 
         <area>sec</area>
         <workgroup>Independent Submission</workgroup>
@@ -262,7 +262,7 @@
                 <t>
                     If the client did not include a <tt>scope</tt> request parameter or if the issued access token scope is
                     different from the one requested by the client, the authorization server <bcp14>MUST</bcp14> include the
-                    <tt>scope</tt>response parameter to inform the client of the actual scope granted. Even when the scope of the
+                    <tt>scope</tt> response parameter to inform the client of the actual scope granted. Even when the scope of the
                     issued access token is the same as the one requested by the client, the authorization server
                     <bcp14>SHOULD</bcp14>
                     include the <tt>scope</tt> response parameter.
@@ -382,6 +382,11 @@
                         <xref target="RFC6749" section="7.1"/>. Value is case insensitive.
                     </dd>
                 </dl>
+
+                <t>
+                    This JSON object <bcp14>MAY</bcp14> contain additional fields. If the client does not 
+                    understand or recognize such additional fields, it <bcp14>MUST</bcp14> ignore them.
+                </t>
             </section>
 
             <section title="Error Response" anchor="error-response">
@@ -515,21 +520,21 @@
 
         <section title="Authorization Server Metadata" anchor="authorization-server-metadata">
             <t>
-                Support for the assisted token flow <bcp14>MUST</bcp14> be declared in the authorization server's metadata
+                Support for the assisted token flow <bcp14>SHOULD</bcp14> be declared in the authorization server's metadata
                 (as defined in <xref target="RFC8414"/>) with the following metadata:
             </t>
 
             <dl newline="true" indent="8">
                 <dt>assisted_token_endpoint</dt>
                 <dd>
-                    <bcp14>REQUIRED</bcp14>.
+                    <bcp14>RECOMMENDED</bcp14>.
                     URL of the authorization server's assisted token endpoint defined in
                     <xref target="assisted-token-endpoint"/>.
                 </dd>
 
                 <dt>grant_types_supported</dt>
                 <dd>
-                    <bcp14>REQUIRED</bcp14>.
+                    <bcp14>RECOMMENDED</bcp14>.
                     A JSON array specified in
                     <xref target="RFC8414" section="2"/>
                     which should contain the value <tt>urn:ietf:params:oauth:grant-type:assisted_token</tt> as defined in
@@ -552,6 +557,23 @@
                         <li>Common Name: Assisted token flow grant type for OAuth 2.0</li>
                         <li>Change controller: IESG</li>
                         <li>Specification Document: <xref target="client-metadata"/> of [[ this specification ]]</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section anchor="parametersReg" title="OAuth Parameters">
+                <t>
+                    This specification registers the following values in the
+                    <eref target="https://www.iana.org/assignments/oauth-parameters/oauth-parameters.xhtml#parameters">IANA "OAuth Parameter" registry</eref>
+                    <xref target="IANA.OAuth.Parameters"/> established by <xref target="RFC6749"/>.
+                </t>
+
+                <section title="Registry Contents" anchor="parameters">
+                    <ul>
+                        <li>for_origin</li>
+                        <li>Parameter usage location: authorization request</li>
+                        <li>Change controller: IESG</li>
+                        <li>Specification Document: <xref target="protocol"/> of [[ this specification ]]</li>
                     </ul>
                 </section>
             </section>
@@ -604,10 +626,20 @@
                     authenticated the user in a specific deployment) to prevent framing from unauthorized origins. Using
                     CSP allows the authorization server to specify multiple origins in a single response header field
                     and to constrain these using flexible patterns (see <xref target="CSP-2"/> for details). This
-                    standard provides a robust mechanism for protecting against click-jacking when combining policies
-                    that restrict <tt>child-src</tt> with the sources of scripts that are allowed to execute by using
-                    <tt>script-src</tt> policies.
+                    standard provides a robust mechanism for protecting against click-jacking by using policies
+                    that restrict the origin of frames (using <tt>frame-ancestors</tt>) together with those that restrict the sources of scripts allowed to execute on an HTML page (by using
+                    <tt>script-src</tt>). A non-normative example of such a policy is shown in the following listing:
                 </t>
+                <figure anchor="csp-x-f-o-example" title="Example CSP that will help protect against click-jacking">
+                    <sourcecode type="html">
+                        <![CDATA[
+HTTP/1.1 200 OK
+Content-Security-Policy: frame-ancestors https://a.example.org:8000
+Content-Security-Policy: script-src 'self'
+X-Frame-Options: ALLOW-FROM https://a.example.org:8000
+...]]>
+                    </sourcecode>
+                </figure>
                 <t>
                     Because some user agents do not support <xref target="CSP-2"/>, this technique <bcp14>SHOULD</bcp14> be combined with
                     others. In particular, the authorization server <bcp14>SHOULD</bcp14> return an <tt>X-Frame-Options</tt> response header
