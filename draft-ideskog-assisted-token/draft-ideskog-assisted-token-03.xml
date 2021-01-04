@@ -10,12 +10,12 @@
 <?rfc tocindent="yes"?>
 <?rfc tocompact="yes"?>
 
-<rfc ipr="*trust200902" docName="draft-ideskog-assisted-token-02" version="3" category="info" submissionType="independent" sortRefs="true">
-    <link rel="working-copy" href="https://bitbucket.org/curity/rfc/src/master/draft-ideskog-assisted-token/draft-ideskog-assisted-token-02.xml"/>
+<rfc ipr="*trust200902" docName="draft-ideskog-assisted-token-03" version="4" category="info" submissionType="independent" sortRefs="true">
+    <link rel="working-copy" href="https://github.com/curityio/rfc/blob/master/draft-ideskog-assisted-token/draft-ideskog-assisted-token-03.xml"/>
     <front>
         <title abbrev="Assisted Token">OAuth 2.0 Assisted Token</title>
 
-        <seriesInfo name="Internet-Draft" value="draft-ideskog-assisted-token-02" stream="independent" status="informational"/>
+        <seriesInfo name="Internet-Draft" value="draft-ideskog-assisted-token-03" stream="independent" status="informational"/>
 
         <author fullname="Jacob Ideskog" initials="J." surname="Ideskog">
             <organization>Curity AB</organization>
@@ -856,6 +856,24 @@ X-Frame-Options: ALLOW-FROM https://a.example.org:8000
             <t>
                 [[ to be removed by the RFC editor before publication as an RFC ]]
             </t>
+            <t>-03</t>
+            <ul>
+                <li>
+                    Updated repository links.
+                </li>
+            </ul>
+            <t>-02</t>
+            <ul>
+                <li>
+                    Updated section 8.1 with regards to the CSP headers.
+                </li>
+                <li>
+                    Updated authorization server metadata in section 6.
+                </li>
+                <li>
+                    Updated IANA Considerations section 7.
+                </li>
+            </ul>
             <t>-01</t>
             <ul>
                 <li>

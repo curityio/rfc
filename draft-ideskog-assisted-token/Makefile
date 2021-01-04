@@ -1,5 +1,5 @@
 TITLE=draft-ideskog-assisted-token
-VERSION=02
+VERSION=03
 DOC=$(TITLE)-$(VERSION)
 XML_DOC=$(DOC).xml
 HTML_DOC=$(DOC).html
