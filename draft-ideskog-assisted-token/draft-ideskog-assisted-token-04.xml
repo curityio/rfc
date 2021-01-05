@@ -10,12 +10,12 @@
 <?rfc tocindent="yes"?>
 <?rfc tocompact="yes"?>
 
-<rfc ipr="*trust200902" docName="draft-ideskog-assisted-token-03" version="4" category="info" submissionType="independent" sortRefs="true">
-    <link rel="working-copy" href="https://github.com/curityio/rfc/blob/master/draft-ideskog-assisted-token/draft-ideskog-assisted-token-03.xml"/>
+<rfc ipr="*trust200902" docName="draft-ideskog-assisted-token-04" version="5" category="info" submissionType="independent" sortRefs="true">
+    <link rel="working-copy" href="https://github.com/curityio/rfc/blob/master/draft-ideskog-assisted-token/draft-ideskog-assisted-token-04.xml"/>
     <front>
         <title abbrev="Assisted Token">OAuth 2.0 Assisted Token</title>
 
-        <seriesInfo name="Internet-Draft" value="draft-ideskog-assisted-token-03" stream="independent" status="informational"/>
+        <seriesInfo name="Internet-Draft" value="draft-ideskog-assisted-token-04" stream="independent" status="informational"/>
 
         <author fullname="Jacob Ideskog" initials="J." surname="Ideskog">
             <organization>Curity AB</organization>
@@ -33,7 +33,7 @@
             </address>
         </author>
 
-        <date day="04" month="Jan" year="2021"/>
+        <date day="05" month="Jan" year="2021"/>
 
         <area>sec</area>
         <workgroup>Independent Submission</workgroup>
@@ -57,7 +57,7 @@
         <note removeInRFC="true">
             <t>
                 To contribute to this draft, please feel free to create a pull request from the original source
-                available at <eref target="https://bitbucket.org/curity/rfc/">https://bitbucket.org/curity/rfc/</eref>
+                available at <eref target="https://github.com/curityio/rfc/">https://github.com/curityio/rfc</eref>
                 or email the authors.
             </t>
         </note>
@@ -547,7 +547,7 @@
             <section anchor="URIReg" title="OAuth URI Registration">
                 <t>
                     This specification registers the following values in the
-                    <eref target="https://www.iana.org/assignments/oauth-parameters/oauth-parameters.xhtml#uri">IANA "OAuth URI" registry</eref>
+                    <eref target="https://www.iana.org/assignments/oauth-parameters/#uri">IANA "OAuth URI" registry</eref>
                     <xref target="IANA.OAuth.Parameters"/> established by <xref target="RFC6755"/>.
                 </t>
 
@@ -564,7 +564,7 @@
             <section anchor="parametersReg" title="OAuth Parameters">
                 <t>
                     This specification registers the following values in the
-                    <eref target="https://www.iana.org/assignments/oauth-parameters/oauth-parameters.xhtml#parameters">IANA "OAuth Parameter" registry</eref>
+                    <eref target="https://www.iana.org/assignments/oauth-parameters/#parameters">IANA "OAuth Parameter" registry</eref>
                     <xref target="IANA.OAuth.Parameters"/> established by <xref target="RFC6749"/>.
                 </t>
 
@@ -588,7 +588,7 @@
 
                 <t>
                     This specification registers the following values in the
-                    <eref target="https://www.iana.org/assignments/oauth-parameters/oauth-parameters.xhtml#authorization-server-metadata">IANA "OAuth 2.0 Authorization Server
+                    <eref target="https://www.iana.org/assignments/oauth-parameters/#authorization-server-metadata">IANA "OAuth 2.0 Authorization Server
                     Metadata" registry</eref> <xref target="IANA.OAuth.Parameters"/> established by
                     <xref target="RFC8414"/>.
                 </t>
@@ -856,6 +856,17 @@ X-Frame-Options: ALLOW-FROM https://a.example.org:8000
             <t>
                 [[ to be removed by the RFC editor before publication as an RFC ]]
             </t>
+            
+            <t>-04</t>
+            <ul>
+                <li>
+                    Updated IANA references to use the "short version" without file extension or extra path information.
+                </li>
+                <li>
+                    Updated repository reference.
+                </li>
+            </ul>
+
             <t>-03</t>
             <ul>
                 <li>
