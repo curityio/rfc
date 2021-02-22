@@ -10,12 +10,12 @@
 <?rfc tocindent="yes"?>
 <?rfc tocompact="yes"?>
 
-<rfc ipr="*trust200902" docName="draft-ideskog-assisted-token-04" version="3" category="info" submissionType="independent" sortRefs="true">
-    <link rel="working-copy" href="https://github.com/curityio/rfc/blob/master/draft-ideskog-assisted-token/draft-ideskog-assisted-token-04.xml"/>
+<rfc ipr="*trust200902" docName="draft-ideskog-assisted-token-05" version="3" category="info" submissionType="independent" sortRefs="true">
+    <link rel="working-copy" href="https://github.com/curityio/rfc/blob/master/draft-ideskog-assisted-token/draft-ideskog-assisted-token-05.xml"/>
     <front>
         <title abbrev="Assisted Token">OAuth 2.0 Assisted Token</title>
 
-        <seriesInfo name="Internet-Draft" value="draft-ideskog-assisted-token-04" stream="independent" status="informational"/>
+        <seriesInfo name="Internet-Draft" value="draft-ideskog-assisted-token-05" stream="independent" status="informational"/>
 
         <author fullname="Jacob Ideskog" initials="J." surname="Ideskog">
             <organization>Curity AB</organization>
@@ -33,7 +33,7 @@
             </address>
         </author>
 
-        <date day="05" month="Jan" year="2021"/>
+        <date day="21" month="February" year="2021"/>
 
         <area>sec</area>
         <workgroup>Independent Submission</workgroup>
@@ -151,7 +151,7 @@
 | |--(E)-------->|           |--(F)-- Identifier -->|               |
 | |              |  Visible  |                      |               |
 | |              |  iframe   |--(G)-- User -------->|               |
-| |              |  or child |        authenticates |               |
+| |              |  or child |        interaction   |               |
 | |<-(I)- Token -|  window   |                      |               |
 | |              |           |<-(H)-- HTML with ----|               |
 | |              +-----------+        postMessage   |               |
@@ -348,8 +348,7 @@
             <section title="Assisted Token Response" anchor="assisted-token-response">
                 <t>The response from the assisted token endpoint is an HTML document that executes a script which
                     invokes the HTML postMessage interface to send a message to either the parent window (in the case shown in
-                    <xref target="assisted-token-flow"/>) or the opener (in the case illustrated in
-                    <xref target="assisted-token-login-consent-flow"/>). The origin that this event is posted to is
+                    <xref target="assisted-token-flow"/>) or the opener. The origin that this event is posted to is
                     that of the client. The contents of this message is a JSON object with the following fields:
                 </t>
 
@@ -379,7 +378,7 @@
                     <dt>token_type</dt>
                     <dd>
                         <bcp14>REQUIRED</bcp14>. The type of the token issued as described in
-                        <xref target="RFC6749" section="7.1"/>. Value is case insensitive.
+                        <xref target="RFC6749" section="7.1"/>. The value is case insensitive.
                     </dd>
                 </dl>
 
@@ -451,8 +450,7 @@
                             <dd>
                                 The authorization server encountered an unexpected condition that prevented it
                                 from fulfilling the request. (This error code is needed because a 500 Internal
-                                Server Error HTTP status code cannot be returned to the client directly in the
-                                child frame.)
+                                Server Error HTTP status code cannot be returned to the client directly.)
                             </dd>
 
                             <dt>temporarily_unavailable</dt>
@@ -460,7 +458,7 @@
                                 The authorization server is currently unable to handle the request due to a
                                 temporary overloading or maintenance of the server. (This error code is needed
                                 because a 503 Service Unavailable HTTP status code cannot be returned to the client
-                                directly in the child frame.)
+                                directly.)
                             </dd>
                         </dl>
 
@@ -505,6 +503,10 @@
             </t>
 
             <t>
+                If dynamic clients are allowed to register themselves with the authorization server, then additional verification of the origins include in the request <bcp14>MUST</bcp14> be performed in some manner. The way in which this is accomplished by the authorization server is not defined by this specification. Because this additional verification is required and because clients using the assisted token flow are typically ephemeral in nature, it is <bcp14>NOT RECOMMENDED</bcp14> that the authorization server support dynamic client registration of the <tt>urn:ietf:params:oauth:grant-type:assisted_token</tt> grant type.
+            </t>
+
+            <t>
                 The following client metadata field is defined by this specification. It <bcp14>MAY</bcp14> be included in a
                 registration request, as set forth in <xref target="RFC7591" section="2"/>.
             </t>
@@ -537,7 +539,7 @@
                     <bcp14>RECOMMENDED</bcp14>.
                     A JSON array specified in
                     <xref target="RFC8414" section="2"/>
-                    which should contain the value <tt>urn:ietf:params:oauth:grant-type:assisted_token</tt> as defined in
+                    which <bcp14>SHOULD</bcp14> contain the value <tt>urn:ietf:params:oauth:grant-type:assisted_token</tt> as defined in
                     <xref target="client-metadata"/>.
                 </dd>
             </dl>
@@ -555,7 +557,7 @@
                     <ul>
                         <li>URN: urn:ietf:params:oauth:grant-type:assisted_token</li>
                         <li>Common Name: Assisted token flow grant type for OAuth 2.0</li>
-                        <li>Change controller: IESG</li>
+                        <li>Change controller: CURITY: info@curity.io</li>
                         <li>Specification Document: <xref target="client-metadata"/> of [[ this specification ]]</li>
                     </ul>
                 </section>
@@ -572,17 +574,11 @@
                     <ul>
                         <li>for_origin</li>
                         <li>Parameter usage location: authorization request</li>
-                        <li>Change controller: IESG</li>
+                        <li>Change controller: CURITY: info@curity.io</li>
                         <li>Specification Document: <xref target="protocol"/> of [[ this specification ]]</li>
                     </ul>
                 </section>
             </section>
-
-            <!-- The IANA register needs to be updated to have error messages that can eb returned from the assisted
-            token endpoint and not only the authorization endpoint
-
-            TODO: for_origin in the request needs to be defined as well.
-            -->
 
             <section title="OAuth 2.0 Authorization Server Metadata" anchor="MetadataReg">
 
@@ -597,7 +593,7 @@
                     <ul>
                         <li>Metadata name: assisted_token_endpoint</li>
                         <li>Metadata Description: The Assisted Token Endpoint.</li>
-                        <li>Change controller: IESG</li>
+                        <li>Change controller: CURITY: info@curity.io</li>
                         <li>Specification Document: <xref target="authorization-server-metadata"/>
                             of [[ this specification ]]</li>
                     </ul>
@@ -616,8 +612,8 @@
                     Due to the use of an iframe to host the assisted token endpoint, the authorization server 
                     <bcp14>MUST</bcp14> take
                     precautions to ensure that only trusted origins are allowed to frame it. The authorization server
-                    <bcp14>MUST</bcp14> prevent any origin from framing the assisted token endpoint except ones that an administrator
-                    has explicitly allowed. It may do this in any manner that is available to the application.
+                    <bcp14>MUST</bcp14> prevent any origin from framing the assisted token endpoint except ones deemed trustworthy. This attestation may come byway of explicit administrative action or automated techniques available to the authorization server.
+                    Additional care is <bcp14>REQUIRED</bcp14> if dynamic client registration is supported or clients may be registered in a self-service manner.
                 </t>
 
                 <t>
@@ -643,12 +639,12 @@ X-Frame-Options: ALLOW-FROM https://a.example.org:8000
                 <t>
                     Because some user agents do not support <xref target="CSP-2"/>, this technique <bcp14>SHOULD</bcp14> be combined with
                     others. In particular, the authorization server <bcp14>SHOULD</bcp14> return an <tt>X-Frame-Options</tt> response header
-                    on the assisted token endpoint (and, if applicable, other endpoints used to authenticate the user
+                    on the assisted token endpoint (and, if applicable, other endpoints used to authenticate the user and authorize the client
                     in a specific deployment). As defined in <xref target="RFC7034"/>, this header will cause user
                     agents that support it (but not CSP) to block framing from any origin that is not
                     specified in this header's value. Because this header's value can only include one origin, the
-                    framer should use the <tt>for_origin</tt> parameter (as specified in
-                    <xref target="assisted-token-request"/>) to include its own origin.
+                    framer is <bcp14>RECOMMENDED</bcp14> to use the <tt>for_origin</tt> parameter (as specified in
+                    <xref target="assisted-token-request"/>) with its own origin as the value.
                 </t>
 
                 <t>
@@ -659,8 +655,25 @@ X-Frame-Options: ALLOW-FROM https://a.example.org:8000
                     authorization server <bcp14>MAY</bcp14> simply break out of all frames in case <xref target="RFC7034"/>
                     and <xref target="CSP-2"/> are unsupported by the user agent, though this
                     would render the assisted token flow non-functional. The choice of whether or not this drastic
-                    countermeasure should be employed depends on the user agents being targetted in a certain
+                    countermeasure should be employed depends on the user agents being targeted in a certain
                     deployment.
+                </t>
+
+                 <t>
+                    When the authorization server and client are provided by separate parties, it is important that the
+                    resource owner is able to distinguish the two. One safe way of doing so is by examination of
+                    the user agent's address bar by the resource owner where the validity of the certificate and location can be verified. In
+                    such situations, whenever user interaction is required, the client <bcp14>MUST</bcp14> open the assisted token
+                    endpoint in a new browser window rather than a hidden iframe. The authorization server <bcp14>MUST</bcp14> take
+                    measures deemed appropriate in a deployment to ensure that the client has not framed the user's
+                    manual interaction; however, the necessity for interactive user authentication and/or consent
+                    <bcp14>SHOULD</bcp14> be possible for the client to determine in a hidden iframe.
+                </t>
+            </section>
+
+            <section title="WebAuthn" anchor="webauthn">
+               <t>
+                <xref target="WebAuthn"/> <bcp14>MAY</bcp14> be used to ensure that the user is authenticated to the authorization server in a safe manner. This protocol offers authentication processes that are resistant to man-in-the-middle attacks. The API defined by this standard can be used to verify that user authentication is performed at the expected origin. This is superior to manual verification of the origin in the address bar of the browser by the resource owner. It also provides a mechanism to restrict the client framing the assisted token endpoint to be in the same origin. When it is not, the use of <xref target="WebAuthn"/> will force the client to use a separate window for user authentication.
                 </t>
             </section>
 
@@ -728,25 +741,12 @@ X-Frame-Options: ALLOW-FROM https://a.example.org:8000
                     storage requirements from the client application developer. Besides simplifying the programming
                     model for developers, this technique allows the authorization server to check the validity of the
                     token and determine if the token has expired or if the associated grant has been revoked in
-                    subsequent requests to the assisted token endpoint; this will be possible because the requests will
+                    subsequent requests to the assisted token endpoint; this will be possible because the requests might
                     include the token in the HTTP Cookie request header. In such cases, the authorization server can
                     take the appropriate action, such as authenticating the user anew or request consent, before
                     issuing a new token. If the token is stored by the application, however, this kind of verification
                     cannot be performed by the authorization server without an explicit request to validate a stored
                     token.
-                </t>
-            </section>
-
-            <section title="Visibility of User Agent's Address Bar" anchor="visibility-of-user-agents-address-bar">
-                <t>
-                    When the authorization server and client are provided by separate parties, it is important that the
-                    resource owner is able to distinguish the two. The only safe way of doing so is by examination of
-                    the user agent's address bar where the validity of the certificate and location can be made. In
-                    such situations, whenever user interaction is required, the client <bcp14>SHOULD</bcp14> open the assisted token
-                    endpoint in a new browser window rather than a hidden iframe. The authorization serer <bcp14>MAY</bcp14> take any
-                    measures deemed appropriate in a deployment to ensure that the client has not framed the user's
-                    manual interaction; however, the necessity for interactive user authentication and/or consent
-                    <bcp14>SHOULD</bcp14> be possible for the client to determine in a hidden iframe.
                 </t>
             </section>
         </section>
@@ -840,6 +840,68 @@ X-Frame-Options: ALLOW-FROM https://a.example.org:8000
                 <seriesInfo name='World Wide Web Consortium LastCall' value='WD-cors-20120403' />
                 <format type='HTML' target='http://www.w3.org/TR/2012/WD-cors-20120403' />
             </reference>
+            <reference anchor="WebAuthn" target="https://www.w3.org/TR/2019/REC-webauthn-1-20190304" quoteTitle="true" derivedAnchor="WebAuthn">
+                <front>
+                  <title>Web Authentication: An API for accessing Public Key Credentials</title>
+                  <seriesInfo name="World Wide Web Consortium (W3C)" value="Recommendation"/>
+                  <author initials="D." surname="Balfanz" fullname="Dirk Balfanz">
+                    <organization showOnFrontPage="true">Google</organization>
+                    <address>
+                      <email>balfanz@google.com</email>
+                    </address>
+                  </author>
+                  <author initials="A." surname="Czeskis" fullname="Alexei Czeskis">
+                    <organization showOnFrontPage="true">Google</organization>
+                    <address>
+                      <email>aczeskis@google.com</email>
+                    </address>
+                  </author>
+                  <author initials="J." surname="Hodges" fullname="Jeff Hodges">
+                    <organization showOnFrontPage="true">PayPal</organization>
+                    <address>
+                      <email>jdhodges@google.com</email>
+                    </address>
+                  </author>
+                  <author initials="J.C." surname="Jones" fullname="J.C. Jones">
+                    <organization showOnFrontPage="true">Mozilla</organization>
+                    <address>
+                      <email>jc@mozilla.com</email>
+                    </address>
+                  </author>
+                  <author initials="M." surname="Jones" fullname="Michael B. Jones">
+                    <organization showOnFrontPage="true">Microsoft</organization>
+                    <address>
+                      <email>mbj@microsoft.com</email>
+                      <uri>http://self-issued.info/</uri>
+                    </address>
+                  </author>
+                  <author initials="A." surname="Kumar" fullname="Akshay Kumar">
+                    <organization showOnFrontPage="true">Microsoft</organization>
+                    <address>
+                      <email>akshayku@microsoft.com</email>
+                    </address>
+                  </author>
+                  <author initials="A." surname="Liao" fullname="Angelo Liao">
+                    <organization showOnFrontPage="true">Microsoft</organization>
+                    <address>
+                      <email>huliao@microsoft.com</email>
+                    </address>
+                  </author>
+                  <author initials="R." surname="Lindemann" fullname="Rolf Lindemann">
+                    <organization showOnFrontPage="true">Nok Nok Labs</organization>
+                    <address>
+                      <email>rolf@noknok.com</email>
+                    </address>
+                  </author>
+                  <author initials="E." surname="Lundberg" fullname="Emil Lundberg">
+                    <organization showOnFrontPage="true">Yubico</organization>
+                    <address>
+                      <email>emil@yubico.com</email>
+                    </address>
+                  </author>
+                  <date month="March" day="4" year="2019"/>
+                </front>
+              </reference>
         </references>
 
         <section anchor="Acknowledgements" title="Acknowledgements">
@@ -848,7 +910,7 @@ X-Frame-Options: ALLOW-FROM https://a.example.org:8000
             </t>
 
             <t>
-                Mark Dobrinic, Karl McGuinness, Renato Athaydes, Daniel Lindau
+                Mark Dobrinic, Karl McGuinness, Renato Athaydes, Daniel Lindau, Louis Jannett
             </t>
         </section>
 
@@ -856,7 +918,16 @@ X-Frame-Options: ALLOW-FROM https://a.example.org:8000
             <t>
                 [[ to be removed by the RFC editor before publication as an RFC ]]
             </t>
-            
+
+            <t>-05</t>
+            <ul>
+                <li>Clarified text and figures</li>
+                <li>Added note about DCR not being recommended</li>
+                <li>Fixed change controller for IANA registry entries</li>
+                <li>Clarified and reorganized framing and address bar security considerations based on L. Lannett's feedback</li>
+                <li>Added WebAuthn security consideration</li>
+            </ul>
+
             <t>-04</t>
             <ul>
                 <li>
